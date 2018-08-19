@@ -1,0 +1,17 @@
+REPORTE DE TRABAJO PROYECTO Pjulia
+
+Versión de Django utilizada 2.0.7
+super user django es:
+developers
+User1987
+
+Base de datos:
+Mysql
+Nombre: corindb
+usuario: devuser
+Pass: User1987
+
+
+** Se utilizó en el modelos los campos booleanos con NullBooleanField en lugar de BooleanField, ya que NullBoolean es el utilizado en la versión Django 2.1 tenerlo en cuenta por si el hosting no soporta la última versión de Django y genera error en este campo
+
+Las pruebas las habíamos hecho en Django 2.0 y MochaHost sólo soporta la versión 1.5, por ese motivo reconfiguramos el ambiente para adaptarnos a las particularidades del hosting.
