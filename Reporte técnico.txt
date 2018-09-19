@@ -1,6 +1,6 @@
 REPORTE DE TRABAJO PROYECTO Pjulia
 
-Versi�n de Django utilizada 2.0.7
+Versión de Django utilizada 2.0.7
 super user django es:
 developers
 User1987
@@ -9,9 +9,78 @@ Base de datos:
 Mysql
 Nombre: corindb
 usuario: devuser
+utf8
 Pass: User1987
 
+Superadmin para django
+username: corinmanager
+pwd:p1234.#1
 
-** Se utiliz� en el modelos los campos booleanos con NullBooleanField en lugar de BooleanField, ya que NullBoolean es el utilizado en la versi�n Django 2.1 tenerlo en cuenta por si el hosting no soporta la �ltima versi�n de Django y genera error en este campo
 
-Las pruebas las hab�amos hecho en Django 2.0 y MochaHost s�lo soporta la versi�n 1.5, por ese motivo reconfiguramos el ambiente para adaptarnos a las particularidades del hosting.
+** Se utilizó en el modelos los campos booleanos con NullBooleanField en lugar de BooleanField, ya que NullBoolean es el utilizado en la versión Django 2.1 tenerlo en cuenta por si el hosting no soporta la última versión de Django y genera error en este campo
+
+Las pruebas las habíamos hecho en Django 2.0 y MochaHost sólo soporta la versión 1.5, por ese motivo reconfiguramos el ambiente para adaptarnos a las particularidades del hosting.
+
+
+Deployment keys:
+https://www.youtube.com/watch?v=40eaIU1rByg
+
+Configuracion de la base de datos 
+Disponible en el archivo settings.py
+
+
+*** Manejo de librerias necesarias
+Considere que en el archivo requirements.txt
+(Mas info disponible en https://rukbottoland.com/blog/como-instalar-paquetes-python-con-requirementstxt/)
+# Para instalar una versión específica
+package==version
+
+# Para instalar una versión igual o superior
+package>=version
+
+# Para instalar la versión más reciente
+package
+
+# Migraciones en python tips
+Para revertir todas las migraciones por una aplicación para inicial o de puesta, puede ejecutar:
+./manage.py migrate my_app zero
+
+# Ejecutar una migracion en particular
+manage.py migrate my_app 0010_previous_migration 
+
+# Mostrar todas las migraciones y su estado
+manage.py showmigrations
+
+# Darle nombre a las migraciones
+If you want to give the migration(s) a meaningful name instead of a generated one, you can use the makemigrations --name option:
+
+# Unificar migraciones ( para tener algo mas listo para producción )
+Squashing migrations¶
+manage.py squashmigrations appName migrationNumber
+manage.py squashmigrations myapp 0004
+
+######Modelos en Django
+Cada vez que se hace un cambio en el modelo se tiene que hacer una migración con makemigrations y luego ejecutar la migración
+
+
+get_absolute_url()
+Esto le indica a Django cómo calcular la URL de un objeto. Django usa esto en su interfaz de administración y en cualquier tiempo que necesita para encontrar una dirección URL de un objeto.
+Cualquier objeto que tenga una URL que identifica de forma exclusiva debe definir este método.
+
+
+
+Pasos para migrar la aplicacion
+Crear la base de datos
+Agregar el usuario a la base de datos
+Dar permisos de "localhost" al usuario de la base de datos
+Instalar dependencias proyecto python:  pip install -r requirements.txt
+Migrar la base de datos
+Correr el servidor
+(Solo la primera vez crear usuario adminstrativo) python manage.py createsuperuser
+
+
+
+Comandos
+Migrar la base de datos python manage.py migrate
+Correr servidor : python manage.py runserver
+Elaborar las migraciones: manage.py makemigrations
