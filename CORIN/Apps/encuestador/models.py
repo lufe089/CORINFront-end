@@ -29,6 +29,9 @@ class Parametric_master (models.Model):
     end_date = models.DateTimeField(default=None, null=True, blank=True)
     #option_group_id = models.IntegerField()
 
+    def __str__(self):  # __unicode__ on Python 2
+        return self.name
+
 
 class Trans_parametric_table(models.Model):
     parametric_master = models.ForeignKey(Parametric_master, on_delete=models.CASCADE)
@@ -38,11 +41,18 @@ class Trans_parametric_table(models.Model):
     start_date = models.DateTimeField(auto_now=True)
     end_date = models.DateTimeField(default=None, null=True, blank=True)
 
+    def __str__(self):  # __unicode__ on Python 2
+        return self.option_label
+
 
 class Response_format (models.Model):
     parametric_table = models.ForeignKey(Parametric_master, on_delete=models.CASCADE)
     name = models.CharField(max_length = 50)
     type = models.CharField ( choices=[(tag, tag.value) for tag in ResponseFormatType],max_length = 15 ) # Choices is a list of Tuple)
+
+
+    def __str__(self):  # __unicode__ on Python 2
+        return self.name
 
 
 #class item_hierarchy(models.Model):
@@ -60,21 +70,27 @@ class ItemClassification(models.Model):
     )
     i18n_code = models.CharField(max_length=40)
 
+    def __str__(self):  # __unicode__ on Python 2
+        return self.name + " -- type" + str(self.type)
+
 
 class Item (models.Model):
     response_format = models.ForeignKey(Response_format, on_delete=models.CASCADE)
     item_order = models.IntegerField()
-    dimension = models.ForeignKey(ItemClassification, related_name="item_dimension", on_delete=models.CASCADE,default=None)
-    category = models.ForeignKey(ItemClassification,related_name="item_category", on_delete=models.CASCADE,default=None)
+    dimension = models.ForeignKey(ItemClassification, related_name="itemsByDimension", on_delete=models.CASCADE,default=None)
+    category = models.ForeignKey(ItemClassification,related_name="itemsByCategory", on_delete=models.CASCADE,default=None)
     #component1 = models.ForeignKey(ItemClassification,related_name="item_component1", on_delete=models.CASCADE,default=None)
-    component = models.ForeignKey(ItemClassification,related_name="item_component", on_delete=models.CASCADE,default=None,null=True,blank=True)
+    component = models.ForeignKey(ItemClassification,related_name="itemsByComponent", on_delete=models.CASCADE,default=None,null=True,blank=True)
     #component = models.IntegerField(default=None)
 
 class Trans_item(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, related_name='translations',on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     description = models.TextField(default=None,null=True,blank=True)
     i18n_code = models.CharField(max_length=40)
+
+    def __str__(self):  # __unicode__ on Python 2
+        return self.name
 
 
 class Instrument_header(models.Model):

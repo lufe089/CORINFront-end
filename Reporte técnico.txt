@@ -63,6 +63,7 @@ manage.py squashmigrations myapp 0004
 Cada vez que se hace un cambio en el modelo se tiene que hacer una migración con makemigrations y luego ejecutar la migración
 
 
+
 get_absolute_url()
 Esto le indica a Django cómo calcular la URL de un objeto. Django usa esto en su interfaz de administración y en cualquier tiempo que necesita para encontrar una dirección URL de un objeto.
 Cualquier objeto que tenga una URL que identifica de forma exclusiva debe definir este método.
@@ -84,3 +85,22 @@ Comandos
 Migrar la base de datos python manage.py migrate
 Correr servidor : python manage.py runserver
 Elaborar las migraciones: manage.py makemigrations
+
+
+############## REST FRAMEWORK #############################
+http://www.django-rest-framework.org/tutorial/2-requests-and-responses/
+
+Los serializers son importantes para el rest framework
+Web API is to provide a way of serializing and deserializing the snippet instances into representations such as json. REST framework includes both Serializer classes, and ModelSerializer classes.
+ModelSerializer classes don't do anything particularly magical, they are simply a shortcut for creating serializer classes, An automatically determined set of fields and provides a Simple default implementations for the create() and update() methods.
+
+# Request 
+REST framework introduces a Request object that extends the regular HttpRequest, and provides more flexible request parsing. The core functionality of the Request object is the request.data attribute, which is similar to request.POST, but more useful for working with Web APIs.
+
+# Response
+REST framework also introduces a Response object, which is a type of TemplateResponse that takes unrendered content and uses content negotiation to determine the correct content type to return to the client
+
+Para las relaciones importa
+Que en el modelo las relaciones tengan un nombre
+Que exista el serializador de los objetos que se queiren dibjar
+Que si se obtiene el serializador usando "cadena" esta cadena corresponda al nombre de la relacion en el modelo y luego el atributo se llame igual cuando se ponen los campos

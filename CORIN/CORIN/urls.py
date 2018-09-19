@@ -15,7 +15,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url, include
 
+from rest_framework import routers
+from Apps.encuestador import views
+
+router = routers.DefaultRouter()
+router.register(r'items', views.ItemsViewSet)
+router.register(r'categories', views.CategoriesViewSet)
+router.register(r'dimensions', views.DimensionsViewSet)
+router.register(r'components', views.ComponentsViewSet)
+
+
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
+    url(r'^', include(router.urls)),
     path('admin/', admin.site.urls),
+    url(r'^api/', include((router.urls, 'encuestador'))),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
+
+
