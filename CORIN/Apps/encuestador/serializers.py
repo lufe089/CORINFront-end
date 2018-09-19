@@ -22,9 +22,10 @@ class ItemClassificationSerializer(serializers.HyperlinkedModelSerializer):
     # Se serializan los datos aprovechando las relaciones entre los atributos de llavesprimarias y foraneas
     itemsByCategory = ItemSerializer(many=True,read_only=True)
     itemsByDimension = ItemSerializer(many=True,read_only=True)
+    itemsByComponent = ItemSerializer(many=True,read_only=True)
 
 
     class Meta:
         model = ItemClassification
         # fields = ('name', 'description','i18n_code','translations')
-        fields = ('id','name', 'itemsByCategory','itemsByDimension')
+        fields = ('id','name', 'itemsByCategory','itemsByDimension','itemsByComponent')
