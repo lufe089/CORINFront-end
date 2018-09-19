@@ -1,58 +1,91 @@
 from django.db import models
 from django.utils import timezone
+from enum import Enum
 
+##########################  ENUMS ##########################
+
+class ClassificationChoice(Enum): # A subclass of Enum
+    COMPONENT = 1
+    DIMENSION = 2
+    CATEGORY = 3
+
+class LanguageChoice(Enum): # A subclass of Enum
+    ES = "ESP"
+    EN = "ENG"
+
+class ResponseFormatType(Enum): # A subclass of Enum
+    BOOL = "Yes/No"
+    LIKERT_NINE = "Likert 9 points"
+    LIKERT_SIX = "Likert 6 points"
+
+
+
+#######################  CLASES ################################
 
 class Parametric_master (models.Model):
     name = models.CharField(max_length = 50)
     description = models.TextField()
     start_date = models.DateTimeField(auto_now=True)
-    end_date = models.DateTimeField(auto_now=True)
+    end_date = models.DateTimeField(default=None, null=True, blank=True)
+    #option_group_id = models.IntegerField()
 
 
 class Trans_parametric_table(models.Model):
-    id_parametric_master = models.ForeignKey(Parametric_master, on_delete=models.CASCADE)
+    parametric_master = models.ForeignKey(Parametric_master, on_delete=models.CASCADE)
     option_label = models.CharField(max_length=50)
-    option_group = models.CharField(max_length=50)
     i18n_code = models.CharField(max_length=2)
     numeric_value = models.IntegerField()
     start_date = models.DateTimeField(auto_now=True)
-    end_date = models.DateTimeField(auto_now=True)
+    end_date = models.DateTimeField(default=None, null=True, blank=True)
 
 
 class Response_format (models.Model):
-    id_parametric_table = models.ForeignKey(Parametric_master, on_delete=models.CASCADE)
+    parametric_table = models.ForeignKey(Parametric_master, on_delete=models.CASCADE)
     name = models.CharField(max_length = 50)
-    type = models.CharField (max_length = 50)
+    type = models.CharField ( choices=[(tag, tag.value) for tag in ResponseFormatType],max_length = 15 ) # Choices is a list of Tuple)
 
 
-class item_hierarchy(models.Model):
-    ancestor = models.IntegerField()
-    descendant = models.IntegerField()
-    length = models.IntegerField()
+#class item_hierarchy(models.Model):
+    #ancestor = models.IntegerField()
+    #descendant = models.IntegerField()
+    #length = models.IntegerField()
+    #length = models.IntegerField()
+
+
+
+class ItemClassification(models.Model):
+    name = models.CharField(max_length=50)
+    type = models.IntegerField(
+        choices=[(tag, tag.value) for tag in ClassificationChoice]  # Choices is a list of Tuple
+    )
+    i18n_code = models.CharField(max_length=40)
 
 
 class Item (models.Model):
-    id_response_format = models.ForeignKey(Response_format, on_delete=models.CASCADE)
-    hierarchicalLevel = models.IntegerField()
+    response_format = models.ForeignKey(Response_format, on_delete=models.CASCADE)
     item_order = models.IntegerField()
-
+    dimension = models.ForeignKey(ItemClassification, related_name="item_dimension", on_delete=models.CASCADE,default=None)
+    category = models.ForeignKey(ItemClassification,related_name="item_category", on_delete=models.CASCADE,default=None)
+    #component1 = models.ForeignKey(ItemClassification,related_name="item_component1", on_delete=models.CASCADE,default=None)
+    component = models.ForeignKey(ItemClassification,related_name="item_component", on_delete=models.CASCADE,default=None,null=True,blank=True)
+    #component = models.IntegerField(default=None)
 
 class Trans_item(models.Model):
-    id_item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
-    description = models.TextField()
-    i18n_code = models.CharField(max_length=2)
+    description = models.TextField(default=None,null=True,blank=True)
+    i18n_code = models.CharField(max_length=40)
 
 
 class Instrument_header(models.Model):
     version_name = models.CharField(max_length=50)
     is_active = models.BooleanField()
     start_date = models.DateTimeField(auto_now=True)
-    end_date = models.DateTimeField(auto_now=True)
+    end_date = models.DateTimeField(default=None, null=True, blank=True)
 
 
 class Trans_instrument_header(models.Model):
-    id_instrument_header = models.ForeignKey(Instrument_header, on_delete=models.CASCADE)
+    instrument_header = models.ForeignKey(Instrument_header, on_delete=models.CASCADE)
     general_description = models.TextField()
     feature_description = models.TextField()
     disclaimer = models.TextField()
@@ -61,30 +94,30 @@ class Trans_instrument_header(models.Model):
 
 
 class Instrument_structure_history(models.Model):
-    id_instrument_header = models.ForeignKey(Instrument_header, on_delete=models.CASCADE)
-    id_orignal_item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    instrument_header = models.ForeignKey(Instrument_header, on_delete=models.CASCADE)
+    original_item = models.ForeignKey(Item,related_name="item_originalItem", on_delete=models.CASCADE,default=None)
     item_minor_version = models.CharField(max_length=20)
-    id_new_item = models.IntegerField()
-    id_previous_item = models.IntegerField()
+    new_item = models.ForeignKey(Item, related_name="item_newItem", on_delete=models.CASCADE, default=None)
+    previous_item = models.ForeignKey(Item, related_name="item_previousItem", on_delete=models.CASCADE, default=None)
     change_reason = models.TextField()
     is_active = models.BooleanField()
     start_date = models.DateTimeField(auto_now=True)
-    end_date = models.DateTimeField(auto_now=True)
+    end_date = models.DateTimeField(default=None, null=True, blank=True)
 
 class Company(models.Model):
     company_contact_name = models.CharField(max_length=50)
     company_email = models.EmailField()
 
 class Client(models.Model):
-    id_company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
     max_surveys = models.IntegerField()
     client_logo = models.CharField(max_length=100)
     contact = models.CharField(max_length=50)
     has_iso = models.BooleanField()
 
 class Customized_instrument(models.Model):
-    id_company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    id_client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
     num_completed_responses = models.IntegerField()
     num_partial_responses = models.IntegerField()
     ##framework_version = models.FloatField()
@@ -94,7 +127,7 @@ class Customized_instrument(models.Model):
     Customized_description = models.TextField()
 
 class Participant_response_header(models.Model):
-    id_customized_instrument = models.ForeignKey(Customized_instrument, on_delete=models.CASCADE)
+    customized_instrument = models.ForeignKey(Customized_instrument, on_delete=models.CASCADE)
     participant_name = models.CharField(max_length=50)
     email = models.EmailField()
     last_update = models.DateTimeField()
@@ -105,8 +138,8 @@ class Participant_response_header(models.Model):
     acces_code = models.CharField(max_length=50)
 
 class Items_respon_by_participants(models.Model):
-    id_participant_response_header = models.ForeignKey(Participant_response_header, on_delete=models.CASCADE)
-    id_item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    participant_response_header = models.ForeignKey(Participant_response_header, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     answer_numeric = models.IntegerField()
     answer_text = models.TextField()
 
@@ -123,6 +156,6 @@ class User (models.Model):
     prefered_language = models.CharField(max_length=30)
 
 class Roles_by_user(models.Model):
-    id_company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    id_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=50)

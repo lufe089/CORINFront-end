@@ -1,0 +1,6 @@
+# Newer versions available
+
+#Mysql database connection
+cymysql
+django-cymysql
+
