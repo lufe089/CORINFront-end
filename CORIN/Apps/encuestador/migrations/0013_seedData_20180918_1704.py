@@ -5,6 +5,7 @@ from Apps.encuestador.constants import APP_NAME
 from Apps.encuestador.models import ClassificationChoice
 from Apps.encuestador.models import LanguageChoice
 from Apps.encuestador.models import ResponseFormatType
+from Apps.encuestador.models import ItemClassification
 
 
 def insert_data(apps, schema_editor):
