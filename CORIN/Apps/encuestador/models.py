@@ -140,7 +140,7 @@ class Customized_instrument(models.Model):
     resulting_URL = models.URLField()
     total_of_instrument = models.IntegerField()
     JSON_instrument_file = models.BinaryField()
-    Customized_description = models.TextField()
+    customized_description = models.TextField()
 
 class Participant_response_header(models.Model):
     customized_instrument = models.ForeignKey(Customized_instrument, on_delete=models.CASCADE)

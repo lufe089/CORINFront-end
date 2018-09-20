@@ -23,8 +23,8 @@ from Apps.encuestador import views
 router = routers.DefaultRouter()
 router.register(r'items', views.ItemsViewSet)
 router.register(r'categories', views.CategoriesViewSet)
+router.register(r'components', views.CategoriesViewSet)
 router.register(r'dimensions', views.DimensionsViewSet)
-router.register(r'components', views.ComponentsViewSet)
 
 
 # Wire up our API using automatic URL routing.

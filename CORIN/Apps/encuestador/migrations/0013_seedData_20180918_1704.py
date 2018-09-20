@@ -8,12 +8,16 @@ from Apps.encuestador.models import ResponseFormatType
 
 
 def insert_data(apps, schema_editor):
+
+    ### Aqui van las clases para las que se llenaran los datos
     ItemClassification = apps.get_model(APP_NAME, 'ItemClassification')
     Parametric_master = apps.get_model(APP_NAME, 'Parametric_master')
     Trans_parametric_table = apps.get_model(APP_NAME, 'Trans_parametric_table')
     Response_format = apps.get_model(APP_NAME, 'Response_format')
     Item = apps.get_model(APP_NAME, 'Item')
     Trans_item = apps.get_model(APP_NAME, 'Trans_item')
+    Instrument_header = apps.get_model(APP_NAME, 'Instrument_header')
+    Trans_instrument_header = apps.get_model(APP_NAME, 'Trans_instrument_header')
 
     ###  Clean the data from the tables in which we introduce data in this method
     Item.objects.all().delete()
@@ -384,7 +388,7 @@ def insert_data(apps, schema_editor):
     transItemComOrg15.save()
     transItemComOrg16.save()
 
-    # Entrono y Estrategias subitems
+    # Entorno y Estrategias subitems
     categoria = cat_entorno_estrateg
 
     itemEntEst1 = Item(item_order=1, dimension=dim_entorno, category=categoria,response_format=response_format_items_variable)
