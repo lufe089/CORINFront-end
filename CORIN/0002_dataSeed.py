@@ -19,8 +19,13 @@ def insert_data(apps, schema_editor):
     Trans_item = apps.get_model(APP_NAME, 'Trans_item')
     Instrument_header = apps.get_model(APP_NAME, 'Instrument_header')
     Trans_instrument_header = apps.get_model(APP_NAME, 'Trans_instrument_header')
+    Instrument_structure_history = apps.get_model(APP_NAME, 'Instrument_structure_history')
 
     ###  Clean the data from the tables in which we introduce data in this method
+    Instrument_structure_history.objects.all().delete()
+    Trans_instrument_header.objects.all().delete()
+    Instrument_header.objects.all().delete()
+
     Item.objects.all().delete()
     ItemClassification.objects.all().delete()
     Parametric_master.objects.all().delete()
@@ -29,7 +34,8 @@ def insert_data(apps, schema_editor):
     Trans_item.objects.all().delete()
 
 
-    itemClassification_list  = []
+    ### This list is used later for adding elements to the evaluation instrument
+    itemsList  = []
 
     ################### Dimensions
     dim_adaptabilidad= ItemClassification(name="Adaptabilidad", type=ClassificationChoice.DIMENSION.value,
@@ -322,6 +328,7 @@ def insert_data(apps, schema_editor):
     itemComOrg14.save()
     itemComOrg15.save()
     itemComOrg16.save()
+
 
     transItemComOrg1 = Trans_item(item=itemComOrg1,
                                   name="La comunicación es trasparente, promueve la confianza y la idea de que el desacuerdo es aceptado en la compañía",
@@ -685,6 +692,92 @@ def insert_data(apps, schema_editor):
     transItemRoles4.save()
     transItemRoles5.save()
     transItemRoles6.save()
+
+
+    ##### Instrument headers and basic structure
+    instrument_header = Instrument_header(version_name="1.0.a1",is_active=True)
+    user_instructions= "No existen respuestas correctas, sólo queremos conocer su percepción sobre las cuestiones planteadas. Si de alguna de las preguntas no está totalmente seguro de la respuesta, no importa, nos interesa su estimación. Por favor, conteste todas las preguntas. En la mayoría de las preguntas se le proponen una serie de afirmaciones y se le pide que las valore puntuándolas entre 1 (si está en total desacuerdo con la afirmación) y 5 (si está totalmente de acuerdo con ella).  Si tiene alguna duda, no dude en contactar con nosotros (danieljj@um.es; teléfono: 868887900)"
+    instrument_header.save()
+
+    trans_instrument_header = Trans_instrument_header(instrument_header=instrument_header,user_instructions=user_instructions,i18n_code=LanguageChoice.ES.name )
+    trans_instrument_header.save()
+
+    # We add the items to the list of items in order to add those items to the instrument easily
+    itemsList.append(itemRoles1)
+    itemsList.append(itemRoles2)
+    itemsList.append(itemRoles3)
+    itemsList.append(itemRoles4)
+    itemsList.append(itemRoles5)
+    itemsList.append(itemRoles6)
+
+    itemsList.append(itemRasgos1)
+    itemsList.append(itemRasgos2)
+    itemsList.append(itemRasgos3)
+    itemsList.append(itemRasgos4)
+    itemsList.append(itemRasgos5)
+    itemsList.append(itemRasgos6)
+    itemsList.append(itemRasgos7)
+    itemsList.append(itemRasgos8)
+    itemsList.append(itemRasgos9)
+    itemsList.append(itemRasgos10)
+
+    itemsList.append(itemLider1)
+    itemsList.append(itemLider2)
+    itemsList.append(itemLider3)
+    itemsList.append(itemLider4)
+    itemsList.append(itemLider5)
+    itemsList.append(itemLider6)
+
+    itemsList.append(itemEstru1)
+    itemsList.append(itemEstru2)
+    itemsList.append(itemEstru3)
+    itemsList.append(itemEstru4)
+    itemsList.append(itemEstru5)
+    itemsList.append(itemEstru6)
+
+    itemsList.append(itemCapOrg1)
+    itemsList.append(itemCapOrg2)
+    itemsList.append(itemCapOrg3)
+    itemsList.append(itemCapOrg4)
+    itemsList.append(itemCapOrg5)
+    itemsList.append(itemCapOrg6)
+    itemsList.append(itemCapOrg7)
+
+    itemsList.append(itemComOrg1)
+    itemsList.append(itemComOrg2)
+    itemsList.append(itemComOrg3)
+    itemsList.append(itemComOrg4)
+    itemsList.append(itemComOrg5)
+    itemsList.append(itemComOrg6)
+    itemsList.append(itemComOrg7)
+    itemsList.append(itemComOrg8)
+    itemsList.append(itemComOrg9)
+    itemsList.append(itemComOrg10)
+    itemsList.append(itemComOrg11)
+    itemsList.append(itemComOrg12)
+    itemsList.append(itemComOrg13)
+    itemsList.append(itemComOrg14)
+    itemsList.append(itemComOrg15)
+    itemsList.append(itemComOrg16)
+
+    itemsList.append(itemEntEst1)
+    itemsList.append(itemEntEst2)
+    itemsList.append(itemEntEst3)
+    itemsList.append(itemEntEst4)
+    itemsList.append(itemEntEst5)
+    itemsList.append(itemEntEst6)
+    itemsList.append(itemEntEst7)
+    itemsList.append(itemEntEst8)
+    itemsList.append(itemEntEst9)
+    itemsList.append(itemEntEst10)
+    itemsList.append(itemEntEst11)
+
+    #Se agregan los items que ya se crearon al instrumento
+    for item in itemsList:
+        Instrument_structure_history_item= Instrument_structure_history(instrument_header=instrument_header,is_active=True,original_item=item,item_minor_version=1,new_item=item,previous_item=None,change_reason="version sept2018")
+        Instrument_structure_history_item.save()
+
+
 
 
 class Migration(migrations.Migration):

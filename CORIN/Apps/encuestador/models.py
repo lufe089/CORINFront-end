@@ -79,9 +79,8 @@ class Item (models.Model):
     item_order = models.IntegerField()
     dimension = models.ForeignKey(ItemClassification, related_name="itemsByDimension", on_delete=models.CASCADE,default=None)
     category = models.ForeignKey(ItemClassification,related_name="itemsByCategory", on_delete=models.CASCADE,default=None)
-    #component1 = models.ForeignKey(ItemClassification,related_name="item_component1", on_delete=models.CASCADE,default=None)
     component = models.ForeignKey(ItemClassification,related_name="itemsByComponent", on_delete=models.CASCADE,default=None,null=True,blank=True)
-    #component = models.IntegerField(default=None)
+
 
 class Trans_item(models.Model):
     item = models.ForeignKey(Item, related_name='translations',on_delete=models.CASCADE)
@@ -102,10 +101,11 @@ class Instrument_header(models.Model):
 
 class Trans_instrument_header(models.Model):
     instrument_header = models.ForeignKey(Instrument_header, on_delete=models.CASCADE)
-    general_description = models.TextField()
-    feature_description = models.TextField()
-    disclaimer = models.TextField()
-    user_instructions = models.TextField()
+    # None of these fields are mandatory
+    general_description = models.TextField(default=None, null=True, blank=True)
+    feature_description = models.TextField(default=None, null=True, blank=True)
+    disclaimer = models.TextField(default=None, null=True, blank=True)
+    user_instructions = models.TextField(default=None, null=True, blank=True)
     i18n_code = models.CharField(max_length=2)
 
 
@@ -114,7 +114,7 @@ class Instrument_structure_history(models.Model):
     original_item = models.ForeignKey(Item,related_name="item_originalItem", on_delete=models.CASCADE,default=None)
     item_minor_version = models.CharField(max_length=20)
     new_item = models.ForeignKey(Item, related_name="item_newItem", on_delete=models.CASCADE, default=None)
-    previous_item = models.ForeignKey(Item, related_name="item_previousItem", on_delete=models.CASCADE, default=None)
+    previous_item = models.ForeignKey(Item, related_name="item_previousItem", on_delete=models.CASCADE, default=None,null=True, blank=True)
     change_reason = models.TextField()
     is_active = models.BooleanField()
     start_date = models.DateTimeField(auto_now=True)
