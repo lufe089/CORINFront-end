@@ -1,8 +1,11 @@
 <template>
-  <b-card :header='caption' class="card-body">
-    <div v-for="categoryItems in responsesByCategoriesMap" :key="categoryItems">
+<div class="animated fadeIn">
+  <b-card class="card-body">
+    <!--Iterate over the different categories -->
+    <b-form @submit="onSubmit">
+      <div v-for="categoryAndItems in responsesByCategoriesList" :key="categoryAndItems.id">
       <!-- stacked -->
-      <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='categoryItems.responsesByCategory' :fields='fields' :current-page='currentPage' :per-page='perPage' caption-top>
+      <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='categoryAndItems.responsesByCategory' :fields='fields' :current-page='currentPage' :per-page='perPage' caption-top>
         <template slot="table-caption">
         <!-- Progress section -->
         <div class='float-right'>
@@ -15,11 +18,10 @@
           </div>
         </div>
         <!-- Group level name -->
-        <div class="h5 text-primary mb-0 mt-2 text-uppercase">{{categoryItems.category.name}}  <small> {{categoryItems.responsesCount}}/{{categoryItems.responsesByCategory.length}} </small> </div>
+        <div class="h5 text-primary mb-0 mt-2 text-uppercase">{{categoryAndItems.category.name}}  <small> {{categoryAndItems.responsesCount}}/{{categoryAndItems.responsesByCategory.length}} </small> </div>
         <!-- Progreso por categoria -->
-        <div>
-          <b-progress :value="categoryItems.progressReponses" variant="info" striped :animated="animate" class="mb-2"></b-progress>
-        </div>
+        <div class="float"><b-badge variant="dark" v-if="categoryAndItems.allFilled" pill>{{$t('message.all_fill')}}</b-badge></div>
+        <div class="float"><b-progress :value="categoryAndItems.progressReponses" variant="info" striped class="mb-2"></b-progress></div>
         </template>
         <template slot='item_order' slot-scope='data'>
           <!--Esta es la ruta para llegar data.item es un arreglo, item es el primer elemento item luego es un campo dentro del elemento-->
@@ -28,48 +30,9 @@
         <template slot='category' slot-scope='data'>
           {{data.item.item.item.category.name}}
         </template>
-        <template slot='lowerAnchor' slot-scope='data'>
-          <small>{{$t('message.total_desacuerdo') }}</small>
-        </template>
-        <template slot='name' slot-scope='data'>
-          <div fluid>
-             <b-row>
-              <b-col md="12">
-               {{data.item.item.name}}
-              </b-col>
-             </b-row>
-             <!--<b-row>
-              <b-col md="2">
-                <small>{{$t('message.total_desacuerdo') }}</small>
-              </b-col>
-              <b-col md="8">
-                <b-form-radio-group :name="'likertScale'+data.item.itemId.toString()" :id="'likertScale'+data.item.itemId.toString()" v-model="data.item.numericAnswer"  v-on:change="addProgress(data.item)">
-                <div v-for='(value, key) in appliesLikertOptions' :key='key' class='custom-control-inline col-md-1 py-0'>
-                  <div class="w-15" style="height=100%">
-                    <div class="h-70">
-                      <small>{{value.value === 5 || value.value === -1 || value.value === -2  || value.value === 0 ? value.text: '--------------'}}</small>
-                    </div>
-                    <div class="h-30">
-                      <b-form-radio :value='value.value' :id='data.item.itemId+value.value'/>
-                    </div>
-                  </div>
-                </div> -->
-                <!-- For debuggin purposes
-                <small>name likertScale {{data.item.itemId.toString()}}</small>
-                <small>save in {{data.item.itemId +' answer: ' +data.item.numericAnswer }}{{data.item}}</small>-->
-                <!--<div v-for='(value, key) in appliesLikertOptions' :key='key' class='custom-control-inline py-0'>
-                  <b-form-radio :value='value.value'  >
-                    <small>{{value.text}}</small>
-                  </b-form-radio>
-                </div>
-                </b-form-radio-group>
-              </b-col>
-              <b-col md="2">
-                <div class='float-left'>
-                  <small>{{$t('message.total_acuerdo') }}</small>
-                </div>
-              </b-col>
-             </b-row>-->
+        <template slot='name' slot-scope='data' class="w-20">
+          <div fluid class="mx-auto">
+            {{data.item.item.name}}
           </div>
         </template>
         <!-- Likert scale -->
@@ -103,6 +66,9 @@
           </b-form-radio-group>
         </div>
         </template>
+        <template slot='lowerAnchor' slot-scope='data'>
+          <small>{{$t('message.total_desacuerdo') }}</small>
+        </template>
         <template slot='upperAnchor' slot-scope='data'>
           <small>{{$t('message.total_acuerdo') }}</small>
         </template>
@@ -114,8 +80,19 @@
       <nav>
       <!--<b-pagination :total-rows='getRowCount(responsesList)' :per-page='perPage' v-model='currentPage' prev-text='Prev' next-text='Next' hide-goto-end-buttons/>-->
       </nav>
-    </div>
+     </div>
+    <b-row>
+      <b-col md="12">
+      <div slot="footer" class="float-right">
+        <b-button type="submit" size="m" variant="primary" >
+          <i class="fa fa-dot-circle-o"></i> {{ $t("message.save") }}
+        </b-button>
+      </div>
+      </b-col>
+    </b-row>
+    </b-form>
   </b-card>
+</div>
 </template>
 
 <script>
@@ -171,7 +148,7 @@ export default {
         {key: 'name', sortable: true, label: 'Item'},
         // {key: 'category', sortable: true, label: 'Categoria'},
         // {key: 'lowerAnchor', label: ''},
-        {key: 'responseFormat', label: 'Total desacuerdo (1) -- Total acuerdo (9)'}
+        {key: 'responseFormat', label: 'Total desacuerdo (1) -- Total acuerdo (9)', class: 'scaleWidth'}
         // {key: 'upperAnchor', label: ''}
       ],
       currentPage: 1,
@@ -183,34 +160,12 @@ export default {
       urlGetItems: 'http://localhost:8000/' + 'activeItemsSpanish/',
       urlGetCategories: 'http://localhost:8000/simpleActiveCategories/',
       categories: [],
-      responsesByCategoriesMap: [],
+      responsesByCategoriesList: [],
       isLoading: true // Control when the web services were alredy consumed
     }
   },
   created: function () {
-    /* Consume los servicios que se exponen en el servidor de django */
-    axios.get(this.urlGetItems).then(response => {
-      var subItems = response.data
-      axios.get(this.urlGetCategories).then(response => {
-        var categories = response.data
-        this.prepareData(categories, subItems)
-        // TODO hace aqui un arreglo pq si ya existe solo hay que cargar los datos
-        this.prepareItemResponses()
-        // Solo para control alert(JSON.stringify(this.dataLevelTwo))
-      }, error => {
-        console.error(error)
-        console.error(i18n.tc('message.error_consuming_service_detail_categories'))
-        console.error('Service path:' + this.urlGetCategories)
-        alert(i18n.tc('message.error_consuming_service'))
-        this.isLoading = false
-      })
-    }, error => {
-      console.error(error)
-      console.error(i18n.tc('message.error_consuming_service_detail_items'))
-      console.error('Service path:' + this.urlGetItems)
-      alert(i18n.tc('message.error_consuming_service'))
-      this.isLoading = false
-    })
+    this.loadEmptySurvey()
   },
   methods: {
     getRowCount (items) {
@@ -240,6 +195,31 @@ export default {
         // Si ya se deselecciona la escala de likert entonces se asume que el campo no ha sido lleno
         response.isFilled = false
       }
+    },
+    loadEmptySurvey () {
+      /* Consume los servicios que se exponen en el servidor de django */
+      axios.get(this.urlGetItems).then(response => {
+        var subItems = response.data
+        axios.get(this.urlGetCategories).then(response => {
+          var categories = response.data
+          this.prepareData(categories, subItems)
+          // TODO hace aqui un arreglo pq si ya existe solo hay que cargar los datos
+          this.prepareItemResponses()
+          // Solo para control alert(JSON.stringify(this.dataLevelTwo))
+        }, error => {
+          console.error(error)
+          console.error(i18n.tc('message.error_consuming_service_detail_categories'))
+          console.error('Service path:' + this.urlGetCategories)
+          alert(i18n.tc('message.error_consuming_service'))
+          this.isLoading = false
+        })
+      }, error => {
+        console.error(error)
+        console.error(i18n.tc('message.error_consuming_service_detail_items'))
+        console.error('Service path:' + this.urlGetItems)
+        alert(i18n.tc('message.error_consuming_service'))
+        this.isLoading = false
+      })
     },
     prepareData: function (categories, items) {
       // Organiza los items agrupandolos por categoria
@@ -278,18 +258,29 @@ export default {
           responsesSubItemsByCategory.push(itemResponse)
           this.responsesList.push(itemResponse)
         }
-        this.responsesByCategoriesMap.push({'category': itemLevel2.category, 'responsesByCategory': responsesSubItemsByCategory, 'itemsByCategory': itemsByCategory, 'progressReponses': progress, 'responsesCount': 0})
+        //  We iterate this list in template to present the data of each category
+        this.responsesByCategoriesList.push({'category': itemLevel2.category, 'responsesByCategory': responsesSubItemsByCategory, 'itemsByCategory': itemsByCategory, 'progressReponses': progress, 'responsesCount': 0, 'allFilled': false})
       }
     },
     calculateProgressByCategories () {
-      for (var i = 0; i < this.responsesByCategoriesMap.length; i++) {
-        var responses = this.responsesByCategoriesMap[i].responsesByCategory
+      for (var i = 0; i < this.responsesByCategoriesList.length; i++) {
+        var responses = this.responsesByCategoriesList[i].responsesByCategory
         var totalPotentialResponses = responses.length
-        this.responsesByCategoriesMap[i].responsesCount = responses.filter(response => response.isFilled).length
-        var progressByCategory = this.responsesByCategoriesMap[i].responsesCount / totalPotentialResponses
+        this.responsesByCategoriesList[i].responsesCount = responses.filter(response => response.isFilled).length
+        var progressByCategory = this.responsesByCategoriesList[i].responsesCount / totalPotentialResponses
         progressByCategory = progressByCategory * 100
-        this.responsesByCategoriesMap[i].progressReponses = progressByCategory
+        this.responsesByCategoriesList[i].progressReponses = progressByCategory
+        if (this.responsesByCategoriesList[i].responsesCount === totalPotentialResponses) {
+          this.responsesByCategoriesList[i].allFilled = true
+        }
       }
+    },
+    saveResponses () {
+      console.error('Guarde')
+    },
+    onSubmit (evt) {
+      evt.preventDefault()
+      alert(JSON.stringify(this.form))
     }
 
   },
@@ -316,3 +307,20 @@ export default {
   }
 }
 </script>
+<style>
+.table th, .table td {
+    vertical-align: middle;
+}
+.table thead th {
+    vertical-align: middle;
+    border-bottom: 2px solid #a4b7c1;
+    text-align: center
+}
+.table table td {
+  text-align: center
+}
+.scaleWidth {
+  width: 60%;
+  /* text-align: center  */
+}
+</style>

@@ -20,6 +20,10 @@ def insert_data(apps, schema_editor):
     Instrument_header = apps.get_model(APP_NAME, 'Instrument_header')
     Trans_instrument_header = apps.get_model(APP_NAME, 'Trans_instrument_header')
     Instrument_structure_history = apps.get_model(APP_NAME, 'Instrument_structure_history')
+    Company = apps.get_model(APP_NAME, 'Company')
+    Client = apps.get_model(APP_NAME, 'Client')
+    Surveys_by_client= apps.get_model(APP_NAME, 'Surveys_by_client')
+    Customized_instrument= apps.get_model(APP_NAME, 'Customized_instrument')
 
     ###  Clean the data from the tables in which we introduce data in this method
     Instrument_structure_history.objects.all().delete()
@@ -32,6 +36,10 @@ def insert_data(apps, schema_editor):
     Trans_parametric_table.objects.all().delete()
     Response_format.objects.all().delete()
     Trans_item.objects.all().delete()
+    Company.objects.all().delete()
+    Client.objects.all().delete()
+    Surveys_by_client.objects.all().delete()
+    Customized_instrument.objects.all().delete()
 
 
     ### This list is used later for adding elements to the evaluation instrument
@@ -696,15 +704,17 @@ def insert_data(apps, schema_editor):
 
     ##### Instrument headers and basic structure
     instrument_header = Instrument_header(version_name="1.0.a1",is_active=True)
-    user_instructions= "No existen respuestas correctas, sólo queremos conocer su percepción sobre las cuestiones planteadas. Si de alguna de las preguntas no está totalmente seguro de la respuesta, no importa, nos interesa su estimación. Por favor, conteste todas las preguntas. En la mayoría de las preguntas se le proponen una serie de afirmaciones y se le pide que las valore puntuándolas entre 1 (si está en total desacuerdo con la afirmación) y 5 (si está totalmente de acuerdo con ella).  Si tiene alguna duda, no dude en contactar con nosotros (danieljj@um.es; teléfono: 868887900)"
+    user_instructions= "No existen respuestas correctas, sólo queremos conocer su percepción sobre las cuestiones planteadas. Si de alguna de las preguntas no está totalmente seguro de la respuesta, no importa, nos interesa su estimación. Por favor, conteste todas las preguntas. En la mayoría de las preguntas se le proponen una serie de afirmaciones y se le pide que las valore puntuándolas entre 1 (si está en total desacuerdo con la afirmación) y 5 (si está totalmente de acuerdo con ella)."
+    contact="Si tiene alguna duda, no dude en contactar con nosotros (danieljj@um.es; teléfono: <strong>+57 6 868887900 </strong>)"
     instrument_header.save()
 
-    trans_instrument_header = Trans_instrument_header(instrument_header=instrument_header,user_instructions=user_instructions,i18n_code=LanguageChoice.ES.name )
+    trans_instrument_header = Trans_instrument_header(instrument_header=instrument_header,user_instructions=user_instructions,i18n_code=LanguageChoice.ES.name, contact_info=contact )
     trans_instrument_header.save()
 
     # We add the items to the list of items in order to add those items to the instrument easily
-    itemsList.append(itemRoles1)
-    itemsList.append(itemRoles2)
+    # Se comentan estas dos para probar que el servicio funciona
+    #itemsList.append(itemRoles1)
+    #itemsList.append(itemRoles2)
     itemsList.append(itemRoles3)
     itemsList.append(itemRoles4)
     itemsList.append(itemRoles5)
@@ -777,6 +787,22 @@ def insert_data(apps, schema_editor):
         Instrument_structure_history_item= Instrument_structure_history(instrument_header=instrument_header,is_active=True,original_item=item,item_minor_version=1,new_item=item,previous_item=None,change_reason="version sept2018")
         Instrument_structure_history_item.save()
 
+
+    # Se crea una compañia para hacer pruebas
+    companyTest = Company(company_contact_name ="Contacto de prueba")
+    companyTest.save()
+
+    # Se crea un cliente de prueba
+    clientTest = Client(company=companyTest,max_surveys=10, used_surveys=0, client_logo="",contact="Julia Clemencia" )
+    clientTest.save()
+
+    # Se crea un survey personalizado para el cliente
+    customized_instrument= Customized_instrument (client=clientTest, company=companyTest,num_completed_responses=0,instrument_header=instrument_header)
+    customized_instrument.save()
+
+    # Se crean un survey para el cliente de prueba para hacer pruebas
+    survey_by_client = Surveys_by_client(client=clientTest, acces_code="12345",customized_instrument=customized_instrument)
+    survey_by_client.save()
 
 
 

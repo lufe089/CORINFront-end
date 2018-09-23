@@ -34,7 +34,7 @@ class Parametric_master (models.Model):
 
 
 class Trans_parametric_table(models.Model):
-    parametric_master = models.ForeignKey(Parametric_master, on_delete=models.CASCADE)
+    parametric_master = models.ForeignKey(Parametric_master, on_delete=models.CASCADE,related_name="detailsParameters")
     option_label = models.CharField(max_length=50)
     i18n_code = models.CharField(max_length=2)
     numeric_value = models.IntegerField()
@@ -46,7 +46,7 @@ class Trans_parametric_table(models.Model):
 
 
 class Response_format (models.Model):
-    parametric_table = models.ForeignKey(Parametric_master, on_delete=models.CASCADE)
+    parametric_table = models.ForeignKey(Parametric_master, on_delete=models.CASCADE,)
     name = models.CharField(max_length = 50)
     type = models.CharField ( choices=[(tag, tag.value) for tag in ResponseFormatType],max_length = 15 ) # Choices is a list of Tuple)
 
@@ -84,13 +84,17 @@ class Item (models.Model):
 
 class Trans_item(models.Model):
     item = models.ForeignKey(Item, related_name='translations',on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=300)
     description = models.TextField(default=None,null=True,blank=True)
     i18n_code = models.CharField(max_length=40)
 
     def __str__(self):  # __unicode__ on Python 2
         return self.name
 
+"""Por ahora no sirve para nada, creo que la voy a eliminar"""
+class ClassificationAndItems:
+    itemClassification=models.ForeignKey(ItemClassification, related_name="itemClassification", on_delete=models.CASCADE,default=None)
+    item=models.ForeignKey(Item, related_name="items", on_delete=models.CASCADE,default=None)
 
 class Instrument_header(models.Model):
     version_name = models.CharField(max_length=50)
@@ -100,17 +104,28 @@ class Instrument_header(models.Model):
 
 
 class Trans_instrument_header(models.Model):
-    instrument_header = models.ForeignKey(Instrument_header, on_delete=models.CASCADE)
+    instrument_header = models.ForeignKey(Instrument_header, on_delete=models.CASCADE,related_name="translations")
     # None of these fields are mandatory
     general_description = models.TextField(default=None, null=True, blank=True)
     feature_description = models.TextField(default=None, null=True, blank=True)
     disclaimer = models.TextField(default=None, null=True, blank=True)
     user_instructions = models.TextField(default=None, null=True, blank=True)
+    contact_info=models.TextField(default=None, null=True, blank=True)
     i18n_code = models.CharField(max_length=2)
+
+    def __str__(self):  # __unicode__ on Python 2
+         # Control instruction in case the description is null
+        if self.general_description ==None:
+            description = ""
+        else:
+            description=self.general_description
+
+        return "vesion: "+ self.instrument_header.version_name + " description: "+ description  + " " + " instructions: "+ " " + self.user_instructions
+
 
 
 class Instrument_structure_history(models.Model):
-    instrument_header = models.ForeignKey(Instrument_header, on_delete=models.CASCADE)
+    instrument_header = models.ForeignKey(Instrument_header, on_delete=models.CASCADE,related_name="itemsByInstrument")
     original_item = models.ForeignKey(Item,related_name="item_originalItem", on_delete=models.CASCADE,default=None)
     item_minor_version = models.CharField(max_length=20)
     new_item = models.ForeignKey(Item, related_name="item_newItem", on_delete=models.CASCADE, default=None)
@@ -129,29 +144,34 @@ class Client(models.Model):
     max_surveys = models.IntegerField()
     client_logo = models.CharField(max_length=100)
     contact = models.CharField(max_length=50)
-    has_iso = models.BooleanField()
+    used_surveys=  models.IntegerField(default=0)
 
 class Customized_instrument(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    num_completed_responses = models.IntegerField()
-    num_partial_responses = models.IntegerField()
-    ##framework_version = models.FloatField()
-    resulting_URL = models.URLField()
-    total_of_instrument = models.IntegerField()
-    JSON_instrument_file = models.BinaryField()
-    customized_description = models.TextField()
+    num_completed_responses = models.IntegerField(default=0)
+    num_partial_responses = models.IntegerField(default=0)
+    instrument_header= models.ForeignKey(Instrument_header, on_delete=models.CASCADE)
+    resulting_URL = models.URLField( default=None,null=True, blank=True)
+    JSON_instrument_file = models.BinaryField( default=None, null=True, blank=True)
+    customized_description = models.TextField( default=None, null=True, blank=True)
 
 class Participant_response_header(models.Model):
     customized_instrument = models.ForeignKey(Customized_instrument, on_delete=models.CASCADE)
+    instrument_header = models.ForeignKey(Instrument_header, on_delete=models.CASCADE)
     participant_name = models.CharField(max_length=50)
     email = models.EmailField()
     last_update = models.DateTimeField()
     is_complete = models.BooleanField()
-    ##framework_version = models.FloatField()
     comments = models.TextField()
-    is_admin_response = models.BooleanField()
+
+class Surveys_by_client(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    customized_instrument= models.ForeignKey(Customized_instrument, on_delete=models.CASCADE)
     acces_code = models.CharField(max_length=50)
+    completed = models.BooleanField(default=False)
+    participant_response_header= models.ForeignKey(Participant_response_header, on_delete=models.CASCADE, default=None, null=True, blank=True)
+
 
 class Items_respon_by_participants(models.Model):
     participant_response_header = models.ForeignKey(Participant_response_header, on_delete=models.CASCADE)

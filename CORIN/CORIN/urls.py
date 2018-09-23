@@ -22,9 +22,16 @@ from Apps.encuestador import views
 
 router = routers.DefaultRouter()
 router.register(r'items', views.ItemsViewSet)
-router.register(r'categories', views.CategoriesViewSet)
-router.register(r'components', views.CategoriesViewSet)
-router.register(r'dimensions', views.DimensionsViewSet)
+router.register(r'simpleActiveCategories', views.SimpleActiveCategoriesViewSet)
+#router.register(r'components', views.CategoriesViewSet)
+#router.register(r'dimensions', views.DimensionsViewSet)
+router.register(r'activeItems', views.OnlyActiveItems)
+router.register(r'responseFormats', views.ResponseFormatViewSet)
+router.register(r'instructionsSpanish', views.InstructionsSpanishViewSet)
+router.register(r'activeItemsSpanish', views.SpanishActiveItemsViewSet)
+router.register(r'participantsResponse', views.ParticipantResponseViewSet)
+router.register(r'surveysByClient', views.SurveysByClientViewSet)
+router.register(r'clients', views.ClientViewSet)
 
 
 # Wire up our API using automatic URL routing.
@@ -33,7 +40,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     path('admin/', admin.site.urls),
     url(r'^api/', include((router.urls, 'encuestador'))),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 
 

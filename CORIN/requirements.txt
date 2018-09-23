@@ -6,3 +6,4 @@ django-cymysql
 
 #Restframework
 djangorestframework
+django-cors-headers

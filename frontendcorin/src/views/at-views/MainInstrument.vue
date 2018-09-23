@@ -84,7 +84,7 @@
     <!-- Formulario para llenar las dimensiones, subcriterios y criterios -->
     <b-row fluid>
       <b-col lg="12">
-        <item-level2-table hover caption="<i class='fa fa-align-justify'></i> APPLIES motivation"></item-level2-table>
+        <item-level2-table hover></item-level2-table>
       </b-col><!--/.col-->
     </b-row>
   </div>

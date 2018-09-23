@@ -13,7 +13,7 @@ import messages from './messages.js'
 /* Add instruction to use the i18n plugin */
 Vue.use(VueI18n)
 
-const locale = 'en'
+const locale = 'es'
 const i18n = new VueI18n({
     locale,
     messages

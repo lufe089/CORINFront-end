@@ -31,7 +31,8 @@ export default {
             applies_instructions: '<p style="text-align: justify;">APPLIES is a free framework for evaluating in a systematic, objective and repeatable way company&rsquo;s motivation and preparation for adopting product lines. As a result, APPLIES intends to provide information for supporting the judgments of decision-makers prior they take any decision in favor or against adopting a product line. This framework expects to be useful to consultants, project managers or any person interested in advising management levels to choose a product line initiative.</p><p style="text-align: justify;">APPLIES ask for some product-lines related concepts, <strong><em>THUS IT IS RECOMMENDED</em></strong> that you have at least a <em>BASIC</em> notion <em>about WHAT IS THE PRODUCT LINE ENGINEERING</em> approach <strong>before</strong> using <strong>APPLIES</strong>.</p><p style="text-a"lign: justify;">This tool has three main parts: &ldquo;<em>APPLIES-motivation</em>&rdquo;, &ldquo;<em>APPLIES-preparation</em>&rdquo;, and &ldquo;<em>Resulting charts</em>&rdquo;. <strong>APPLIES-motivation</strong> has questions that help companies to identify &ldquo;signals&rdquo;, called henceforth adoption drivers, which indicate that a product line approach could be useful for a company. On the other hand, <strong>APPLIES-preparation</strong> helps companies to assess to what extent current and future company practices encourage or impede a product line engineering adoption, and the resulting charts of both parts are shown in the tab &ldquo;<strong>Summary charts</strong>&rdquo;.</p><p style="text-align: justify;">To commence using APPLIES go to the tab Applies-motivation and fill the general information about you as the user of this framework. Moreover, In this tab, you will find questions related to APPLIES-motivation. Then, go to the tab " <strong> APPLIES - preparation </strong> " where you will find questions related to APPLIES-preparation. After completing the scoring, you will find in the tab "<strong>Preparation results</strong>" a quantitative and graphical visual synthesis about how well your organization is motivated prepared for adopting a product line approach. These graphical results are calculated automatically.</p>',
             applies_contact: '<blockquote><p><em>In case you have any queries regarding the use of this Framework, or its results, you can contact me at <strong>lfrincon@applies.variamos.com</strong></em></p></blockquote>',
             error_consuming_service: '',
-            general_progress: 'General progress'
+            general_progress: 'General progress',
+            save: 'Save'
         }
     },
     es: {
@@ -69,7 +70,9 @@ export default {
             total_desacuerdo: 'Total desacuerdo',
             total_acuerdo: 'Total acuerdo',
             general_progress: 'Progreso general',
-            likert_scale_9_instructions: 'Total desacuerdo (1) -- Total acuerdo (9)'
+            likert_scale_9_instructions: 'Total desacuerdo (1) -- Total acuerdo (9)',
+            all_fill: 'Completa',
+            save: 'Guardar'
         }
     }
 }
