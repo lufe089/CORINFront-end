@@ -1,99 +1,120 @@
 <template>
   <div class="animated fadeIn">
-    <b-row fluid>
-       <b-col md="12">
-         <b-card>
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">Company name</h5>
-              <small>type of use - framework version</small>
-            </div>
-            <p class="mb-1">
-              Donec id elit non mi porta gravida at eget metus. Maecenas
-              sed diam eget risus varius blandit.
-            </p>
-          </b-card>
-        <b-card>
-          <div slot="header">
-            <b-row >
-              <b-col md="12">
-                  <strong>{{ $t("message.participant_form_header") }}</strong>
-              </b-col>
-             </b-row>
-          </div>
-          <!-- Bootstrap Vue has some problems with Inline forms that's why we use some standard bootstrap classes -->
-          <div fluid>
-            <b-row>
-              <b-col md="6">
-                <b-form-group :description="$t('message.please_enter_name')" :label="$t('message.name')" label-for="basicName" :label-cols="2"
-                  :horizontal="true">
-                  <b-form-input id="basicName" type="text" v-model.lazy="participantResponse.name"></b-form-input>
-                </b-form-group>
-              </b-col>
-              <b-col md="6">
-                <b-form-group :description="$t('message.please_enter_email')" :label="$t('message.email')" label-for="basicEmail" :label-cols="2"
-                  :horizontal="true">
-                  <b-form-input id="basicEmail" type="email" placeholder="lfrincon@applies.variamos.com" v-model.lazy="participantResponse.email"></b-form-input>
-                </b-form-group>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col md="12">
-                <b-form-group
-                  :label="$t('message.profile')"  label-for="basicInlineCustomCheckboxes"
-                  :label-cols="1"
-                  :horizontal="true">
-                  <b-form-checkbox-group id="participantProfiles" v-model="participantResponse.profiles">
-                    <div class="custom-control custom-checkbox custom-control-inline col-sm-3 py-1" v-for="(value, key) in parameters.profiles" :key="key">
-                     <!-- <b-form-checkbox :value="value.value" class="custom-control-input" :id="'profile'+value.id"></b-form-checkbox>
-                     <label class="custom-control-label" :for="'profile'+value.id">{{value.text}}</label> -->
-                     <b-form-checkbox :id="'profile'+value.value" :value="value.value" >{{value.text}}</b-form-checkbox>
-                    </div>
-                  </b-form-checkbox-group>
-                </b-form-group>
-                <!-- No voy a pintar el checkbox asi pq no puedo contrar cuantas columnas ocupa
-                <b-form-group label="Using <code>options</code> array:">
-                  <b-form-checkbox-group id="checkboxes1" name="flavour1" v-model="participantResponse.profiles" :options="parameters.profiles">
-                  </b-form-checkbox-group>
-                </b-form-group>
-                -->
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col md="12">
-                <b-form-group
-                  :label="$t('message.comments')" label-for="commentsTextarea"
-                  :label-cols="1"
-                  :horizontal="true">
-                  <textarea class="form-control rounded-0" id="exampleFormControlTextarea1" rows="3" :placeholder="$t('message.any_comment')" v-model="participantResponse.comments"></textarea>
-                </b-form-group>
-              </b-col>
-            </b-row>
-          </div>
-          <b-row>
-            <b-col md="12">
-            <div slot="footer" class="float-right">
-              <b-button type="submit" size="m" variant="primary" v-on:click.prevent="starForm" >
-                <i class="fa fa-dot-circle-o"></i> {{ $t("message.start") }}</b-button>
-            </div>
-            </b-col>
+    <b-row fluid v-show="isSurveyVisible==false">
+      <b-col md=12>
+         <b-jumbotron bg-variant="light">
+        <template slot="header">
+          <span class="text-center" v-html="$t('message.welcome_to_applies')"></span>
+          <hr class="my-4">
+        </template>
+        <template slot="lead">
+           <b-row fluid>
+             <b-col md="12">
+               <b-card class="mx-auto" border-variant="info">
+                <span v-html="userInstructions"></span>
+                <div slot="footer">
+                  <small class="text-muted" v-html="contactInfo"></small>
+                </div>
+                </b-card>
+             </b-col>
            </b-row>
-        </b-card>
+        </template>
+        <b-btn variant="primary" v-on:click.prevent="startSurvey"  class="float-right">{{$t("message.lets_start")}}</b-btn>
+      </b-jumbotron>
       </b-col>
     </b-row>
 
+    <div v-show="isSurveyVisible">
+      <b-row fluid>
+        <b-col md="12">
+          <b-card>
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Company name</h5>
+                <small>type of use - framework version</small>
+              </div>
+              <p class="mb-1">
+                Donec id elit non mi porta gravida at eget metus. Maecenas
+                sed diam eget risus varius blandit.
+              </p>
+            </b-card>
+          <b-card>
+            <div slot="header">
+              <b-row >
+                <b-col md="12">
+                    <strong>{{ $t("message.participant_form_header") }}</strong>
+                </b-col>
+              </b-row>
+            </div>
+            <!-- Bootstrap Vue has some problems with Inline forms that's why we use some standard bootstrap classes -->
+            <div fluid>
+              <b-form @submit="onSubmit">
+                <b-row>
+                  <b-col md="6">
+                    <b-form-group :description="$t('message.please_enter_email')" :label="$t('message.email')" label-for="basicEmail" :label-cols="2"
+                      :horizontal="true">
+                      <b-form-input id="basicEmail" type="email" placeholder=" " v-model.lazy="participantResponse.email" required></b-form-input>
+                    </b-form-group>
+                  </b-col>
+                  <b-col md="6">
+                    <b-form-group :description="$t('message.please_enter_area')" :label="$t('message.area')" label-for="area" :label-cols="2"
+                      :horizontal="true">
+                      <b-form-select id="area" v-model="participantResponse.area" :options="parameters.area" required/>
+                    </b-form-group>
+                  </b-col>
+                </b-row>
+                <b-row>
+                  <b-col md="6">
+                    <b-form-group :label="$t('message.es_directivo')" label-for="positionDirective" :label-cols="6"
+                      :horizontal="true">
+                      <b-form-radio-group id="positionDirective" v-model="showDirective" :options="parameters.position" name="positionDirective" v-on:change="changeDirectiveVisibility" required></b-form-radio-group>
+                    </b-form-group>
+                  </b-col>
+                  <b-col md="6">
+                    <b-form-group v-show ="showDirective" :description="$t('message.seleccion_cargo')" :label="$t('message.cargo')" label-for="cargo" :label-cols="2"
+                      :horizontal="true">
+                      <b-form-select id="cargo" v-model="participantResponse.position" :options="parameters.directivePositions" required/>
+                    </b-form-group>
+                  </b-col>
+                </b-row>
+                <b-row>
+                  <b-col md="12">
+                    <b-form-group
+                      :label="$t('message.comments')" label-for="commentsTextarea"
+                      :label-cols="1"
+                      :horizontal="true">
+                      <textarea class="form-control rounded-0" id="exampleFormControlTextarea1" rows="3" :placeholder="$t('message.any_comment')" v-model="participantResponse.comments"></textarea>
+                    </b-form-group>
+                  </b-col>
+                </b-row>
+               <b-row>
+              <b-col md="12">
+              <div slot="footer" class="float-right">
+                <b-button type="submit" size="m" variant="primary">
+                  <i class="fa fa-dot-circle-o"></i> {{ $t("message.continue") }}</b-button>
+              </div>
+              </b-col>
+            </b-row>
+            </b-form>
+            </div>
+          </b-card>
+        </b-col>
+    </b-row>
+
     <!-- Formulario para llenar las dimensiones, subcriterios y criterios -->
-    <b-row fluid>
+    <b-row fluid v-show=showQuestions>
       <b-col lg="12">
         <item-level2-table hover></item-level2-table>
       </b-col><!--/.col-->
     </b-row>
+    </div>
   </div>
 </template>
 <script>
 
 import BDData from './_BDData.js'
 import itemLevel2Table from './ItemLevel2Table.vue'
-// import i18n from '../../lang/config'
+import i18n from '../../lang/config'
+import axios from 'axios'
 
 export default {
   name: 'main_instrument',
@@ -101,9 +122,31 @@ export default {
     return {
       participantResponse: {},
       serviceResult: {},
+      result: '',
+      isSurveyVisible: false,
       parameters: BDData.parameters,
-      selected: [] // Must be an array reference!,
+      urlService: 'http://127.0.0.1:8000/instructionsSpanish/',
+      selected: [], // Must be an array reference!,
+      showDirective: undefined,
+      showQuestions: false,
+      userInstructions: '',
+      contactInfo: ''
     }
+  },
+  mounted () {
+    axios(
+      { // Este servicio retorna una arreglo de un solo elemento
+        method: 'GET', 'url': this.urlService
+      }).then(result => {
+      this.userInstructions = result.data[0].user_instructions
+      this.contactInfo = result.data[0].contact_info
+    }, error => {
+      console.error(error)
+      console.error(i18n.tc('message.error_consuming_service_instructions'))
+      console.error('Service path:' + this.urlGetItems)
+      alert(i18n.tc('message.error_consuming_service'))
+    }
+    )
   },
   components: {
     /* tag, component name */
@@ -121,7 +164,26 @@ export default {
       return outpurArr
     },
     starForm: function () {
-      alert(JSON.stringify(BDData.participantResponse))
+      alert(JSON.stringify(this.participantResponse))
+    },
+    startSurvey: function () {
+      this.isSurveyVisible = true
+      // this.inititParticipantResponse()
+    },
+    changeDirectiveVisibility: function () {
+      this.showDirective = !this.showDirective
+      this.participantResponse.isDirective = this.showDirective
+      // Si no es directivo se borra la posicion para que la persona tenga q seleccionar nuevamente
+      if (this.showDirective === false) {
+        this.participantResponse.position = undefined
+      }
+    },
+    onSubmit: function (evt) {
+      // the page doesn’t reload when the form is submitted,
+      evt.preventDefault()
+      // Se activa la visualizacion de las preguntas
+      this.showQuestions = true
+      alert(JSON.stringify(this.form))
     }
   },
   filters: {
@@ -135,6 +197,8 @@ export default {
     /* Duplicar aqui toda la informacion que pueda cambiar por cada persona que response el instrumento
     para tomar como objeto de referencia el json que esta en el archivo parametrico pero no modificarlo */
     this.participantResponse = this.clone(BDData.participantResponse)
+  },
+  computed: {
   }
 }
 </script>

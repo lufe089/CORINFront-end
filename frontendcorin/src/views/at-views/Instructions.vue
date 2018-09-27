@@ -36,7 +36,7 @@ export default {
   data () {
     return {
       result: '',
-      urlService: 'http://localhost:8000/instructionsSpanish/'
+      urlService: 'http://127.0.0.1:8000/instructionsSpanish/'
     }
   },
   methods: { },
@@ -56,6 +56,14 @@ export default {
       console.error('Service path:' + this.urlGetItems)
       alert(i18n.tc('message.error_consuming_service'))
     })
+
+    /* axios.get(this.urlService, {
+    }).then(res => {
+      console.log(res)
+    }).catch(error => {
+      console.log('error', error)
+      alert(i18n.tc('message.error_consuming_service'))
+    }) */
   },
   filter: { },
   directives: { },

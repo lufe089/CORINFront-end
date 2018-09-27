@@ -22,6 +22,8 @@ pwd:p1234.#1
 Las pruebas las habíamos hecho en Django 2.0 y MochaHost sólo soporta la versión 1.5, por ese motivo reconfiguramos el ambiente para adaptarnos a las particularidades del hosting.
 
 
+** Ojo cuando se hace una consulta con get si no existe el valor django genera una excepcion
+
 Deployment keys:
 https://www.youtube.com/watch?v=40eaIU1rByg
 
@@ -110,3 +112,106 @@ Que en el modelo las relaciones tengan un nombre
 Que exista el serializador de los objetos que se queiren dibjar
 Que si se obtiene el serializador usando "cadena" esta cadena corresponda al nombre de la relacion en el modelo y luego el atributo se llame igual cuando se ponen los campos
 En las vistas se pueden filtrar los datos que seran serializados
+
+
+# Para hacer que se puedan hacer peticiones rest a los servicos hay que instalar este paquete
+django-cors-headers
+
+
+# Heroku 
+https://realpython.com/migrating-your-django-project-to-heroku/
+Mas acualizado : https://devcenter.heroku.com/articles/deploying-python
+Conceptos generales: https://devcenter.heroku.com/articles/django-app-configuration
+
+1) Heroku web applications require a Procfile. En ese archivo se pone esta linea
+web: gunicorn <myproject>.wsgi
+Gunicorn, the production web server that we recommend for Django applications.
+Agregar en requirements.txt los requerimientos de posgress
+Crear archivo Procfile en el root del proyecto. Alli hay que poner la linea para llamar el modulo wsgi que es el que realmente ejecuta los archivos. Esa lína depende del sistema operativo y estaes la intruccion para linux
+web: gunicorn CORIN.wsgi --log-file - . Ojo que CORIN.wsgi es CORIN pq asi se llama el poryecto y wsgi pq es el archivo que se queire cargar luego python automáticamente busca el wsgi que corresponda
+
+El nombre del archivo wsgi tiene que coincidir en general con lo que este definido  en el parametro WSGI_APPLICATION del achivo settings.py
+
+En el settings .py también hay que cambiar la parte de la configuración de la base de datos para que quede solo el driver, no se necesita usuario y contraseña pues heroku controla esto automáticamente. 
+
+DATABASES = {
+    'default': {
+         # Heroku controls the username and password
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    }
+}
+
+2) En el settings .py poner el debug en false
+
+3)  Instalar la dependencia django-heroku
+
+4)  Agregar en el settings.py la siguiente informacion para activar el paquete de heroku
+import django_heroku
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
+
+
+
+
+También agregué esto en el archivo de settings
+import dj_database_url
+
+DATABASES = { 'default' : dj_database_url.config()}
+
+# Honor the 'X-Forwarded-Proto' header for request.is_secure()
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# try to load local_settings.py if it exists
+try:
+  from .local_settings import *
+except Exception as e:
+  pass
+
+
+
+
+
+# Instale las siguientes dependencia spara que funcionara
+django-heroku
+
+
+# Static files, los archivos estaticos se tiene que ubicar diferente en producción que en desarrollo pq en 
+https://devcenter.heroku.com/articles/django-assets
+desarrollo django los configura y los gestiona, pero en producción los permisos sobre los servidores no son los mismos. 
+
+whitenoise es la libreria para desplegar archivos estaticos
+With a couple of lines of config WhiteNoise allows your web app to serve its own static files, making it a self-contained unit that can be deployed anywhere without relying on nginx, Amazon S3 or any other external service
+
+En settings.py se debe agregar la instruccion como middleware 'whitenoise.middleware.WhiteNoiseMiddleware',
+
+When a Django application is deployed to Heroku, $ python manage.py collectstatic --noinput is run automatically during the build. A build will fail if the collectstatic step is not successful.
+
+Se debe estar seguro que el settings.py tiene todo lo siguiente:
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+
+#Comandos 
+heroku run python manage.py migrate
+ Ver logs de heroku  heroku logs --tail
+
+ Susperndiendo procesos en heroku
+ heroku ps:stop run.3372
+
+
+#Consultas en el manager de python
+EN el serializador objetos que solo retornen un elemento deben tener una coma
+Note the comma. A tuple with only one object requires a trailing comma to distinguish it from a parenthesized object.
+ class Meta:
+        model = Company
+        fields = ('company_contact_name',)

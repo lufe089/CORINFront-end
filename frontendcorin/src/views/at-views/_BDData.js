@@ -6,23 +6,31 @@ export default {
         instructions: 'translatedInstrument/2/'
     },
     parameters: {
-        profiles: [
-            { value: 1, text: 'Consultant' },
-            { value: 2, text: 'Graduate student' },
-            { value: 3, text: 'Undergraduate student' },
-            { value: 5, text: 'Project manager' },
-            { value: 6, text: 'Product manager' },
-            { value: 7, text: 'Software engineer' },
-            { value: 8, text: 'Other' }
+        directivePositions: [
+            { value: undefined, text: '--' },
+            { value: 1, text: 'Alta Gerencia' },
+            { value: 2, text: 'Gerencia media' },
+            { value: 3, text: 'Gerencia baja' }
+        ],
+        area: [
+            { value: undefined, text: '--' },
+            { value: 1, text: 'Área de Producción/operaciones' },
+            { value: 1, text: 'Área comercial' },
+            { value: 1, text: 'Área de tecnología' },
+            { value: 1, text: 'Área de gestión humana' },
+            { value: 1, text: 'Área de investigación y desarrollo' }
+        ],
+        position: [{
+                value: true,
+                text: 'Directivo'
+            },
+            {
+                value: false,
+                text: 'No directivo'
+            }
+
         ]
     },
-    improvementOptions: [
-        { text: '-- Please select an option --', value: null },
-        { text: 'Redundant', value: 0 },
-        { text: 'Useless', value: 1 },
-        { text: 'Difficult to read it', value: 2 },
-        { text: 'Unclear', value: 3 },
-    ],
     appliesLikertOptions: [
         { text: '1', value: 1 },
         { text: '2', value: 2 },
@@ -35,23 +43,17 @@ export default {
         { text: '9', value: 9 },
     ],
     participantResponse: {
-        name: '',
-        profiles: [],
+        position: null,
+        area: null,
         email: '',
         last_update: '',
         frameworkVersion: '',
         idCustomizedInstrument: '',
         comments: '',
-        isAdminResponse: false,
+        isDirective: '',
         isComplete: false,
-        responsesList: [{
-            idItem: 1,
-            needReview: false,
-            answerNumeric: 4,
-            typeReview: 'redundant',
-            reviewComments: 'string',
-            answer_text: 'string'
-        }]
+        responsesList: [],
+        survey_by_client_id: 1
     },
     customizedInstrument: {
         'generalDescription': 'instrument description',

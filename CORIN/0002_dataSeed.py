@@ -806,6 +806,7 @@ def insert_data(apps, schema_editor):
 
 
 
+
 class Migration(migrations.Migration):
 
     dependencies = [

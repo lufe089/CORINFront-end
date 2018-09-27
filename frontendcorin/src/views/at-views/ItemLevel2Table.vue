@@ -44,7 +44,7 @@
             </b-form-radio-group>
           </b-form-group> -->
           <!-- <small>Not at all</small> -->
-          <b-form-radio-group required :name="'likertScale'+data.item.itemId.toString()" :id="'likertScale'+data.item.itemId.toString()" v-model="data.item.numericAnswer"  v-on:change="addProgress(data.item)">
+          <b-form-radio-group required :name="'likertScale'+data.item.itemId.toString()" :id="'likertScale'+data.item.itemId.toString()" v-model="data.item.numericAnswer"  v-on:change="addProgress(data.item)" :state="false">
             <!--<div v-for='(value, key) in appliesLikertOptions' :key='key' class='custom-control-inline col-md-1 py-0'>
               <div class="w-15" style="height=100%">
                 <div class="h-70">
@@ -59,7 +59,7 @@
             <small>name likertScale {{data.item.itemId.toString()}}</small>
             <small>save in {{data.item.itemId +' answer: ' +data.item.numericAnswer }}{{data.item}}</small>-->
             <div v-for='(value, key) in appliesLikertOptions' :key='key' class='custom-control-inline py-0'>
-              <b-form-radio :value='value.value'  >
+              <b-form-radio :value='value.value'>
                 <small>{{value.text}}</small>
               </b-form-radio>
             </div>
@@ -279,6 +279,7 @@ export default {
       console.error('Guarde')
     },
     onSubmit (evt) {
+      // the page doesn’t reload when the form is submitted,
       evt.preventDefault()
       alert(JSON.stringify(this.form))
     }

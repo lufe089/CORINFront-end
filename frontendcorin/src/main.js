@@ -8,6 +8,8 @@ import router from './router'
 import i18n from './lang/config.js'
 
 Vue.use(BootstrapVue)
+    // Vue.http.headers.common['Access-Control-Allow-Origin'] = '*'
+    // Vue.http.headers.common['Access-Control-Request-Method'] = '*'
 
 /* eslint-disable no-new */
 new Vue({
