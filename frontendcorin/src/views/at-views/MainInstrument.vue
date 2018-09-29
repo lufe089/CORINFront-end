@@ -66,13 +66,13 @@
                   <b-col md="6">
                     <b-form-group :label="$t('message.es_directivo')" label-for="positionDirective" :label-cols="6"
                       :horizontal="true">
-                      <b-form-radio-group id="positionDirective" v-model="showDirective" :options="parameters.position" name="positionDirective" v-on:change="changeDirectiveVisibility" required></b-form-radio-group>
+                      <b-form-radio-group id="positionDirective" v-model="participantResponse.isDirective" :options="parameters.position" name="positionDirective"  @change="changeDirectiveVisibility" required></b-form-radio-group>
                     </b-form-group>
                   </b-col>
                   <b-col md="6">
                     <b-form-group v-show ="showDirective" :description="$t('message.seleccion_cargo')" :label="$t('message.cargo')" label-for="cargo" :label-cols="2"
                       :horizontal="true">
-                      <b-form-select id="cargo" v-model="participantResponse.position" :options="parameters.directivePositions" required/>
+                      <b-form-select id="cargo" name="cargo" v-model="participantResponse.position" :options="parameters.directivePositions" required/>
                     </b-form-group>
                   </b-col>
                 </b-row>
@@ -106,6 +106,8 @@
         <item-level2-table hover></item-level2-table>
       </b-col><!--/.col-->
     </b-row>
+    <h1>Respuestas summary</h1>
+    {{participantResponse.subItems}}
     </div>
   </div>
 </template>
@@ -125,7 +127,7 @@ export default {
       result: '',
       isSurveyVisible: false,
       parameters: BDData.parameters,
-      urlService: 'http://127.0.0.1:8000/instructionsSpanish/',
+      ulrInstructions: 'http://127.0.0.1:8000/instructionsSpanish/',
       selected: [], // Must be an array reference!,
       showDirective: undefined,
       showQuestions: false,
@@ -136,7 +138,7 @@ export default {
   mounted () {
     axios(
       { // Este servicio retorna una arreglo de un solo elemento
-        method: 'GET', 'url': this.urlService
+        method: 'GET', 'url': this.ulrInstructions
       }).then(result => {
       this.userInstructions = result.data[0].user_instructions
       this.contactInfo = result.data[0].contact_info
@@ -170,8 +172,8 @@ export default {
       this.isSurveyVisible = true
       // this.inititParticipantResponse()
     },
-    changeDirectiveVisibility: function () {
-      this.showDirective = !this.showDirective
+    changeDirectiveVisibility: function (value) {
+      this.showDirective = value
       this.participantResponse.isDirective = this.showDirective
       // Si no es directivo se borra la posicion para que la persona tenga q seleccionar nuevamente
       if (this.showDirective === false) {
@@ -183,7 +185,6 @@ export default {
       evt.preventDefault()
       // Se activa la visualizacion de las preguntas
       this.showQuestions = true
-      alert(JSON.stringify(this.form))
     }
   },
   filters: {

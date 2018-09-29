@@ -2,6 +2,7 @@
 <div class="animated fadeIn">
   <b-card class="card-body">
     <!--Iterate over the different categories -->
+    <div class="loading">Loading&#8230;</div>
     <b-form @submit="onSubmit">
       <div v-for="categoryAndItems in responsesByCategoriesList" :key="categoryAndItems.id">
       <!-- stacked -->
@@ -156,12 +157,12 @@ export default {
       totalRows: 0,
       totalItems: 0,
       dataLevelTwo: [],
-      urlHost: 'http://localhost:8000/',
       urlGetItems: 'http://localhost:8000/' + 'activeItemsSpanish/',
       urlGetCategories: 'http://localhost:8000/simpleActiveCategories/',
       categories: [],
       responsesByCategoriesList: [],
-      isLoading: true // Control when the web services were alredy consumed
+      isLoading: true, // Control when the web services were alredy consumed
+      company: {company_contact_name: 'Prueba', company_email: 'luisaEmailTest'}
     }
   },
   created: function () {
@@ -182,6 +183,7 @@ export default {
     addProgress (response) {
       /* Event called when a likert option is selected */
       response.isFilled = true
+      response.state = true
       this.calculateProgressByCategories()
     },
     clearLikertScale (response) {
@@ -229,7 +231,6 @@ export default {
         level2.subItems = items.filter(result => result.item.category.id === categories[i].id)
         this.dataLevelTwo.push(level2)
       }
-
       this.isLoading = false
     },
     prepareItemResponses () { // Crea los objetos de tipo respuesta que son los que se almacena luego en la bd
@@ -247,13 +248,7 @@ export default {
           itemResponse.name = itemLevel2.subItems[i].name
           itemResponse.itemId = itemId
           itemResponse.item = itemLevel2.subItems[i]
-          itemResponse.numericAnswer = null
-          /* itemResponse.typeResponse = null
-          itemResponse.reviewComments = null
-          itemResponse.typeReview = null
-          itemResponse.idResponseFormat = null
-          itemResponse.N_A = false */
-          // Control if an item was filled or not
+          itemResponse.numericAnswer = 2
           itemResponse.isFilled = false
           responsesSubItemsByCategory.push(itemResponse)
           this.responsesList.push(itemResponse)
@@ -276,12 +271,43 @@ export default {
       }
     },
     saveResponses () {
-      console.error('Guarde')
+      console.error('Guardando')
+      // Send a POST request
+      /* axios({
+        method: 'post',
+        url: 'http://127.0.0.1:8000/participantsResponse/',
+        data: {
+          data: this.$parent.participantResponse
+        }
+      }).then(response => {
+        alert('Contesto', response)
+      }, error => {
+        console.error(error)
+      }
+      ) */
+      // axios.post('http://127.0.0.1:8000/participantsResponse/', this.$parent.participantResponse)
+
+      /* axios.post('http://127.0.0.1:8000/company/', this.company).then(response => {
+        alert('Contesto', response)
+      }).catch(function (error) {
+        console.log(error)
+      }) */
+
+      console.log('Que se va a enviar')
+      console.log(JSON.stringify(this.$parent.participantResponse))
+      axios.post('http://127.0.0.1:8000/participantsResponse/', this.$parent.participantResponse).then(response => {
+        alert('Guarde datos', response)
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     onSubmit (evt) {
       // the page doesn’t reload when the form is submitted,
       evt.preventDefault()
-      alert(JSON.stringify(this.form))
+
+      // Asocia las respuestas obtenidas a la respuesta del participante
+      this.$parent.participantResponse.subItems = this.responsesList
+      this.saveResponses()
     }
 
   },
@@ -323,5 +349,18 @@ export default {
 .scaleWidth {
   width: 60%;
   /* text-align: center  */
+}
+
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 </style>

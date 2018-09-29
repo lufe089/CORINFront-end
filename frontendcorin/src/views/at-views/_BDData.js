@@ -43,17 +43,16 @@ export default {
         { text: '9', value: 9 },
     ],
     participantResponse: {
-        position: null,
-        area: null,
-        email: '',
+        position: 1,
+        area: 1,
+        email: 'prueba@prueba',
         last_update: '',
-        frameworkVersion: '',
-        idCustomizedInstrument: '',
         comments: '',
-        isDirective: '',
+        isDirective: true,
         isComplete: false,
         responsesList: [],
-        survey_by_client_id: 1
+        survey_by_client: 1,
+        customizedInstrument: 1,
     },
     customizedInstrument: {
         'generalDescription': 'instrument description',
