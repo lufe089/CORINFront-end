@@ -2,11 +2,10 @@
 <div class="animated fadeIn">
   <b-card class="card-body">
     <!--Iterate over the different categories -->
-    <div class="loading">Loading&#8230;</div>
+    <!--<div class="loading">Loading&#8230;</div>-->
     <b-form @submit="onSubmit">
       <div v-for="categoryAndItems in responsesByCategoriesList" :key="categoryAndItems.id">
-      <!-- stacked -->
-      <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='categoryAndItems.responsesByCategory' :fields='fields' :current-page='currentPage' :per-page='perPage' caption-top>
+       <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='categoryAndItems.responsesByCategory' :fields='fields' :current-page='currentPage' :per-page='perPage' caption-top>
         <template slot="table-caption">
         <!-- Progress section -->
         <div class='float-right'>
@@ -20,18 +19,15 @@
         </div>
         <!-- Group level name -->
         <div class="h5 text-primary mb-0 mt-2 text-uppercase">{{categoryAndItems.category.name}}  <small> {{categoryAndItems.responsesCount}}/{{categoryAndItems.responsesByCategory.length}} </small> </div>
-        <!-- Progreso por categoria -->
-        <div class="float"><b-badge variant="dark" v-if="categoryAndItems.allFilled" pill>{{$t('message.all_fill')}}</b-badge></div>
-        <div class="float"><b-progress :value="categoryAndItems.progressReponses" variant="info" striped class="mb-2"></b-progress></div>
         </template>
-        <template slot='item_order' slot-scope='data'>
+                <template slot='item_order' slot-scope='data'>
           <!--Esta es la ruta para llegar data.item es un arreglo, item es el primer elemento item luego es un campo dentro del elemento-->
           <small>{{data.item.item.item.item_order}}</small>
         </template>
         <template slot='category' slot-scope='data'>
           {{data.item.item.item.category.name}}
         </template>
-        <template slot='name' slot-scope='data' class="w-20">
+        <template slot='name' slot-scope='data'>
           <div fluid class="mx-auto">
             {{data.item.item.name}}
           </div>
@@ -39,24 +35,8 @@
         <!-- Likert scale -->
         <template slot='responseFormat' slot-scope='data'>
         <div>
-          <!-- other whay to use the radio button group
-            <b-form-group :id=''likertScale'+data.item.itemId'>
-            <b-form-radio-group v-model='selected' :options='options' name='likertScale'>
-            </b-form-radio-group>
-          </b-form-group> -->
-          <!-- <small>Not at all</small> -->
-          <b-form-radio-group required :name="'likertScale'+data.item.itemId.toString()" :id="'likertScale'+data.item.itemId.toString()" v-model="data.item.numericAnswer"  v-on:change="addProgress(data.item)" :state="false">
-            <!--<div v-for='(value, key) in appliesLikertOptions' :key='key' class='custom-control-inline col-md-1 py-0'>
-              <div class="w-15" style="height=100%">
-                <div class="h-70">
-                  <small>{{value.value === 5 || value.value === -1 || value.value === -2  || value.value === 0 ? value.text: '--------------'}}</small>
-                </div>
-                <div class="h-30">
-                  <b-form-radio :value='value.value' :id='data.item.itemId+value.value'/>
-                </div>
-              </div>
-            </div> -->
-            <!-- For debuggin purposes
+          <b-form-radio-group required :name="'likertScale'+data.item.item_id.toString()" :id="'likertScale'+data.item.item_id.toString()" v-model="data.item.answer_numeric"  v-on:change="addProgress(data.item)" :state="false">
+            <!-- For debugging purposes
             <small>name likertScale {{data.item.itemId.toString()}}</small>
             <small>save in {{data.item.itemId +' answer: ' +data.item.numericAnswer }}{{data.item}}</small>-->
             <div v-for='(value, key) in appliesLikertOptions' :key='key' class='custom-control-inline py-0'>
@@ -67,16 +47,6 @@
           </b-form-radio-group>
         </div>
         </template>
-        <template slot='lowerAnchor' slot-scope='data'>
-          <small>{{$t('message.total_desacuerdo') }}</small>
-        </template>
-        <template slot='upperAnchor' slot-scope='data'>
-          <small>{{$t('message.total_acuerdo') }}</small>
-        </template>
-        <!-- Details of the justification  This slot should be named as row-details to work properly-->
-        <!--<template slot='row-details' slot-scope='row'>
-          <item-justification :justification='row.item.justification' :itemName='row.item.name'></item-justification>
-        </template>-->
       </b-table>
       <nav>
       <!--<b-pagination :total-rows='getRowCount(responsesList)' :per-page='perPage' v-model='currentPage' prev-text='Prev' next-text='Next' hide-goto-end-buttons/>-->
@@ -147,8 +117,8 @@ export default {
       fields: [
         // {key: 'item_order', sortable: true, label: '#'},
         {key: 'name', sortable: true, label: 'Item'},
-        // {key: 'category', sortable: true, label: 'Categoria'},
-        // {key: 'lowerAnchor', label: ''},
+        {key: 'category', sortable: true, label: 'Categoria'},
+        {key: 'lowerAnchor', label: ''},
         {key: 'responseFormat', label: 'Total desacuerdo (1) -- Total acuerdo (9)', class: 'scaleWidth'}
         // {key: 'upperAnchor', label: ''}
       ],
@@ -207,6 +177,8 @@ export default {
           this.prepareData(categories, subItems)
           // TODO hace aqui un arreglo pq si ya existe solo hay que cargar los datos
           this.prepareItemResponses()
+          console.info('Consultados datos de los items')
+          console.info(JSON.stringify(this.dataLevelTwo))
           // Solo para control alert(JSON.stringify(this.dataLevelTwo))
         }, error => {
           console.error(error)
@@ -228,7 +200,7 @@ export default {
       for (var i = 0; i < categories.length; i++) {
         var level2 = {}
         level2.category = categories[i]
-        level2.subItems = items.filter(result => result.item.category.id === categories[i].id)
+        level2.responsesList = items.filter(result => result.item.category.id === categories[i].id)
         this.dataLevelTwo.push(level2)
       }
       this.isLoading = false
@@ -236,23 +208,24 @@ export default {
     prepareItemResponses () { // Crea los objetos de tipo respuesta que son los que se almacena luego en la bd
       /* Creates a list of objects that will save user answers */
       for (var t = 0; t < this.dataLevelTwo.length; t++) {
-        this.totalItems += this.dataLevelTwo[t].subItems.length
+        this.totalItems += this.dataLevelTwo[t].responsesList.length
         var itemLevel2 = this.dataLevelTwo[t]
         // Por cada elemento de nivel 2 se recorren su subitems
         var responsesSubItemsByCategory = []
         var itemsByCategory = 0
         var progress = 0.0
-        for (var i = 0; i < itemLevel2.subItems.length; i++) {
+        for (var i = 0; i < itemLevel2.responsesList.length; i++) {
           var itemResponse = {}
-          var itemId = itemLevel2.subItems[i].id
-          itemResponse.name = itemLevel2.subItems[i].name
-          itemResponse.itemId = itemId
-          itemResponse.item = itemLevel2.subItems[i]
-          itemResponse.numericAnswer = 2
-          itemResponse.isFilled = false
+          var itemId = itemLevel2.responsesList[i].id
+          itemResponse.name = itemLevel2.responsesList[i].name
+          itemResponse.item_id = itemId
+          itemResponse.item = itemLevel2.responsesList[i]
+          itemResponse.answer_numeric = 3
+          itemResponse.isFilled = true
           responsesSubItemsByCategory.push(itemResponse)
           this.responsesList.push(itemResponse)
         }
+        itemsByCategory = responsesSubItemsByCategory.length
         //  We iterate this list in template to present the data of each category
         this.responsesByCategoriesList.push({'category': itemLevel2.category, 'responsesByCategory': responsesSubItemsByCategory, 'itemsByCategory': itemsByCategory, 'progressReponses': progress, 'responsesCount': 0, 'allFilled': false})
       }
@@ -270,8 +243,8 @@ export default {
         }
       }
     },
-    saveResponses () {
-      console.error('Guardando')
+    saveItem2Responses () {
+      console.log('Guardando ...')
       // Send a POST request
       /* axios({
         method: 'post',
@@ -292,11 +265,21 @@ export default {
       }).catch(function (error) {
         console.log(error)
       }) */
-
       console.log('Que se va a enviar')
-      console.log(JSON.stringify(this.$parent.participantResponse))
-      axios.post('http://127.0.0.1:8000/participantsResponse/', this.$parent.participantResponse).then(response => {
-        alert('Guarde datos', response)
+      var obj = {}
+      obj.position = 1
+      obj.area = 1
+      obj.email = 'prueba@prueba.com'
+      obj.is_directive = true
+      obj.is_complete = false
+      obj.customized_instrument_id = 1
+      obj.responsesList = this.responsesList
+      this.$parent.participantResponse.responsesList = this.responsesList
+      console.log(JSON.stringify(this.$parent.participantResponse[0]))
+      axios.post('http://127.0.0.1:8000/participantsResponse/', obj).then(response => {
+        console.log('Guardado de respuestas en BD fue correcto')
+        // Se emite mensaje al componente padre para notificar que se termino
+        this.$emit('item-level2-table:change')
       }).catch(function (error) {
         console.log(error)
       })
@@ -306,8 +289,9 @@ export default {
       evt.preventDefault()
 
       // Asocia las respuestas obtenidas a la respuesta del participante
-      this.$parent.participantResponse.subItems = this.responsesList
-      this.saveResponses()
+      this.$parent.participantResponse.responsesList = this.responsesList
+      // this.$emit('saveResponses')
+      this.saveItem2Responses()
     }
 
   },

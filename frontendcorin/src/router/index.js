@@ -26,7 +26,7 @@ import Dashboard from '@/views/Dashboard'
 import Cards from '@/views/base/Cards'
 import Forms from '@/views/base/Forms'
 import MainInstrument from '@/views/at-views/MainInstrument'
-import Instructions from '@/views/at-views/Instructions.vue'
+import Results from '@/views/at-views/Results.vue'
 
 Vue.use(Router)
 
@@ -51,9 +51,9 @@ export default new Router({
                 component: MainInstrument
             },
             {
-                path: 'instructions',
-                name: 'Instrucciones',
-                component: Instructions
+                path: 'result',
+                name: 'Resultados',
+                component: Results
             },
             {
                 path: 'base',

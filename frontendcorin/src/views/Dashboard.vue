@@ -1,6 +1,5 @@
 <template>
   <div class="animated fadeIn">
-    <p class="text-info">Hello World</p>
     <b-card-group columns class="card-columns cols-2">
       <b-card header="Bar Chart">
         <div class="chart-wrapper">

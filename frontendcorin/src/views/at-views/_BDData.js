@@ -45,14 +45,13 @@ export default {
     participantResponse: {
         position: 1,
         area: 1,
-        email: 'prueba@prueba',
+        email: 'prueba@zalo',
         last_update: '',
         comments: '',
         isDirective: true,
-        isComplete: false,
+        is_complete: true,
         responsesList: [],
-        survey_by_client: 1,
-        customizedInstrument: 1,
+        customized_instrument: 1,
     },
     customizedInstrument: {
         'generalDescription': 'instrument description',

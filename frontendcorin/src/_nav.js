@@ -2,20 +2,15 @@
 que se necesite un método que cambie el name de un idioma a otro */
 /* eslint-disable */
 export default {
-    items: [{
-            name: 'Instrucciones',
-            url: '/instructions',
-            icon: 'icon-info'
-        },
+    items: [
+        /*{
+                    name: 'Instrucciones',
+                    url: '/instructions',
+                    icon: 'icon-info'
+                },*/
         {
-            name: 'Assessment instrument',
+            name: 'Evaluación',
             url: '/main_instrument',
-            icon: 'fa fa-thermometer-1'
-                /* children: [ ] */
-        },
-        {
-            name: 'Table Example',
-            url: '/tableExample',
             icon: 'fa fa-thermometer-1'
                 /* children: [ ] */
         },
@@ -30,11 +25,11 @@ export default {
           icon: 'fa fa-thermometer-1'
         }, */
         {
-            name: 'Results',
-            url: '/base/forms',
+            name: 'Resultados',
+            url: '/result',
             icon: 'fa fa-pie-chart'
         },
-        {
+        /*{
             title: true,
             name: 'Satisfaction evaluation',
             class: '',
@@ -42,6 +37,6 @@ export default {
                 element: '',
                 attributes: {}
             }
-        }
+        }*/
     ]
 }

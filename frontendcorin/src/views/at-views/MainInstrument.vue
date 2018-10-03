@@ -1,6 +1,6 @@
 <template>
   <div class="animated fadeIn">
-    <b-row fluid v-show="isSurveyVisible==false">
+    <b-row fluid v-show="!isSurveyVisible && !showThanksMessage">
       <b-col md=12>
          <b-jumbotron bg-variant="light">
         <template slot="header">
@@ -11,9 +11,9 @@
            <b-row fluid>
              <b-col md="12">
                <b-card class="mx-auto" border-variant="info">
-                <span v-html="userInstructions"></span>
+                <span v-html="instruccionData.user_instructions"></span>
                 <div slot="footer">
-                  <small class="text-muted" v-html="contactInfo"></small>
+                  <small class="text-muted" v-html="instruccionData.contact_info"></small>
                 </div>
                 </b-card>
              </b-col>
@@ -24,7 +24,7 @@
       </b-col>
     </b-row>
 
-    <div v-show="isSurveyVisible">
+    <div v-show="isSurveyVisible && !showThanksMessage">
       <b-row fluid>
         <b-col md="12">
           <b-card>
@@ -72,7 +72,7 @@
                   <b-col md="6">
                     <b-form-group v-show ="showDirective" :description="$t('message.seleccion_cargo')" :label="$t('message.cargo')" label-for="cargo" :label-cols="2"
                       :horizontal="true">
-                      <b-form-select id="cargo" name="cargo" v-model="participantResponse.position" :options="parameters.directivePositions" required/>
+                      <b-form-select id="cargo" name="cargo" v-model="participantResponse.position" :options="parameters.directivePositions" :required="showDirective"/>
                     </b-form-group>
                   </b-col>
                 </b-row>
@@ -103,12 +103,26 @@
     <!-- Formulario para llenar las dimensiones, subcriterios y criterios -->
     <b-row fluid v-show=showQuestions>
       <b-col lg="12">
-        <item-level2-table hover></item-level2-table>
+        <item-level2-table hover @item-level2-table:change='processEnd'></item-level2-table>
       </b-col><!--/.col-->
     </b-row>
-    <h1>Respuestas summary</h1>
-    {{participantResponse.subItems}}
     </div>
+    <!-- Mensaje de agradecimiento -->
+    <b-row md="12">
+       <b-col lg="12">
+          <b-card v-show="showThanksMessage"
+                header-tag="header"
+                footer-tag="footer">
+                <b-alert show variant="success">
+                  <h4 class="alert-heading">{{ $t("message.fin_encuesta") }}</h4>
+                  <hr>
+                  <p>
+                    <span v-html="instruccionData.thanks"></span>
+                  </p>
+                </b-alert>
+          </b-card>
+       </b-col>
+    </b-row>
   </div>
 </template>
 <script>
@@ -131,8 +145,9 @@ export default {
       selected: [], // Must be an array reference!,
       showDirective: undefined,
       showQuestions: false,
-      userInstructions: '',
-      contactInfo: ''
+      instruccionData: {user_instructions: '', contact_info: '', thanks: ' '},
+      showThanksMessage: false
+
     }
   },
   mounted () {
@@ -140,8 +155,9 @@ export default {
       { // Este servicio retorna una arreglo de un solo elemento
         method: 'GET', 'url': this.ulrInstructions
       }).then(result => {
-      this.userInstructions = result.data[0].user_instructions
-      this.contactInfo = result.data[0].contact_info
+      this.instruccionData.user_instructions = result.data[0].user_instructions
+      this.instruccionData.contact_info = result.data[0].contact_info
+      this.instruccionData.thanks = result.data[0].thanks
     }, error => {
       console.error(error)
       console.error(i18n.tc('message.error_consuming_service_instructions'))
@@ -185,6 +201,11 @@ export default {
       evt.preventDefault()
       // Se activa la visualizacion de las preguntas
       this.showQuestions = true
+    },
+    processEnd: function () {
+      // Cambia la bandera que controla si se muestra el mensaje de fin de encuesta
+      this.showThanksMessage = true
+      console.log('Emitio guardado')
     }
   },
   filters: {

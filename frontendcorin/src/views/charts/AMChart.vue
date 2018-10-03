@@ -26,6 +26,14 @@ export default {
   name: 'instrument-instructions',
   data () {
     return {
+
+    }
+  },
+  props: {
+    chartData: {
+      type: Array,
+      required: true,
+      default: function () { return [] }
     }
   },
   mounted () {
@@ -67,13 +75,13 @@ export default {
     // AXES
     // category
     var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis())
-    categoryAxis.dataFields.category = 'country'
-    categoryAxis.title.text = 'Countries'
+    categoryAxis.dataFields.category = 'name'
+    categoryAxis.title.text = 'Dimensiones'
     // categoryAxis.autoGridCount = false
     // categoryAxis.gridCount = 10
 
     var valueAxis = chart.xAxes.push(new am4charts.ValueAxis())
-    valueAxis.title.text = 'Litres sold (M)'
+    valueAxis.title.text = 'Promedio'
     valueAxis.title.fontWeight = 'bold'
     /* valueAxis.min = 0
     valueAxis.max = 800
@@ -107,6 +115,7 @@ export default {
     valueAxis.renderer.grid.template.disabled = true
 
     // Add data si es general se pone chart.data
+    /*
     chart.data = [{
       'country': 'Lithuania',
       'litres': 501.9
@@ -138,7 +147,8 @@ export default {
     {
       'country': 'Peru',
       'litres': 50
-    }]
+    }] */
+    chart.data = this.chartData
     /* Series */
     var series = chart.series.push(new am4charts.ColumnSeries())
     /* series.data = [{
@@ -169,10 +179,10 @@ export default {
       'country': 'The Netherlands',
       'litres': 50
     }] */
-    series.dataFields.valueX = 'litres'
+    series.dataFields.valueX = 'promedio'
     // Instead of graph.valueField = 'value'
-    series.dataFields.categoryY = 'country'
-    series.name = 'Sales'
+    series.dataFields.categoryY = 'name'
+    series.name = 'Dimensions'
     // Instead of ballonText graph.balloonText='[[category]]: <b>[[value]]'
     // It holds a 'template' object of type RoundedRectangle which we can use to set a 'default' column appearance for our series.
     series.columns.template.tooltipText = 'Series: {name}\nCategory: {categoryX}\nValue: {valueY}'
