@@ -80,7 +80,7 @@
                   <b-col md="12">
                     <b-form-group
                       :label="$t('message.comments')" label-for="commentsTextarea"
-                      :label-cols="1"
+                      :label-cols="2"
                       :horizontal="true">
                       <textarea class="form-control rounded-0" id="exampleFormControlTextarea1" rows="3" :placeholder="$t('message.any_comment')" v-model="participantResponse.comments"></textarea>
                     </b-form-group>

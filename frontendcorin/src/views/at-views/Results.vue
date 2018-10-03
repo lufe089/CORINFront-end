@@ -1,32 +1,60 @@
 <template>
   <div class="animated fadeIn">
-    <b-card-group columns class="card-columns cols-2">
-      <b-card header="Radar chart">
-        <div >
-           <div class="chartStyle" ref="chartRadar"> </div>
-        </div>R
+    <div v-show="noResponses">
+      <b-card class="mx-auto" border-variant="info">
+        <h4> {{ $t("message.no_resultados") }}</h4>
       </b-card>
-      <b-card header="AMChart">
-        <div class="chart-wrapper">
-          <div class="chartStyle" ref="chartdiv"> </div>
-        </div>
-      </b-card>
-    </b-card-group>
-    <b-card-group columns class="card-columns cols-1">
-      <b-card header="PerformanceByCriterion">
-        <div class="chart-wrapper">
-          <performance-by-criterion-chart></performance-by-criterion-chart>
-        </div>
-      </b-card>
-    </b-card-group>
-    {{responsesList}}
+    </div>
+    <!-- Si existen resultados para mostrar -->
+    <div id="results" v-show="!noResponses">
+      <b-row>
+      <b-col sm="12" md="3">
+        <b-card header="Rendimiento general">
+          <div class="chart-wrapper">
+            <div class="chartStyle" ref="chartByDimensions"> </div>
+          </div>
+        </b-card>
+      </b-col>
+      <b-col sm="12" md="3">
+        <b-card>
+          <div class="chart-wrapper">
+            <div class="chartStyle" ref="chartByCategories"> </div>
+          </div>
+        </b-card>
+      </b-col>
+      </b-row>
+      <b-row>
+        <b-col sm="12" md="12">
+          <b-card >
+          <div class="chart-wrapper">
+            <div class="chartStyle" ref="chartByCategories"> </div>
+          </div>
+        </b-card>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col sm="12" md="6">
+          <b-card >
+          <div class="chart-wrapper">
+            <div class="chartStyle" ref="chartByDimensions"> </div>
+          </div>
+          </b-card>
+        </b-col>
+        <b-col sm="12" md="6">
+          <b-card >
+          <div class="chart-wrapper">
+           <div class="chartStyle" ref="chartByComponents"> </div>
+          </div>
+          </b-card>
+        </b-col>
+      </b-row>
+      </div>
   </div>
 </template>
 
 <script>
 
 import BarExample from '@/views/charts/barExample.vue'
-import PerformanceByCriteriaChart from '@/views/charts/PerformanceByCriteriaChart'
 import axios from 'axios'
 import i18n from '../../lang/config'
 import * as am4core from '@amcharts/amcharts4/core'
@@ -39,8 +67,7 @@ export default {
   name: 'results-module',
   components: {
     /* tag, component name */
-    BarExample,
-    'performance-by-criterion-chart': PerformanceByCriteriaChart
+    BarExample
   },
   data () {
     return {
@@ -56,17 +83,29 @@ export default {
       responsesList: [],
       scoresByDimensions: [],
       scoresByCategories: [],
-      scoresByComponents: []
+      scoresByComponents: [],
+      errorConsultingData: false,
+      noResponses: false,
+      responsesHeadersList: [],
+      chartsVisualParameters: []
 
     }
   },
-  mounted () {
+  created () {
     axios(
       { // Este servicio retorna una arreglo de un solo elemento
         method: 'GET', 'url': this.urlResponses
       }).then(result => {
       console.info('LOG: consultó las respuestas')
-      this.responsesList = result.data[0].responsesList
+      // Se verifica que halla al menos un valor en la respuesta
+      if (result.data.length > 0) {
+        this.responsesHeadersList = result.data
+        for (var i = 0; i < result.data.length; i++) {
+          Array.prototype.push.apply(this.responsesList, result.data[i].responsesList)
+        }
+      } else {
+        this.noResponses = true
+      }
       axios.get(this.urlDimensions).then(response => {
         this.scoresByDimensions = response.data
         console.info('LOG: consultó lista de dimensiones')
@@ -77,14 +116,17 @@ export default {
             this.scoresByComponents = response.data
             console.info('LOG: consultó lista de componentes')
             this.prepareData()
-            this.drawChart()
-            this.drawRadarChart(this.scoresByCategories)
+            this.drawChart(this.scoresByDimensions, 'Dimensiones', this.$refs.chartByDimensions, i18n.tc('message.rendimiento_dimension'))
+            // this.drawColumnChart(this.scoresByDimensions, 'Dimensiones', this.$refs.chartByDimensionsFull, i18n.tc('message.rendimiento_dimension'))
+            this.drawChart(this.scoresByComponents, 'Componentes', this.$refs.chartByComponents, i18n.tc('message.rendimiento_componente'))
+            this.drawRadarChart(this.scoresByCategories, 'Categorias', this.$refs.chartByCategories, i18n.tc('message.rendimiento_categoria'))
           }, error => {
-            // FIXME
+            // FIXMEscoresByComponents
             console.error(error)
             console.error(i18n.tc('message.error_consuming_service_dimensions', this.urlDimensions))
             console.error('Service path:' + this.urlCategories)
             alert(i18n.tc('message.error_consuming_service'))
+            this.errorConsultingData = true
           })
         }, error => {
           // FIXME
@@ -99,12 +141,14 @@ export default {
         console.error(i18n.tc('message.error_consuming_service_dimensions', this.urlDimensions))
         console.error('Service path:' + this.urlDimensions)
         alert(i18n.tc('message.error_consuming_service'))
+        this.errorConsultingData = true
       })
     }, error => {
       console.error(error)
       console.error(i18n.tc('message.error_consuming_service_instructions'))
       console.error('Service path:' + this.urlGetItems)
       alert(i18n.tc('message.error_consuming_service'))
+      this.errorConsultingData = true
     }
     )
   },
@@ -123,7 +167,7 @@ export default {
           }
         }
         if (contAgrupador > 0 && acumDimension > 0) {
-          agrupador.promedio = acumDimension / contAgrupador
+          agrupador.promedio = (acumDimension / contAgrupador).toFixed(2)
           agrupador.cantItems = contAgrupador
         } else {
           agrupador.promedio = 0
@@ -143,22 +187,47 @@ export default {
           }
         }
         if (contCategoria > 0 && acumCategoria > 0) {
-          agrupadorCategoria.promedio = acumCategoria / contCategoria
+          agrupadorCategoria.promedio = (acumCategoria / contCategoria).toFixed(2)
           agrupadorCategoria.cantItems = contCategoria
         } else {
           agrupadorCategoria.promedio = 0
           agrupadorCategoria.cantItems = 0
         }
       }
-
       console.log(this.scoresByCategories)
+
+      // Calulo de score por componente
+      for (var c = 0; c < this.scoresByComponents.length; c++) {
+        var agrupadorComponente = this.scoresByComponents[c]
+        var contComponente = 0
+        var acumComponente = 0
+        for (var o = 0; o < this.responsesList.length; o++) {
+          var responseComponent = this.responsesList[o]
+          // El criterio tiene componentes
+          if (responseComponent.item.component != null) {
+            if (responseComponent.item.component.id === agrupadorComponente.id && responseComponent.answer_numeric != null) {
+              contComponente = 1 + contComponente
+              acumComponente = acumComponente + responseComponent.answer_numeric
+            }
+          }
+        }
+        if (contComponente > 0 && acumComponente > 0) {
+          agrupadorComponente.promedio = (acumComponente / contComponente).toFixed(2)
+          agrupadorComponente.cantItems = contComponente
+        } else {
+          agrupadorComponente.promedio = 0
+          agrupadorComponente.cantItems = 0
+        }
+      }
     },
-    drawChart: function () {
+    drawChart: function (data, label, div, titleText) {
       // we will create the chart here
-      let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
+      // let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
+      let chart = am4core.create(div, am4charts.XYChart)
       var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis())
       categoryAxis.dataFields.category = 'name'
-      categoryAxis.title.text = 'Dimensiones'
+      categoryAxis.title.text = label + ' ( ' + (data.length) + ' ) '
+      categoryAxis.title.fontWeight = 'bold'
       var valueAxis = chart.xAxes.push(new am4charts.ValueAxis())
       valueAxis.title.text = 'Promedio'
       valueAxis.title.fontWeight = 'bold'
@@ -167,6 +236,7 @@ export default {
       valueAxis.calculateTotals = false
       valueAxis.strictMinMax = true
 
+      /* Linea de referencia
       var middleLine = chart.plotContainer.createChild(am4core.Line)
       middleLine.strokeOpacity = 1
       middleLine.stroke = am4core.color('#DC3545')
@@ -177,6 +247,7 @@ export default {
         return target.parent.pixelHeight
       })
 
+      */
       var axisRange = valueAxis.axisRanges.create()
       axisRange.value = 300
       axisRange.grid.strokeOpacity = 0.1
@@ -186,101 +257,167 @@ export default {
       axisRange.label.fillOpacity = 0.8
 
       // Customize labels appareance
-      // valueAxis.renderer.labels.template.fill = am4core.color('#A0CA92')
-      // valueAxis.renderer.labels.template.fontSize = 15
+      valueAxis.renderer.labels.template.fill = am4core.color('#A0CA92')
+      valueAxis.renderer.labels.template.fontSize = 15
 
       // Disable grid values
       categoryAxis.renderer.grid.template.disabled = true
       valueAxis.renderer.grid.template.disabled = true
-      chart.data = this.scoresByDimensions
+      // Separacion entre los elementos que se dibujan
+      categoryAxis.renderer.minGridDistance = 10
+
+      // Title
+      var title = chart.titles.create()
+      title.text = titleText
+      title.fontSize = 25
+      title.marginBottom = 30
+
+      chart.data = data
       /* Series */
       var series = chart.series.push(new am4charts.ColumnSeries())
       series.dataFields.valueX = 'promedio'
-      // Instead of graph.valueField = 'value'
       series.dataFields.categoryY = 'name'
-      series.name = 'Dimensiones'
-      // Instead of ballonText graph.balloonText='[[category]]: <b>[[value]]'
-      // It holds a 'template' object of type RoundedRectangle which we can use to set a 'default' column appearance for our series.
-      series.columns.template.tooltipText = 'Dimension: {categoryY}\nValor: {valueX}'
-      // series.columns.template.fill = am4core.color('#104547')
-      // series.columns.template.stroke = am4core.color('#ff0000') // red outline
-      // series.columns.template.fill = am4core.color('#00ff00') // green fill // red outline
+      series.columns.template.tooltipText = '{categoryY}\nValor: {valueX}'
+      series.name = 'Rendimiento por ' + label + ' (n = ' + this.responsesHeadersList.length + ')'
       var columnTemplate = series.columns.template
-      columnTemplate.height = am4core.percent(20)
-      /* Degrade de colores segun el puntaje */
-      // series.heatRules.push({ target: columnTemplate, property: 'fill', dataField: 'valueX', min: am4core.color('#e5dc36'), max: am4core.color('#5faa46') })
-
+      columnTemplate.height = am4core.percent(25)
       // Preload style for doing circular bulltets
       var circleBullet = columnTemplate.createChild(am4charts.CircleBullet)
-      circleBullet.circle.radius = 10
+      circleBullet.circle.radius = 8
       circleBullet.valign = 'middle'
       circleBullet.align = 'right'
       circleBullet.isMeasured = true
       circleBullet.mouseEnabled = false
       circleBullet.verticalCenter = 'middle'
-
-      /* var bullet1 = series.bullets.push(new am4charts.LabelBullet())
-      bullet1.label.text = '{valueX.litres.formatNumber("#.00")}%'
-      bullet1.label.fill = am4core.color('#ccccff')
-      bullet1.locationX = 0.5 */
-      var labelBullet = series.bullets.push(new am4charts.LabelBullet())
-      labelBullet.label.text = 'algo'
-      labelBullet.label.fill = am4core.color('#ccccff')
-      labelBullet.locationY = 0.5
-      // Etiqueta para el bullet que muestra el valor del gráfico
-      // var labelBullet = new am4charts.LabelBullet()
-      // series.bullets.push(labelBullet)
-      // labelBullet.label.text = '{valueX.value.formatNumber("#.")}'
-      // labelBullet.label.text = 'otro'
-      // labelBullet.strokeOpacity = 0
-      // labelBullet.stroke = am4core.color('#dadada')
-      // labelBullet.dy = -20
+      // Label
+      var columnLabel = circleBullet.createChild(am4core.Label)
+      columnLabel.text = ' ----> {valueX}   '
+      columnLabel.textAlign = 'end'
+      columnLabel.fontSize = 10
+      // columnLabel.valign = 'middle'
+      columnLabel.marginLeft = 30
       // Cursor
-      /* var cursor = new am4charts.XYCursor()
-      cursor.behavior = 'panX'
-      cursor.lineY.disabled = true
-      chart.cursor = cursor */
+      chart.cursor = new am4charts.XYCursor()
+      chart.cursor.behavior = 'none'
+
+      // Export the chart
+      chart.exporting.menu = new am4core.ExportMenu()
 
       // And, for a good measure, let's add a legend
       chart.legend = new am4charts.Legend()
-
-      this.setGeneralChartProperties(chart)
     },
-    drawRadarChart: function (data) {
-      let chart = am4core.create(this.$refs.chartRadar, am4charts.RadarChart)
+    drawRadarChart: function (data, label, div, titleText) {
+      let chart = am4core.create(div, am4charts.RadarChart)
       chart.data = data
       chart.padding(10, 10, 10, 10)
       let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis())
       categoryAxis.renderer.grid.template.location = 0
       categoryAxis.dataFields.category = 'name'
-      categoryAxis.renderer.minGridDistance = 60
-      chart.yAxes.push(new am4charts.ValueAxis())
-
+      // categoryAxis.title.text = label + ' ( ' + (data.length) + ' ) '
+      categoryAxis.renderer.minGridDistance = 10
+      // Values
+      let valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
+      valueAxis.min = 0
+      valueAxis.max = 9
       let series = chart.series.push(new am4charts.RadarSeries())
       series.dataFields.categoryX = 'name'
       series.dataFields.valueY = 'promedio'
-      series.tooltipText = 'Dimension: {categoryY}\nValor: {valueX}'
-      // series.columns.template.fill = am4core.color('#CDA2AB')
-      // series.columns.template.radarColumn.cornerRadius = 30
-      series.fillOpacity = 0.6
-      chart.scrollbarX = new am4core.Scrollbar()
-      chart.scrollbarY = new am4core.Scrollbar()
-      this.setGeneralChartProperties(chart)
-    },
-    setGeneralChartProperties: function (chart) {
+      series.tooltipText = '{categoryY}: {valueX}'
+      // Le pone fondo al area
+      series.fillOpacity = 0.1
+      series.name = 'Rendimiento por ' + label + ' (n = ' + this.responsesHeadersList.length + ')'
+      // Da el grosor de la linea
+      series.strokeWidth = 4
+      chart.legend = new am4charts.Legend()
+      // Le pone bolitas en cada cambio de valor
+      series.bullets.push(new am4charts.CircleBullet())
       chart.scrollbarX = new am4core.Scrollbar()
       chart.scrollbarY = new am4core.Scrollbar()
       chart.cursor = new am4charts.RadarCursor()
-      chart.cursor.lineY.disabled = true
+      // Title
+      var title = chart.titles.create()
+      title.text = titleText
+      title.fontSize = 25
+      title.marginBottom = 30
+
       // Export the chart
       chart.exporting.menu = new am4core.ExportMenu()
+    },
+    drawColumnChart: function (data, label, div, titleText) {
+      // we will create the chart here
+      // let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
+      let chart = am4core.create(div, am4charts.XYChart)
+      var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis())
+      categoryAxis.dataFields.category = 'name'
+      categoryAxis.title.text = label + ' ( ' + (data.length) + ' ) '
+      categoryAxis.title.fontWeight = 'bold'
+      categoryAxis.labelRotation = '45'
+      // Value axis
+      var valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
+      valueAxis.title.text = 'Promedio'
+      valueAxis.title.fontWeight = 'bold'
+      valueAxis.min = 0
+      valueAxis.max = 9
+      valueAxis.calculateTotals = false
+      valueAxis.strictMinMax = true
+
+      /* Linea de referencia
+      var middleLine = chart.plotContainer.createChild(am4core.Line)
+      middleLine.strokeOpacity = 1
+      middleLine.stroke = am4core.color('#DC3545')
+      middleLine.strokeDasharray = '2,2'
+      middleLine.align = 'center'
+      middleLine.zIndex = 1
+      middleLine.adapter.add('y2', function (y2, target) {
+        return target.parent.pixelHeight
+      })
+
+      */
+      // Customize labels appareance
+      valueAxis.renderer.labels.template.fill = am4core.color('#000000')
+      valueAxis.renderer.labels.template.fontSize = 15
+
+      // Disable grid values
+      categoryAxis.renderer.grid.template.disabled = true
+      valueAxis.renderer.grid.template.disabled = true
+      // Separacion entre los elementos que se dibujan
+      categoryAxis.renderer.minGridDistance = 10
+
+      // Title
+      var title = chart.titles.create()
+      title.text = titleText
+      title.fontSize = 25
+      title.marginBottom = 30
+
+      chart.data = data
+      /* Series */
+      var series = chart.series.push(new am4charts.ColumnSeries())
+      series.dataFields.valueY = 'promedio'
+      series.dataFields.categoryX = 'name'
+      series.columns.template.tooltipText = '{categoryX}\nValor: {valueY}'
+      series.name = 'Rendimiento por ' + label + ' (n = ' + this.responsesHeadersList.length + ')'
+      var columnTemplate = series.columns.template
+      columnTemplate.height = am4core.percent(25)
+      // Label
+      var columnLabel = columnTemplate.createChild(am4core.Label)
+      columnLabel.text = '{valueX}'
+      columnLabel.textAlign = 'end'
+      columnLabel.fontSize = 14
+      columnLabel.valign = 'middle'
+      // Cursor
+      chart.cursor = new am4charts.XYCursor()
+      chart.cursor.behavior = 'zoomXY'
+
+      // And, for a good measure, let's add a legend
+      chart.legend = new am4charts.Legend()
+      // this.setGeneralChartProperties(chart)
     }
   }
 }
 </script>
 <style scoped>
 .chartStyle {
-  width: 100%;
-  height: 100%;
+  width: 95%;
+  height: 800px;
 }
 </style>

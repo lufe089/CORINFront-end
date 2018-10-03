@@ -19,13 +19,19 @@
         </div>
         <!-- Group level name -->
         <div class="h5 text-primary mb-0 mt-2 text-uppercase">{{categoryAndItems.category.name}}  <small> {{categoryAndItems.responsesCount}}/{{categoryAndItems.responsesByCategory.length}} </small> </div>
+        <div class="float"><b-badge variant="dark" v-if="categoryAndItems.allFilled" pill>{{$t('message.all_fill')}}</b-badge></div>
+        <div class="float"><b-progress :value="categoryAndItems.progressReponses" variant="info" striped class="mb-2"></b-progress></div>
         </template>
-                <template slot='item_order' slot-scope='data'>
+        <template slot='item_order' slot-scope='data'>
           <!--Esta es la ruta para llegar data.item es un arreglo, item es el primer elemento item luego es un campo dentro del elemento-->
           <small>{{data.item.item.item.item_order}}</small>
         </template>
-        <template slot='category' slot-scope='data'>
-          {{data.item.item.item.category.name}}
+        <template slot='component' slot-scope='data'>
+          <span v-if='data.item.item.item.component != null'>{{data.item.item.item.component.name}} </span>
+          <span v-if='data.item.item.item.component == null'> -- </span>
+        </template>
+        <template slot='dimension' slot-scope='data'>
+          {{data.item.item.item.dimension.name}}
         </template>
         <template slot='name' slot-scope='data'>
           <div fluid class="mx-auto">
@@ -35,7 +41,7 @@
         <!-- Likert scale -->
         <template slot='responseFormat' slot-scope='data'>
         <div>
-          <b-form-radio-group required :name="'likertScale'+data.item.item_id.toString()" :id="'likertScale'+data.item.item_id.toString()" v-model="data.item.answer_numeric"  v-on:change="addProgress(data.item)" :state="false">
+          <b-form-radio-group required :name="'likertScale'+data.item.item_id.toString()" :id="'likertScale'+data.item.item_id.toString()" v-model="data.item.answer_numeric"  v-on:change="addProgress(data.item)" :state="getState(data.item)">
             <!-- For debugging purposes
             <small>name likertScale {{data.item.itemId.toString()}}</small>
             <small>save in {{data.item.itemId +' answer: ' +data.item.numericAnswer }}{{data.item}}</small>-->
@@ -116,9 +122,9 @@ export default {
       // items: BDData.customizedInstrument.itemsHierarchy.motivationHierarchy.hierarchicalItem.subHierarchicalItems.subItems
       fields: [
         // {key: 'item_order', sortable: true, label: '#'},
+        {key: 'dimension', sortable: true, label: 'Dimensión'},
+        {key: 'component', sortable: true, label: 'Componente'},
         {key: 'name', sortable: true, label: 'Item'},
-        {key: 'category', sortable: true, label: 'Categoria'},
-        {key: 'lowerAnchor', label: ''},
         {key: 'responseFormat', label: 'Total desacuerdo (1) -- Total acuerdo (9)', class: 'scaleWidth'}
         // {key: 'upperAnchor', label: ''}
       ],
@@ -128,7 +134,7 @@ export default {
       totalItems: 0,
       dataLevelTwo: [],
       urlGetItems: 'http://localhost:8000/' + 'activeItemsSpanish/',
-      urlGetCategories: 'http://localhost:8000/simpleActiveCategories/',
+      urlGetCategories: 'http://localhost:8000/categories/',
       categories: [],
       responsesByCategoriesList: [],
       isLoading: true, // Control when the web services were alredy consumed
@@ -220,8 +226,8 @@ export default {
           itemResponse.name = itemLevel2.responsesList[i].name
           itemResponse.item_id = itemId
           itemResponse.item = itemLevel2.responsesList[i]
-          itemResponse.answer_numeric = 3
-          itemResponse.isFilled = true
+          itemResponse.answer_numeric = null
+          itemResponse.isFilled = false
           responsesSubItemsByCategory.push(itemResponse)
           this.responsesList.push(itemResponse)
         }
@@ -292,6 +298,14 @@ export default {
       this.$parent.participantResponse.responsesList = this.responsesList
       // this.$emit('saveResponses')
       this.saveItem2Responses()
+    },
+    getState: function (response) {
+      // Si ya fue diligenciado se quita el rojo
+      if (response.isFilled) {
+        return null
+      } else {
+        return false
+      }
     }
 
   },
