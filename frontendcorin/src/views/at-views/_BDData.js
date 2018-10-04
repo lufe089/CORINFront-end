@@ -44,15 +44,15 @@ export default {
         { text: '9', value: 9 },
     ],
     participantResponse: {
-        position: 1,
-        area: 1,
-        email: 'prueba@zalo',
+        position: null,
+        area: null,
+        email: '',
         last_update: '',
         comments: '',
-        isDirective: false,
-        is_complete: true,
+        isDirective: null,
+        is_complete: false,
         responsesList: [],
-        customized_instrument: 1,
+        customized_instrument: 1
     },
     customizedInstrument: {
         'generalDescription': 'instrument description',

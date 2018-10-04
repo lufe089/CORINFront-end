@@ -232,7 +232,7 @@ export default {
           itemResponse.item = itemLevel2.responsesList[i]
           itemResponse.answer_numeric = null
           itemResponse.isFilled = false
-          this.createFakeResponses(itemResponse)
+          // this.createFakeResponses(itemResponse)
           responsesSubItemsByCategory.push(itemResponse)
           this.responsesList.push(itemResponse)
         }

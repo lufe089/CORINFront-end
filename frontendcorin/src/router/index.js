@@ -18,13 +18,6 @@ import Router from 'vue-router'
 
 // Containers
 import Full from '@/containers/Full'
-
-// Views
-import Dashboard from '@/views/Dashboard'
-
-// Views - Components
-import Cards from '@/views/base/Cards'
-import Forms from '@/views/base/Forms'
 import MainInstrument from '@/views/at-views/MainInstrument'
 import Results from '@/views/at-views/Results.vue'
 
@@ -36,16 +29,11 @@ export default new Router({
     scrollBehavior: () => ({ y: 0 }),
     routes: [{
         path: '/',
-        redirect: '/dashboard',
+        redirect: '/main_instrument',
         name: 'Home',
         component: Full,
         /* así se especifica que el resto de componentes son hijos de full */
         children: [{
-                path: 'dashboard',
-                name: 'Dashboard',
-                component: Dashboard
-            },
-            {
                 path: 'main_instrument',
                 name: 'Encuesta',
                 component: MainInstrument
@@ -54,28 +42,7 @@ export default new Router({
                 path: 'result',
                 name: 'Resultados',
                 component: Results
-            },
-            {
-                path: 'base',
-                redirect: '/base/cards',
-                name: 'Base',
-                component: {
-                    /* Empty root */
-                    render(c) { return c('router-view') }
-                },
-                children: [{
-                        path: 'forms',
-                        name: 'Forms',
-                        component: Forms
-                    },
-                    {
-                        path: 'cards',
-                        name: 'Cards',
-                        component: Cards
-                    }
-                ]
             }
-
         ]
     }]
 })
