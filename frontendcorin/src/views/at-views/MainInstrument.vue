@@ -27,12 +27,12 @@
     <div v-show="isSurveyVisible && !showThanksMessage">
       <b-row fluid>
         <b-col md="12">
-          <b-card>
+          <!--<b-card>
               <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1 text-right">Company name</h5>
-                <!--<small>version</small> -->
+                <small>version</small>
               </div>
-            </b-card>
+            </b-card> -->
           <b-card>
             <div slot="header">
               <b-row >
@@ -137,7 +137,7 @@ export default {
       result: '',
       isSurveyVisible: false,
       parameters: BDData.parameters,
-      ulrInstructions: 'http://127.0.0.1:8000/instructionsSpanish/',
+      ulrInstructions: BDData.apiURL + 'instructionsSpanish/',
       selected: [], // Must be an array reference!,
       showDirective: undefined,
       showQuestions: false,

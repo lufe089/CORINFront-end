@@ -1,7 +1,8 @@
 /* eslint-disable */
 export default {
 
-    apiPath: 'http://localhost:8000/',
+    // apiURL: 'http://localhost:8000/',
+    apiURL: 'http://zalonore.pythonanywhere.com/',
     servicesURL: {
         instructions: 'translatedInstrument/2/'
     },
@@ -48,7 +49,7 @@ export default {
         email: 'prueba@zalo',
         last_update: '',
         comments: '',
-        isDirective: true,
+        isDirective: false,
         is_complete: true,
         responsesList: [],
         customized_instrument: 1,

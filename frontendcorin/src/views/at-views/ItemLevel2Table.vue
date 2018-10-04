@@ -75,7 +75,6 @@
 <script>
 
 import BDData from './_BDData.js'
-import itemJustification from './ItemJustification.vue'
 import axios from 'axios'
 import i18n from '../../lang/config'
 // import func from './vue-temp/vue-editor-bridge.js'
@@ -133,8 +132,9 @@ export default {
       totalRows: 0,
       totalItems: 0,
       dataLevelTwo: [],
-      urlGetItems: 'http://localhost:8000/' + 'activeItemsSpanish/',
-      urlGetCategories: 'http://localhost:8000/categories/',
+      urlGetItems: BDData.apiURL + 'activeItemsSpanish/',
+      urlGetCategories: BDData.apiURL + 'categories',
+      urlSaveSubItems: BDData.apiURL + 'participantsResponse/',
       categories: [],
       responsesByCategoriesList: [],
       isLoading: true, // Control when the web services were alredy consumed
@@ -147,10 +147,6 @@ export default {
   methods: {
     getRowCount (items) {
       return items.length
-    },
-    toggleJustification () {
-      /* Chages the justification of an item from visible to visible and vice-versa */
-      this.showLevel2Justification = !this.showLevel2Justification
     },
     toggleReview (row) {
       /* Chages the justification of an item from visible to visible and vice-versa */
@@ -211,6 +207,14 @@ export default {
       }
       this.isLoading = false
     },
+    createFakeResponses (itemResponse) {
+      itemResponse.answer_numeric = Math.round((Math.random() * 10))
+      if (itemResponse.answer_numeric < 1 || itemResponse.answer_numeric > 9) {
+        // Si queda mal generado el numero aleatorio lo ajusto
+        itemResponse.answer_numeric = 9
+      }
+      itemResponse.isFilled = true
+    },
     prepareItemResponses () { // Crea los objetos de tipo respuesta que son los que se almacena luego en la bd
       /* Creates a list of objects that will save user answers */
       for (var t = 0; t < this.dataLevelTwo.length; t++) {
@@ -228,6 +232,7 @@ export default {
           itemResponse.item = itemLevel2.responsesList[i]
           itemResponse.answer_numeric = null
           itemResponse.isFilled = false
+          this.createFakeResponses(itemResponse)
           responsesSubItemsByCategory.push(itemResponse)
           this.responsesList.push(itemResponse)
         }
@@ -282,7 +287,7 @@ export default {
       obj.responsesList = this.responsesList
       this.$parent.participantResponse.responsesList = this.responsesList
       console.log(JSON.stringify(this.$parent.participantResponse[0]))
-      axios.post('http://127.0.0.1:8000/participantsResponse/', obj).then(response => {
+      axios.post(this.urlSaveSubItems, obj).then(response => {
         console.log('Guardado de respuestas en BD fue correcto')
         // Se emite mensaje al componente padre para notificar que se termino
         this.$emit('item-level2-table:change')
@@ -311,7 +316,6 @@ export default {
   },
   components: {
     /* tag, component name */
-    'item-justification': itemJustification
   },
   computed: {
     // Computed functions are called only when change the values of their related properties

@@ -39,6 +39,7 @@ export default {
         message: {
             any_comment: 'Algún comentario?',
             cargo: 'Cargo',
+            cargando: 'Cargando ....',
             comments: 'Commentarios',
             company_name: 'Company name',
             continue: 'Continuar',

@@ -1,66 +1,81 @@
 <template>
   <div class="animated fadeIn">
-    <div v-show="noResponses">
-      <b-card class="mx-auto" border-variant="info">
-        <h4> {{ $t("message.no_resultados") }}</h4>
-      </b-card>
+    <div v-show="isLoading">
+      <img class="loading" src="https://vignette.wikia.nocookie.net/judo/images/0/03/Cargando.gif/revision/latest?cb=20110601212206&path-prefix=es" alt="loading">
     </div>
-    <!-- Si existen resultados para mostrar -->
-    <div id="results" v-show="!noResponses">
-      <b-row>
-      <b-col sm="12" md="12">
-        <b-card :no-body="true">
-          <b-card-body class="p-4 clearfix">
-            <div class="h1 bg-success p-4 px-5 font-2xl mr-3 float-left">8.5 </div>
-            <div>
-              <div class="h2 text-primary mb-0 mt-2">{{$t("message.resultado_alta_tendencia")}}</div>
-              <div class="text-muted font-weight-bold font-xs float-right"> Promedio entre 6 y 9 </div>
-              <div class="text-muted font-weight-bold font-s"> Numero de respuestas: 3  </div>
-              <b-progress height={} class="progress-xs my-1" variant="success" :value="85"/>
-              <small class="text-muted">Valor mínimo 1  -- Valor máximo 9 </small>
-            </div>
-          </b-card-body>
+    <div v-show="!isLoading">
+      <div v-show="noResponses">
+        <b-card class="mx-auto" border-variant="info">
+          <h4> {{ $t("message.no_resultados") }}</h4>
         </b-card>
-      </b-col>
-      </b-row>
-      <b-row>
-        <b-col sm="12" md="12">
-          <b-card >
-          <div class="chart-wrapper">
-            <div class="chartStyle" ref="chartByCategories"> </div>
-          </div>
-        </b-card>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col sm="12" md="6">
-          <b-card >
-          <div class="chart-wrapper">
-            <div class="chartStyle" ref="chartByDimensions"> </div>
-          </div>
-          </b-card>
-        </b-col>
-        <b-col sm="12" md="6">
-          <b-card >
-          <div class="chart-wrapper">
-           <div class="chartStyle" ref="chartByComponents"> </div>
-          </div>
-          </b-card>
-        </b-col>
-      </b-row>
       </div>
-    <!-- Tabla con resultados -->
-    <b-row v-show="showResponsesSummaryTables">
-      <b-col md="4">
-        <c-table-results :caption="$t('message.resultado_dimensiones')" hover :items="scoresByDimensions"></c-table-results>
-      </b-col><!--/.col-->
-      <b-col md="4">
-        <c-table-results :caption="$t('message.resultado_componentes')"  hover :items="scoresByComponents"></c-table-results>
-      </b-col><!--/.col-->
-      <b-col md="4">
-        <c-table-results :caption="$t('message.resultado_categorias')"  hover :items="scoresByCategories"></c-table-results>
-      </b-col><!--/.col-->
-    </b-row><!--/.row-->
+      <!-- Si existen resultados para mostrar -->
+      <div id="results" v-show="!noResponses">
+        <b-row>
+        <b-col sm="12" md="12">
+          <b-card :no-body="true">
+            <b-card-body class="p-4 clearfix">
+              <div :class="calculateVariantResults('bg')" class=" h1 p-4 px-5 font-2xl mr-3 float-left">{{promedioGeneral}} </div>
+              <div>
+                <div class="h2 text-primary mb-0 mt-2" >
+                  <div v-show="promedioGeneral>=7">{{$t("message.resultado_alta_tendencia")}}
+                    <div class="text-muted font-weight-bold font-xs"> Promedio entre 7 y 9 </div>
+                  </div>
+                  <div v-show="promedioGeneral<=3">{{$t("message.resultado_baja_tendencia")}}
+                    <div class="text-muted font-weight-bold font-xs"> Promedio entre 1 y 3 </div>
+                  </div>
+                  <div v-show="promedioGeneral> 3 && promedioGeneral< 7">{{$t("message.resultado_media_tendencia")}}
+                    <div class="text-muted font-weight-bold font-xs"> Promedio entre 4 y 6 </div>
+                  </div>
+                </div>
+                <b-progress height={} class="progress-xs my-1" :variant=calculateVariantResults()  :max=max :value="promedioBarra"/>
+                <div class="text-muted font-weight-bold font-s"> Numero de respuestas: {{responsesHeadersList.length}}
+                  <div class="float-right"><small class="text-muted">Valor mínimo 1  -- Valor máximo 9 </small></div>
+                </div>
+              </div>
+            </b-card-body>
+          </b-card>
+        </b-col>
+        </b-row>
+        <b-row>
+          <b-col sm="12" md="12">
+            <b-card >
+            <div class="chart-wrapper">
+              <div class="chartStyle" ref="chartByCategories"> </div>
+            </div>
+          </b-card>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col sm="12" md="6">
+            <b-card >
+            <div class="chart-wrapper">
+              <div class="chartStyle" ref="chartByDimensions"> </div>
+            </div>
+            </b-card>
+          </b-col>
+          <b-col sm="12" md="6">
+            <b-card >
+            <div class="chart-wrapper">
+            <div class="chartStyle" ref="chartByComponents"> </div>
+            </div>
+            </b-card>
+          </b-col>
+        </b-row>
+        </div>
+      <!-- Tabla con resultados -->
+      <b-row v-show="!noResponses">
+        <b-col md="4">
+          <c-table-results :caption="$t('message.resultado_dimensiones')" hover :items="scoresByDimensions"></c-table-results>
+        </b-col><!--/.col-->
+        <b-col md="4">
+          <c-table-results :caption="$t('message.resultado_componentes')"  hover :items="scoresByComponents"></c-table-results>
+        </b-col><!--/.col-->
+        <b-col md="4">
+          <c-table-results :caption="$t('message.resultado_categorias')"  hover :items="scoresByCategories"></c-table-results>
+        </b-col><!--/.col-->
+      </b-row><!--/.row-->
+    </div>
   </div>
 </template>
 
@@ -72,6 +87,7 @@ import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
 import ResultsTable from './ResultsTable'
+import BDData from './_BDData.js'
 
 // Le da un comportanemiento animado al chart
 am4core.useTheme(am4themesAnimated)
@@ -88,10 +104,10 @@ export default {
       result: '',
       isSurveyVisible: false,
       // parameters: BDData.parameters,
-      urlResponses: 'http://127.0.0.1:8000/participantsResponse/',
-      urlDimensions: 'http://127.0.0.1:8000/dimensions/',
-      urlCategories: 'http://127.0.0.1:8000/categories/',
-      urlComponents: 'http://127.0.0.1:8000/components/',
+      urlResponses: BDData.apiURL + 'participantsResponse/',
+      urlDimensions: BDData.apiURL + 'dimensions/',
+      urlCategories: BDData.apiURL + 'categories/',
+      urlComponents: BDData.apiURL + 'components/',
       responsesList: [],
       scoresByDimensions: [],
       scoresByCategories: [],
@@ -100,8 +116,11 @@ export default {
       noResponses: false,
       showResponsesSummaryTables: false, // Controla la visualizacion de las tablas que resumen los resultados por categoria dimension y componente
       responsesHeadersList: [],
-      chartsVisualParameters: []
-
+      chartsVisualParameters: [],
+      promedioGeneral: 0.0,
+      promedioBarra: 0.0,
+      max: 9,
+      isLoading: true
     }
   },
   created () {
@@ -135,6 +154,11 @@ export default {
             this.drawRadarChart(this.scoresByCategories, 'Categorias', this.$refs.chartByCategories, i18n.tc('message.rendimiento_categoria'))
             // Se cambia la bandera que controla si se muestran las tablas de resultados para indicar que si se pueden mostrar
             this.showResponsesSummaryTables = true
+            this.isLoading = false
+            // Se ordenan los resultados para mostrarlos ordenados en las tablas que resumen los resultados
+            this.sortJSON(this.scoresByDimensions, 'promedio', 'asc')
+            this.sortJSON(this.scoresByComponents, 'promedio', 'asc')
+            this.sortJSON(this.scoresByCategories, 'promedio', 'asc')
           }, error => {
             // FIXMEscoresByComponents
             console.error(error)
@@ -142,6 +166,7 @@ export default {
             console.error('Service path:' + this.urlCategories)
             alert(i18n.tc('message.error_consuming_service'))
             this.errorConsultingData = true
+            this.isLoading = false
           })
         }, error => {
           // FIXME
@@ -149,6 +174,7 @@ export default {
           console.error(i18n.tc('message.error_consuming_service_dimensions', this.urlDimensions))
           console.error('Service path:' + this.urlCategories)
           alert(i18n.tc('message.error_consuming_service'))
+          this.isLoading = false
         })
       }, error => {
         // FIXME
@@ -157,6 +183,7 @@ export default {
         console.error('Service path:' + this.urlDimensions)
         alert(i18n.tc('message.error_consuming_service'))
         this.errorConsultingData = true
+        this.isLoading = false
       })
     }, error => {
       console.error(error)
@@ -164,6 +191,7 @@ export default {
       console.error('Service path:' + this.urlGetItems)
       alert(i18n.tc('message.error_consuming_service'))
       this.errorConsultingData = true
+      this.isLoading = false
     }
     )
   },
@@ -208,6 +236,18 @@ export default {
           agrupadorCategoria.promedio = 0
           agrupadorCategoria.cantItems = 0
         }
+      }
+      // Calculo el promedio general
+      for (var m = 0; m < this.responsesList.length; m++) {
+        var responsePromedio = this.responsesList[m]
+        // Promedio general
+        this.promedioGeneral = this.promedioGeneral + responsePromedio.answer_numeric
+      }
+      if (this.responsesList.length > 0) {
+        var calculo = (this.promedioGeneral / this.responsesList.length)
+        this.promedioBarra = calculo
+        calculo = calculo.toFixed(2)
+        this.promedioGeneral = calculo
       }
       // Calulo de score por componente
       for (var c = 0; c < this.scoresByComponents.length; c++) {
@@ -305,8 +345,7 @@ export default {
       // Label
       var columnLabel = circleBullet.createChild(am4core.Label)
       columnLabel.text = ' {valueX}   '
-      columnLabel.textAlign = 'end'
-      columnLabel.fontSize = 10
+      columnLabel.fontSize = 12
       // Alinea la etiqueta con las barras para que se vea bonito
       columnLabel.dy = -5
       columnLabel.dx = 15
@@ -425,6 +464,34 @@ export default {
       // And, for a good measure, let's add a legend
       chart.legend = new am4charts.Legend()
       // this.setGeneralChartProperties(chart)
+    },
+    calculateVariantResults: function (type) {
+      var variant = ''
+      if (this.promedioGeneral >= 7) {
+        variant = 'success'
+      } else if (this.promedioGeneral <= 3) {
+        variant = 'danger'
+      } else {
+        variant = 'warning'
+      }
+      if (type === 'bg') {
+        return 'bg-' + variant
+      } else {
+        return variant
+      }
+    },
+    sortJSON: function (data, key, orden) {
+      return data.sort(function (a, b) {
+        var x = a[key]
+        var y = b[key]
+        if (orden === 'asc') {
+          return ((x < y) ? -1 : ((x > y) ? 1 : 0))
+        }
+
+        if (orden === 'desc') {
+          return ((x > y) ? -1 : ((x < y) ? 1 : 0))
+        }
+      })
     }
   }
 }
@@ -433,5 +500,17 @@ export default {
 .chartStyle {
   width: 95%;
   height: 800px;
+}
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 </style>

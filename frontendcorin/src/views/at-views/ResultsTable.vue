@@ -53,7 +53,7 @@ export default {
     return {
       fields: [
         {key: 'name', label: 'Nombre', sortable: true, class: 'widthColumn'},
-        {key: 'promedio'}
+        {key: 'promedio', sortable: true}
       ],
       currentPage: 1,
       perPage: 7,
