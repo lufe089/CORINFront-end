@@ -57,6 +57,7 @@ export default {
             area: 'Área',
             n_a_explanation: 'Text for explaining somethig',
             no_directivo: 'No directivo',
+            no_resultados: 'No se encuentra ningún resultado para consultar',
             needs_review: 'Needs review?',
             part1_applies_motivation: 'Part 1. APPLIES-motivation',
             part2_applies_preparation: 'Part 2. APPLIES-preparation',
@@ -67,6 +68,15 @@ export default {
             please_explain: 'Please explain',
             profile: 'Profile',
             progress: 'Progress',
+            rendimiento_dimension: 'Rendimiento por dimensiones',
+            rendimiento_componente: 'Rendimiento por componentes',
+            rendimiento_categoria: 'Rendimiento por categoría',
+            resultado_alta_tendencia: 'Alta tendencia a la cultura innovadora',
+            resultado_media_tendencia: 'Tendencia media a la cultura innovadora',
+            resultado_baja_tendencia: 'Baja tendencia a la cultura innovadora',
+            resultado_dimensiones: 'Resultados por dimensiones',
+            resultado_componentes: 'Resultados por componentes',
+            resultado_categorias: 'Resultados por categorías',
             start: 'Start',
             seleccion_cargo: 'Seleccione el tipo de cargo que tiene en la empresa',
             total: 'total',
@@ -81,7 +91,7 @@ export default {
             total_acuerdo: 'Total acuerdo',
             general_progress: 'Progreso general',
             likert_scale_9_instructions: 'Total desacuerdo (1) -- Total acuerdo (9)',
-            all_fill: 'Completa',
+            all_fill: 'Completado',
             save: 'Guardar'
         }
     }

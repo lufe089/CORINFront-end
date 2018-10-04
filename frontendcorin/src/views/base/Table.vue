@@ -66,7 +66,7 @@
 <script>
 
 // import BDData from '../at-views/_BDData.js'
-import itemJustification from '../at-views/ItemJustification.vue'
+// import itemJustification from '../at-views/ItemJustification.vue'
 
 export default {
   name: 'c-table',
@@ -98,89 +98,7 @@ export default {
   },
   data: () => {
     return {
-      improvementOptions: [
-        { text: '-- Please select an option --', value: null },
-        { text: 'Redundant', value: 0 },
-        { text: 'Useless', value: 1 },
-        { text: 'Difficult to read it', value: 2 },
-        { text: 'Unclear', value: 3 },
-        { text: 'Other', value: 4 }
-      ],
       responsesList: [],
-      // items: BDData.customizedInstrument.itemsHierarchy.motivationHierarchy.hierarchicalItem.subHierarchicalItems.subItems
-      items: [ {
-        'itemId': 'subc1',
-        'suggestedImportance': {
-          'numericValue': 1,
-          'label': 'desirable'
-        },
-        'responseFormat': 'rating',
-        'name': 'Manager support the innitiative',
-        'description': 'Managers will support the initiative for exploring a product line solution',
-        'justification': 'string',
-        'showJustification': false,
-        'hierarchicalLevel': 3,
-        'feedback': [{
-          'feedbackType': 'positive',
-          'text': 'string',
-          'minScore': 0,
-          'maxScore': 0,
-          'references': [{
-            'name': 'Empirical evaluation of a decision support model for adopting software product line engineering',
-            'reference': '(Tüzün, Tekinerdogan, Kalender, & Bilgen, 2015)',
-            'cite': 'Tüzün, E., Tekinerdogan, B., Kalender, M. E., & Bilgen, S. (2015). Empirical evaluation of a decision support model for adopting software product line engineering. Information and Software Technology, 60, 77–101. https://doi.org/10.1016/j.infsof.2014.12.007'
-          }]
-        }]
-      },
-      {
-        'itemId': 'subc2',
-        'suggestedImportance': {
-          'numericValue': 1,
-          'label': 'desirable'
-        },
-        'responseFormat': 'rating',
-        'name': 'Project leader',
-        'description': 'The product line project would have a project leader with authority to take decisions and support the idea of change',
-        'justification': 'This is the explanation about why one of those criteria are important',
-        'showJustification': false,
-        'hierarchicalLevel': 3,
-        'feedback': [{
-          'feedbackType': 'positive',
-          'text': 'string',
-          'minScore': 0,
-          'maxScore': 0,
-          'references': [{
-            'name': 'Empirical evaluation of a decision support model for adopting software product line engineering',
-            'reference': '(Tüzün, Tekinerdogan, Kalender, & Bilgen, 2015)',
-            'cite': 'Tüzün, E., Tekinerdogan, B., Kalender, M. E., & Bilgen, S. (2015). Empirical evaluation of a decision support model for adopting software product line engineering. Information and Software Technology, 60, 77–101. https://doi.org/10.1016/j.infsof.2014.12.007'
-          }]
-        }]
-      },
-      {
-        'itemId': 'subc3',
-        'suggestedImportance': {
-          'numericValue': 1,
-          'label': 'desirable'
-        },
-        'responseFormat': 'rating',
-        'name': 'sub criterion 3',
-        'description': 'description sub criterion 3',
-        'justification': 'string',
-        'showJustification': true,
-        'hierarchicalLevel': 3,
-        'feedback': [{
-          'feedbackType': 'positive',
-          'text': 'string',
-          'minScore': 0,
-          'maxScore': 0,
-          'references': [{
-            'name': 'Empirical evaluation of a decision support model for adopting software product line engineering',
-            'reference': '(Tüzün, Tekinerdogan, Kalender, & Bilgen, 2015)',
-            'cite': 'Tüzün, E., Tekinerdogan, B., Kalender, M. E., & Bilgen, S. (2015). Empirical evaluation of a decision support model for adopting software product line engineering. Information and Software Technology, 60, 77–101. https://doi.org/10.1016/j.infsof.2014.12.007'
-          }]
-        }]
-      }
-      ],
       fields: [
         {key: 'itemId', label: 'Id', sortable: true},
         {key: 'name', sortable: true},
@@ -246,7 +164,7 @@ export default {
   },
   components: {
     /* tag, component name */
-    'item-justification': itemJustification
+    // 'item-justification': itemJustification
   }
 }
 </script>

@@ -117,6 +117,14 @@ En las vistas se pueden filtrar los datos que seran serializados
 # Para hacer que se puedan hacer peticiones rest a los servicos hay que instalar este paquete
 django-cors-headers
 
+# Para incluir todos los campos en el serializador de Django se debe poner
+fields = '__all__'
+###############################################################################
+
+%%========================Ejemplo a consultar ==================================%
+
+https://vue-django-crud.herokuapp.com
+https://medium.com/quick-code/crud-app-using-vue-js-and-django-516edf4e4217
 
 # Heroku 
 https://realpython.com/migrating-your-django-project-to-heroku/

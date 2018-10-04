@@ -8,18 +8,18 @@
     <!-- Si existen resultados para mostrar -->
     <div id="results" v-show="!noResponses">
       <b-row>
-      <b-col sm="12" md="3">
-        <b-card header="Rendimiento general">
-          <div class="chart-wrapper">
-            <div class="chartStyle" ref="chartByDimensions"> </div>
-          </div>
-        </b-card>
-      </b-col>
-      <b-col sm="12" md="3">
-        <b-card>
-          <div class="chart-wrapper">
-            <div class="chartStyle" ref="chartByCategories"> </div>
-          </div>
+      <b-col sm="12" md="12">
+        <b-card :no-body="true">
+          <b-card-body class="p-4 clearfix">
+            <div class="h1 bg-success p-4 px-5 font-2xl mr-3 float-left">8.5 </div>
+            <div>
+              <div class="h2 text-primary mb-0 mt-2">{{$t("message.resultado_alta_tendencia")}}</div>
+              <div class="text-muted font-weight-bold font-xs float-right"> Promedio entre 6 y 9 </div>
+              <div class="text-muted font-weight-bold font-s"> Numero de respuestas: 3  </div>
+              <b-progress height={} class="progress-xs my-1" variant="success" :value="85"/>
+              <small class="text-muted">Valor mínimo 1  -- Valor máximo 9 </small>
+            </div>
+          </b-card-body>
         </b-card>
       </b-col>
       </b-row>
@@ -49,17 +49,29 @@
         </b-col>
       </b-row>
       </div>
+    <!-- Tabla con resultados -->
+    <b-row v-show="showResponsesSummaryTables">
+      <b-col md="4">
+        <c-table-results :caption="$t('message.resultado_dimensiones')" hover :items="scoresByDimensions"></c-table-results>
+      </b-col><!--/.col-->
+      <b-col md="4">
+        <c-table-results :caption="$t('message.resultado_componentes')"  hover :items="scoresByComponents"></c-table-results>
+      </b-col><!--/.col-->
+      <b-col md="4">
+        <c-table-results :caption="$t('message.resultado_categorias')"  hover :items="scoresByCategories"></c-table-results>
+      </b-col><!--/.col-->
+    </b-row><!--/.row-->
   </div>
 </template>
 
 <script>
 
-import BarExample from '@/views/charts/barExample.vue'
 import axios from 'axios'
 import i18n from '../../lang/config'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
+import ResultsTable from './ResultsTable'
 
 // Le da un comportanemiento animado al chart
 am4core.useTheme(am4themesAnimated)
@@ -67,7 +79,7 @@ export default {
   name: 'results-module',
   components: {
     /* tag, component name */
-    BarExample
+    'c-table-results': ResultsTable
   },
   data () {
     return {
@@ -86,6 +98,7 @@ export default {
       scoresByComponents: [],
       errorConsultingData: false,
       noResponses: false,
+      showResponsesSummaryTables: false, // Controla la visualizacion de las tablas que resumen los resultados por categoria dimension y componente
       responsesHeadersList: [],
       chartsVisualParameters: []
 
@@ -120,10 +133,12 @@ export default {
             // this.drawColumnChart(this.scoresByDimensions, 'Dimensiones', this.$refs.chartByDimensionsFull, i18n.tc('message.rendimiento_dimension'))
             this.drawChart(this.scoresByComponents, 'Componentes', this.$refs.chartByComponents, i18n.tc('message.rendimiento_componente'))
             this.drawRadarChart(this.scoresByCategories, 'Categorias', this.$refs.chartByCategories, i18n.tc('message.rendimiento_categoria'))
+            // Se cambia la bandera que controla si se muestran las tablas de resultados para indicar que si se pueden mostrar
+            this.showResponsesSummaryTables = true
           }, error => {
             // FIXMEscoresByComponents
             console.error(error)
-            console.error(i18n.tc('message.error_consuming_service_dimensions', this.urlDimensions))
+            console.error(i18n.tc('message.error_consuming_service_dimensions', [this.urlDimensions]))
             console.error('Service path:' + this.urlCategories)
             alert(i18n.tc('message.error_consuming_service'))
             this.errorConsultingData = true
@@ -194,8 +209,6 @@ export default {
           agrupadorCategoria.cantItems = 0
         }
       }
-      console.log(this.scoresByCategories)
-
       // Calulo de score por componente
       for (var c = 0; c < this.scoresByComponents.length; c++) {
         var agrupadorComponente = this.scoresByComponents[c]
@@ -291,11 +304,12 @@ export default {
       circleBullet.verticalCenter = 'middle'
       // Label
       var columnLabel = circleBullet.createChild(am4core.Label)
-      columnLabel.text = ' ----> {valueX}   '
+      columnLabel.text = ' {valueX}   '
       columnLabel.textAlign = 'end'
       columnLabel.fontSize = 10
-      // columnLabel.valign = 'middle'
-      columnLabel.marginLeft = 30
+      // Alinea la etiqueta con las barras para que se vea bonito
+      columnLabel.dy = -5
+      columnLabel.dx = 15
       // Cursor
       chart.cursor = new am4charts.XYCursor()
       chart.cursor.behavior = 'none'
@@ -319,10 +333,12 @@ export default {
       let valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
       valueAxis.min = 0
       valueAxis.max = 9
+
+      let axisTooltip = valueAxis.tooltip
+      axisTooltip.value = '{categoryX}\nValor: {valueY}'
       let series = chart.series.push(new am4charts.RadarSeries())
       series.dataFields.categoryX = 'name'
       series.dataFields.valueY = 'promedio'
-      series.tooltipText = '{categoryY}: {valueX}'
       // Le pone fondo al area
       series.fillOpacity = 0.1
       series.name = 'Rendimiento por ' + label + ' (n = ' + this.responsesHeadersList.length + ')'
@@ -333,13 +349,11 @@ export default {
       series.bullets.push(new am4charts.CircleBullet())
       chart.scrollbarX = new am4core.Scrollbar()
       chart.scrollbarY = new am4core.Scrollbar()
-      chart.cursor = new am4charts.RadarCursor()
       // Title
       var title = chart.titles.create()
       title.text = titleText
       title.fontSize = 25
       title.marginBottom = 30
-
       // Export the chart
       chart.exporting.menu = new am4core.ExportMenu()
     },

@@ -29,13 +29,9 @@
         <b-col md="12">
           <b-card>
               <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Company name</h5>
-                <small>type of use - framework version</small>
+                <h5 class="mb-1 text-right">Company name</h5>
+                <!--<small>version</small> -->
               </div>
-              <p class="mb-1">
-                Donec id elit non mi porta gravida at eget metus. Maecenas
-                sed diam eget risus varius blandit.
-              </p>
             </b-card>
           <b-card>
             <div slot="header">

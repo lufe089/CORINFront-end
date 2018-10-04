@@ -47,7 +47,7 @@ export default new Router({
             },
             {
                 path: 'main_instrument',
-                name: 'Main Instrument',
+                name: 'Encuesta',
                 component: MainInstrument
             },
             {
