@@ -121,8 +121,8 @@ export default {
       // items: BDData.customizedInstrument.itemsHierarchy.motivationHierarchy.hierarchicalItem.subHierarchicalItems.subItems
       fields: [
         // {key: 'item_order', sortable: true, label: '#'},
-        {key: 'dimension', sortable: true, label: 'Dimensión'},
-        {key: 'component', sortable: true, label: 'Componente'},
+        // {key: 'dimension', sortable: true, label: 'Dimensión'}, // No se deben mostrar
+        // {key: 'component', sortable: true, label: 'Componente'},// No se deben mostrar
         {key: 'name', sortable: true, label: 'Item'},
         {key: 'responseFormat', label: 'Total desacuerdo (1) -- Total acuerdo (9)', class: 'scaleWidth'}
         // {key: 'upperAnchor', label: ''}
@@ -134,7 +134,6 @@ export default {
       dataLevelTwo: [],
       urlGetItems: BDData.apiURL + 'activeItemsSpanish/',
       urlGetCategories: BDData.apiURL + 'categories',
-      urlSaveSubItems: BDData.apiURL + 'participantsResponse/',
       categories: [],
       responsesByCategoriesList: [],
       isLoading: true, // Control when the web services were alredy consumed
