@@ -1,11 +1,8 @@
 /* eslint-disable */
 export default {
 
-    // apiURL: 'http://localhost:8000/',
-    apiURL: 'http://zalonore.pythonanywhere.com/',
-    servicesURL: {
-        instructions: 'translatedInstrument/2/'
-    },
+    apiURL: 'http://localhost:8000/',
+    // apiURL: 'http://zalonore.pythonanywhere.com/',
     parameters: {
         directivePositions: [
             { value: undefined, text: '--' },
@@ -44,200 +41,14 @@ export default {
         { text: '9', value: 9 },
     ],
     participantResponse: {
-        position: null,
-        area: null,
+        position: undefined,
+        area: undefined,
         email: '',
         last_update: '',
         comments: '',
-        isDirective: null,
+        is_directive: undefined,
         is_complete: false,
         responsesList: [],
-        customized_instrument: 1
-    },
-    customizedInstrument: {
-        'generalDescription': 'instrument description',
-        'featuresDescription': 'features description',
-        'disclaimer': 'it something gets wrong is not my fault',
-        'motivation': 'complete text about applies motivation',
-        'preparation': 'description about applies preparation',
-        'userInstructions': 'how people should use this instrument',
-        'i18nCode': '',
-        'frameworkVersion': 'V.1.0.a2',
-        itemsHierarchy: {
-            motivationHierarchy: [{
-                hierarchicalItem: {
-                    'itemData': {
-                        'itemId': 1,
-                        'suggestedImportance': {
-                            'numericValue': 1,
-                            'label': 'desirable'
-                        },
-                        'responseFormat': 'rating',
-                        'name': 'Operational',
-                        'description': 'This dimension evaluates company operational factors',
-                        'justification': 'string',
-                        'hierarchicalLevel': 1,
-                        'feedback': [{
-                            'feedbackType': 'positive',
-                            'text': 'string',
-                            'minScore': 0,
-                            'maxScore': 0,
-                            'references': [{
-                                'name': 'Empirical evaluation of a decision support model for adopting software product line engineering',
-                                'reference': '(Tüzün, Tekinerdogan, Kalender, & Bilgen, 2015)',
-                                'cite': 'Tüzün, E., Tekinerdogan, B., Kalender, M. E., & Bilgen, S. (2015). Empirical evaluation of a decision support model for adopting software product line engineering. Information and Software Technology, 60, 77–101. https://doi.org/10.1016/j.infsof.2014.12.007'
-                            }]
-                        }]
-                    },
-                    subHierarchicalItems: [{
-                        'itemData': {
-                            'itemId': 1,
-                            'suggestedImportance': {
-                                'numericValue': 1,
-                                'label': 'desirable'
-                            },
-                            'responseFormat': 'rating',
-                            'name': 'Operational level 2',
-                            'description': 'Criterion 2',
-                            'justification': 'string',
-                            'hierarchicalLevel': 1,
-                            'feedback': [{
-                                'feedbackType': 'positive',
-                                'text': 'string',
-                                'minScore': 0,
-                                'maxScore': 0,
-                                'references': [{
-                                    'name': 'Empirical evaluation of a decision support model for adopting software product line engineering',
-                                    'reference': '(Tüzün, Tekinerdogan, Kalender, & Bilgen, 2015)',
-                                    'cite': 'Tüzün, E., Tekinerdogan, B., Kalender, M. E., & Bilgen, S. (2015). Empirical evaluation of a decision support model for adopting software product line engineering. Information and Software Technology, 60, 77–101. https://doi.org/10.1016/j.infsof.2014.12.007'
-                                }]
-                            }]
-                        },
-                        subItems: [{
-                                'itemId': 1,
-                                'suggestedImportance': {
-                                    'numericValue': 1,
-                                    'label': 'desirable'
-                                },
-                                'responseFormat': 'rating',
-                                'name': 'sub criterion 1',
-                                'description': 'sub criterion 1',
-                                'justification': 'string',
-                                'hierarchicalLevel': 1,
-                                'feedback': [{
-                                    'feedbackType': 'positive',
-                                    'text': 'string',
-                                    'minScore': 0,
-                                    'maxScore': 0,
-                                    'references': [{
-                                        'name': 'Empirical evaluation of a decision support model for adopting software product line engineering',
-                                        'reference': '(Tüzün, Tekinerdogan, Kalender, & Bilgen, 2015)',
-                                        'cite': 'Tüzün, E., Tekinerdogan, B., Kalender, M. E., & Bilgen, S. (2015). Empirical evaluation of a decision support model for adopting software product line engineering. Information and Software Technology, 60, 77–101. https://doi.org/10.1016/j.infsof.2014.12.007'
-                                    }]
-                                }]
-                            },
-                            {
-                                'itemId': 10,
-                                'suggestedImportance': {
-                                    'numericValue': 1,
-                                    'label': 'desirable'
-                                },
-                                'responseFormat': 'rating',
-                                'name': 'sub criterion 2',
-                                'description': 'sub criterion 2',
-                                'justification': 'string',
-                                'hierarchicalLevel': 1,
-                                'feedback': [{
-                                    'feedbackType': 'positive',
-                                    'text': 'string',
-                                    'minScore': 0,
-                                    'maxScore': 0,
-                                    'references': [{
-                                        'name': 'Empirical evaluation of a decision support model for adopting software product line engineering',
-                                        'reference': '(Tüzün, Tekinerdogan, Kalender, & Bilgen, 2015)',
-                                        'cite': 'Tüzün, E., Tekinerdogan, B., Kalender, M. E., & Bilgen, S. (2015). Empirical evaluation of a decision support model for adopting software product line engineering. Information and Software Technology, 60, 77–101. https://doi.org/10.1016/j.infsof.2014.12.007'
-                                    }]
-                                }]
-                            }
-                        ]
-                    }]
-                }
-            }],
-            'preparationHierarcy': [{
-                'hierarchicalItem': {
-                    'itemData': {
-                        'itemId': 1,
-                        'suggestedImportance': {
-                            'numericValue': 1,
-                            'label': 'desirable'
-                        },
-                        'responseFormat': 'rating',
-                        'name': 'Operational',
-                        'description': 'This dimension evaluates company operational factors',
-                        'justification': 'string',
-                        'hierarchicalLevel': 1,
-                        'feedback': [{
-                            'feedbackType': 'positive',
-                            'text': 'string',
-                            'minScore': 0,
-                            'maxScore': 0,
-                            'references': [{
-                                'name': 'Empirical evaluation of a decision support model for adopting software product line engineering',
-                                'reference': '(Tüzün, Tekinerdogan, Kalender, & Bilgen, 2015)',
-                                'cite': 'Tüzün, E., Tekinerdogan, B., Kalender, M. E., & Bilgen, S. (2015). Empirical evaluation of a decision support model for adopting software product line engineering. Information and Software Technology, 60, 77–101. https://doi.org/10.1016/j.infsof.2014.12.007'
-                            }]
-                        }]
-                    },
-                    'subHierarchicalItems': [{
-                        'itemData': {
-                            'itemId': 1,
-                            'suggestedImportance': {
-                                'numericValue': 1,
-                                'label': 'desirable'
-                            },
-                            'responseFormat': 'rating',
-                            'name': 'Operational',
-                            'description': 'This dimension evaluates company operational factors',
-                            'justification': 'string',
-                            'hierarchicalLevel': 1,
-                            'feedback': [{
-                                'feedbackType': 'positive',
-                                'text': 'string',
-                                'minScore': 0,
-                                'maxScore': 0,
-                                'references': [{
-                                    'name': 'Empirical evaluation of a decision support model for adopting software product line engineering',
-                                    'reference': '(Tüzün, Tekinerdogan, Kalender, & Bilgen, 2015)',
-                                    'cite': 'Tüzün, E., Tekinerdogan, B., Kalender, M. E., & Bilgen, S. (2015). Empirical evaluation of a decision support model for adopting software product line engineering. Information and Software Technology, 60, 77–101. https://doi.org/10.1016/j.infsof.2014.12.007'
-                                }]
-                            }]
-                        },
-                        'subItems': [{
-                            'itemId': 1,
-                            'suggestedImportance': {
-                                'numericValue': 1,
-                                'label': 'desirable'
-                            },
-                            'responseFormat': 'rating',
-                            'name': 'Operational',
-                            'description': 'This dimension evaluates company operational factors',
-                            'justification': 'string',
-                            'hierarchicalLevel': 1,
-                            'feedback': [{
-                                'feedbackType': 'positive',
-                                'text': 'string',
-                                'minScore': 0,
-                                'maxScore': 0,
-                                'references': [{
-                                    'name': 'Empirical evaluation of a decision support model for adopting software product line engineering',
-                                    'reference': '(Tüzün, Tekinerdogan, Kalender, & Bilgen, 2015)',
-                                    'cite': 'Tüzün, E., Tekinerdogan, B., Kalender, M. E., & Bilgen, S. (2015). Empirical evaluation of a decision support model for adopting software product line engineering. Information and Software Technology, 60, 77–101. https://doi.org/10.1016/j.infsof.2014.12.007'
-                                }]
-                            }]
-                        }]
-                    }]
-                }
-            }]
-        }
+        customized_instrument_id: 1
     }
 }

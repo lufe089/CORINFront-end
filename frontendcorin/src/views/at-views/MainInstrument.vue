@@ -1,5 +1,8 @@
 <template>
   <div class="animated fadeIn">
+    <div v-show="isLoading">
+      <img class="loading" src="https://vignette.wikia.nocookie.net/judo/images/0/03/Cargando.gif/revision/latest?cb=20110601212206&path-prefix=es" alt="loading">
+    </div>
     <b-row fluid v-show="!isSurveyVisible && !showThanksMessage">
       <b-col md=12>
          <b-jumbotron bg-variant="light">
@@ -62,7 +65,7 @@
                   <b-col md="6">
                     <b-form-group :label="$t('message.es_directivo')" label-for="positionDirective" :label-cols="6"
                       :horizontal="true">
-                      <b-form-radio-group id="positionDirective" v-model="participantResponse.isDirective" :options="parameters.position" name="positionDirective"  @change="changeDirectiveVisibility" required></b-form-radio-group>
+                      <b-form-radio-group id="positionDirective" v-model="participantResponse.is_directive" :options="parameters.position" name="positionDirective"  @change="changeDirectiveVisibility" required></b-form-radio-group>
                     </b-form-group>
                   </b-col>
                   <b-col md="6">
@@ -132,17 +135,19 @@ export default {
   name: 'main_instrument',
   data () {
     return {
-      participantResponse: {},
+      participantResponse: null,
       serviceResult: {},
       result: '',
       isSurveyVisible: false,
       parameters: BDData.parameters,
       ulrInstructions: BDData.apiURL + 'instructionsSpanish/',
+      urlSaveSubItems: BDData.apiURL + 'participantsResponse/',
       selected: [], // Must be an array reference!,
       showDirective: undefined,
       showQuestions: false,
       instruccionData: {user_instructions: '', contact_info: '', thanks: ' '},
-      showThanksMessage: false
+      showThanksMessage: false,
+      isLoading: true
 
     }
   },
@@ -154,11 +159,13 @@ export default {
       this.instruccionData.user_instructions = result.data[0].user_instructions
       this.instruccionData.contact_info = result.data[0].contact_info
       this.instruccionData.thanks = result.data[0].thanks
+      this.isLoading = false
     }, error => {
       console.error(error)
       console.error(i18n.tc('message.error_consuming_service_instructions'))
       console.error('Service path:' + this.urlGetItems)
       alert(i18n.tc('message.error_consuming_service'))
+      this.isLoading = false
     }
     )
   },
@@ -171,11 +178,17 @@ export default {
       // do nothing
     },
     clone (obj) {
-      var outpurArr = []
+      // var outpurArr = []
+      var outputObj = {}
       for (var i in obj) {
-        outpurArr[i] = typeof (obj[i]) === 'object' ? this.clone(obj[i]) : obj[i]
+        // outpurArr[i] = typeof (obj[i]) === 'object' ? this.clone(obj[i]) : obj[i]
+        if (typeof (obj[i]) === 'object') {
+          Object.defineProperty(outputObj, this.clone(obj[i]), {value: obj[i], writable: true, enumerable: true, configurable: true})
+        } else {
+          Object.defineProperty(outputObj, i, {value: obj[i], writable: true, enumerable: true, configurable: true})
+        }
       }
-      return outpurArr
+      return outputObj
     },
     starForm: function () {
       alert(JSON.stringify(this.participantResponse))
@@ -186,7 +199,7 @@ export default {
     },
     changeDirectiveVisibility: function (value) {
       this.showDirective = value
-      this.participantResponse.isDirective = this.showDirective
+      this.participantResponse.is_directive = this.showDirective
       // Si no es directivo se borra la posicion para que la persona tenga q seleccionar nuevamente
       if (this.showDirective === false) {
         this.participantResponse.position = undefined
@@ -198,10 +211,24 @@ export default {
       // Se activa la visualizacion de las preguntas
       this.showQuestions = true
     },
-    processEnd: function () {
+    processEnd: function (responsesList) {
       // Cambia la bandera que controla si se muestra el mensaje de fin de encuesta
-      this.showThanksMessage = true
+      this.isLoading = true
       console.log('Emitio guardado')
+      console.log('Que se va a enviar')
+      console.log(JSON.stringify(this.participantResponse))
+      this.participantResponse.responsesList = responsesList
+      console.log(JSON.stringify(this.participantResponse))
+      // console.log(this.$parent.participantResponse.customized_instrument_id)
+      axios.post(this.urlSaveSubItems, this.participantResponse).then(response => {
+        console.log('Guardado de respuestas en BD fue correcto')
+        this.showThanksMessage = true
+        this.isLoading = false
+      }).catch(function (error) {
+        console.error(error)
+        alert(i18n.tc('message.error_consuming_save_service'))
+        this.isLoading = false
+      })
     }
   },
   filters: {

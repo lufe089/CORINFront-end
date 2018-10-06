@@ -180,7 +180,7 @@ export default {
           // TODO hace aqui un arreglo pq si ya existe solo hay que cargar los datos
           this.prepareItemResponses()
           console.info('Consultados datos de los items')
-          console.info(JSON.stringify(this.dataLevelTwo))
+          // console.info(JSON.stringify(this.dataLevelTwo))
           // Solo para control alert(JSON.stringify(this.dataLevelTwo))
         }, error => {
           console.error(error)
@@ -232,7 +232,8 @@ export default {
           itemResponse.item = itemLevel2.responsesList[i]
           itemResponse.answer_numeric = null
           itemResponse.isFilled = false
-          // this.createFakeResponses(itemResponse)
+          itemResponse.is_complete = true
+          this.createFakeResponses(itemResponse)
           responsesSubItemsByCategory.push(itemResponse)
           this.responsesList.push(itemResponse)
         }
@@ -257,43 +258,7 @@ export default {
     saveItem2Responses () {
       console.log('Guardando ...')
       // Send a POST request
-      /* axios({
-        method: 'post',
-        url: 'http://127.0.0.1:8000/participantsResponse/',
-        data: {
-          data: this.$parent.participantResponse
-        }
-      }).then(response => {
-        alert('Contesto', response)
-      }, error => {
-        console.error(error)
-      }
-      ) */
-      // axios.post('http://127.0.0.1:8000/participantsResponse/', this.$parent.participantResponse)
-
-      /* axios.post('http://127.0.0.1:8000/company/', this.company).then(response => {
-        alert('Contesto', response)
-      }).catch(function (error) {
-        console.log(error)
-      }) */
-      console.log('Que se va a enviar')
-      var obj = {}
-      obj.position = 1
-      obj.area = 1
-      obj.email = 'prueba@prueba.com'
-      obj.is_directive = true
-      obj.is_complete = false
-      obj.customized_instrument_id = 1
-      obj.responsesList = this.responsesList
-      this.$parent.participantResponse.responsesList = this.responsesList
-      console.log(JSON.stringify(this.$parent.participantResponse[0]))
-      axios.post(this.urlSaveSubItems, obj).then(response => {
-        console.log('Guardado de respuestas en BD fue correcto')
-        // Se emite mensaje al componente padre para notificar que se termino
-        this.$emit('item-level2-table:change')
-      }).catch(function (error) {
-        console.log(error)
-      })
+      this.$emit('item-level2-table:change', this.responsesList)
     },
     onSubmit (evt) {
       // the page doesn’t reload when the form is submitted,

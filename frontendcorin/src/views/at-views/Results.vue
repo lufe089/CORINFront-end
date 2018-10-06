@@ -62,19 +62,25 @@
             </b-card>
           </b-col>
         </b-row>
-        </div>
-      <!-- Tabla con resultados -->
-      <b-row v-show="!noResponses">
-        <b-col md="4">
-          <c-table-results :caption="$t('message.resultado_dimensiones')" hover :items="scoresByDimensions"></c-table-results>
-        </b-col><!--/.col-->
-        <b-col md="4">
-          <c-table-results :caption="$t('message.resultado_componentes')"  hover :items="scoresByComponents"></c-table-results>
-        </b-col><!--/.col-->
-        <b-col md="4">
-          <c-table-results :caption="$t('message.resultado_categorias')"  hover :items="scoresByCategories"></c-table-results>
-        </b-col><!--/.col-->
-      </b-row><!--/.row-->
+        <!-- Tabla con resultados -->
+        <b-row>
+          <b-col md="4">
+            <c-table-results :caption="$t('message.resultado_dimensiones')" hover :items="scoresByDimensions"></c-table-results>
+          </b-col><!--/.col-->
+          <b-col md="4">
+            <c-table-results :caption="$t('message.resultado_componentes')"  hover :items="scoresByComponents"></c-table-results>
+          </b-col><!--/.col-->
+          <b-col md="4">
+            <c-table-results :caption="$t('message.resultado_categorias')"  hover  :items="scoresByCategories"></c-table-results>
+          </b-col><!--/.col-->
+        </b-row><!--/.row-->
+        <!-- Tabla que muestra los participantes que han contestado -->
+        <b-row>
+          <b-col md="12">
+             <!--<c-table-results :caption="$t('message.resultado_componentes')"  hover :items="responsesHeadersList"></c-table-results> -->
+          </b-col>
+        </b-row>
+      </div>
     </div>
   </div>
 </template>

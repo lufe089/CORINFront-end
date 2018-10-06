@@ -54,14 +54,18 @@ export default {
       fields: [
         {key: 'name', label: 'Nombre', sortable: true, class: 'widthColumn'},
         {key: 'promedio', sortable: true}
-      ],
+        /* {key: 'email', label: 'Email', sortable: true, class: 'widthColumn'},
+        {key: 'comments', label: 'Comentarios', sortable: true},
+        {key: 'area', label: 'Area', sortable: true},
+        {key: 'is_directive', label: 'Es directivo?', sortable: true},
+        {key: 'posicion', label: 'Es directivo?', sortable: true},
+        {key: 'promedio', sortable: true} */ ],
       currentPage: 1,
       perPage: 7,
       totalRows: 0
     }
   },
-  created () {
-  },
+  created: { },
   methods: {
     getBadge (status) {
       return status === 'Active' ? 'success'
