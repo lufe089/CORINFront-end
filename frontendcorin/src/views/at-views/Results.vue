@@ -210,7 +210,7 @@ export default {
         var acumDimension = 0
         for (var j = 0; j < this.responsesList.length; j++) {
           var response = this.responsesList[j]
-          if (response.item.dimension.id === agrupador.id && response.answer_numeric != null) {
+          if (response.item.dimension_id === agrupador.id && response.answer_numeric != null) {
             contAgrupador = 1 + contAgrupador
             acumDimension = acumDimension + response.answer_numeric
           }
@@ -230,7 +230,7 @@ export default {
         var acumCategoria = 0
         for (var t = 0; t < this.responsesList.length; t++) {
           var responseCategoria = this.responsesList[t]
-          if (responseCategoria.item.category.id === agrupadorCategoria.id && responseCategoria.answer_numeric != null) {
+          if (responseCategoria.item.category_id === agrupadorCategoria.id && responseCategoria.answer_numeric != null) {
             contCategoria = 1 + contCategoria
             acumCategoria = acumCategoria + responseCategoria.answer_numeric
           }
@@ -263,8 +263,8 @@ export default {
         for (var o = 0; o < this.responsesList.length; o++) {
           var responseComponent = this.responsesList[o]
           // El criterio tiene componentes
-          if (responseComponent.item.component != null) {
-            if (responseComponent.item.component.id === agrupadorComponente.id && responseComponent.answer_numeric != null) {
+          if (responseComponent.item.component_id != null) {
+            if (responseComponent.item.component_id === agrupadorComponente.id && responseComponent.answer_numeric != null) {
               contComponente = 1 + contComponente
               acumComponente = acumComponente + responseComponent.answer_numeric
             }
@@ -358,6 +358,8 @@ export default {
       // Cursor
       chart.cursor = new am4charts.XYCursor()
       chart.cursor.behavior = 'none'
+      chart.scrollbarX = new am4core.Scrollbar()
+      chart.scrollbarY = new am4core.Scrollbar()
 
       // Export the chart
       chart.exporting.menu = new am4core.ExportMenu()

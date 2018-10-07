@@ -232,7 +232,7 @@ export default {
           itemResponse.answer_numeric = null
           itemResponse.isFilled = false
           itemResponse.is_complete = true
-          this.createFakeResponses(itemResponse)
+          // this.createFakeResponses(itemResponse)
           responsesSubItemsByCategory.push(itemResponse)
           this.responsesList.push(itemResponse)
         }
@@ -256,15 +256,12 @@ export default {
     },
     saveItem2Responses () {
       console.log('Guardando ...')
-      // Send a POST request
+      // Se emite el mensaje para que el padre se encargue de guardar en la base de datos
       this.$emit('item-level2-table:change', this.responsesList)
     },
     onSubmit (evt) {
       // the page doesn’t reload when the form is submitted,
       evt.preventDefault()
-
-      // Asocia las respuestas obtenidas a la respuesta del participante
-      this.$parent.participantResponse.responsesList = this.responsesList
       // this.$emit('saveResponses')
       this.saveItem2Responses()
     },

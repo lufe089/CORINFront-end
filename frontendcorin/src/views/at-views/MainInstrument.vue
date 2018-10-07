@@ -215,8 +215,6 @@ export default {
       // Cambia la bandera que controla si se muestra el mensaje de fin de encuesta
       this.isLoading = true
       console.log('Emitio guardado')
-      console.log('Que se va a enviar')
-      console.log(JSON.stringify(this.participantResponse))
       this.participantResponse.responsesList = responsesList
       console.log(JSON.stringify(this.participantResponse))
       // console.log(this.$parent.participantResponse.customized_instrument_id)
