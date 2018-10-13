@@ -3,9 +3,9 @@
     <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{caption}}</div>
     <hr>
     <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='items' :fields='fields' :current-page='currentPage' :per-page='perPage'>
-    <template slot='promedio' slot-scope='data'>
-      <strong>{{data.item.promedio}}</strong>
-      <b-progress height={} class="progress-xs my-0" variant="info" :value= 'calculateProgress(data.item.promedio)'/>
+    <template slot='average' slot-scope='data'>
+      <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
+      <b-progress height={} class="progress-xs my-0" variant="info" :value= "data.item.average" max="9"/>
     </template>
     </b-table>
     <nav>
@@ -53,7 +53,7 @@ export default {
     return {
       fields: [
         {key: 'name', label: 'Nombre', sortable: true, class: 'widthColumn'},
-        {key: 'promedio', sortable: true}
+        {key: 'average', label: 'Promedio', sortable: true}
         /* {key: 'email', label: 'Email', sortable: true, class: 'widthColumn'},
         {key: 'comments', label: 'Comentarios', sortable: true},
         {key: 'area', label: 'Area', sortable: true},
@@ -76,8 +76,8 @@ export default {
     getRowCount (items) {
       return items.length
     },
-    calculateProgress (promedio) {
-      return (promedio * 100) / 9
+    calculateProgress (average) {
+      return (average * 100) / 9
     }
   },
   components: {

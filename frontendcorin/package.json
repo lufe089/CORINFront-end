@@ -28,6 +28,7 @@
         "vue": "^2.5.16",
         "vue-chartjs": "^3.3.1",
         "vue-i18n": "^8.1.0",
+        "vue-numeric": "^2.3.0",
         "vue-router": "^3.0.1",
         "vue-tables-2": "^1.4.70"
     },

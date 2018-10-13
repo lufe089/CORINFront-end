@@ -15,21 +15,21 @@
         <b-col sm="12" md="12">
           <b-card :no-body="true">
             <b-card-body class="p-4 clearfix">
-              <div :class="calculateVariantResults('bg')" class=" h1 p-4 px-5 font-2xl mr-3 float-left">{{promedioGeneral}} </div>
+              <div :class="calculateVariantResults('bg')" class=" h1 p-4 px-5 font-2xl mr-3 float-left">{{overall_average}} </div>
               <div>
                 <div class="h2 text-primary mb-0 mt-2" >
-                  <div v-show="promedioGeneral>=7">{{$t("message.resultado_alta_tendencia")}}
+                  <div v-show="overall_average>=7">{{$t("message.resultado_alta_tendencia")}}
                     <div class="text-muted font-weight-bold font-xs"> Promedio entre 7 y 9 </div>
                   </div>
-                  <div v-show="promedioGeneral<=3">{{$t("message.resultado_baja_tendencia")}}
+                  <div v-show="overall_average<=3">{{$t("message.resultado_baja_tendencia")}}
                     <div class="text-muted font-weight-bold font-xs"> Promedio entre 1 y 3 </div>
                   </div>
-                  <div v-show="promedioGeneral> 3 && promedioGeneral< 7">{{$t("message.resultado_media_tendencia")}}
+                  <div v-show="overall_average> 3 && overall_average< 7">{{$t("message.resultado_media_tendencia")}}
                     <div class="text-muted font-weight-bold font-xs"> Promedio entre 4 y 6 </div>
                   </div>
                 </div>
                 <b-progress height={} class="progress-xs my-1" :variant=calculateVariantResults()  :max=max :value="promedioBarra"/>
-                <div class="text-muted font-weight-bold font-s"> Numero de respuestas: {{responsesHeadersList.length}}
+                <div class="text-muted font-weight-bold font-s"> Numero de respuestas: {{n}}
                   <div class="float-right"><small class="text-muted">Valor mínimo 1  -- Valor máximo 9 </small></div>
                 </div>
               </div>
@@ -65,13 +65,13 @@
         <!-- Tabla con resultados -->
         <b-row>
           <b-col md="4">
-            <c-table-results :caption="$t('message.resultado_dimensiones')" hover :items="scoresByDimensions"></c-table-results>
+            <c-table-results :caption="$t('message.resultado_dimensiones')" hover :items="average_by_dimensions"></c-table-results>
           </b-col><!--/.col-->
           <b-col md="4">
-            <c-table-results :caption="$t('message.resultado_componentes')"  hover :items="scoresByComponents"></c-table-results>
+            <c-table-results :caption="$t('message.resultado_componentes')"  hover :items="average_by_components"></c-table-results>
           </b-col><!--/.col-->
           <b-col md="4">
-            <c-table-results :caption="$t('message.resultado_categorias')"  hover  :items="scoresByCategories"></c-table-results>
+            <c-table-results :caption="$t('message.resultado_categorias')"  hover  :items="average_by_categories"></c-table-results>
           </b-col><!--/.col-->
         </b-row><!--/.row-->
         <!-- Tabla que muestra los participantes que han contestado -->
@@ -109,88 +109,42 @@ export default {
       serviceResult: {},
       result: '',
       isSurveyVisible: false,
-      // parameters: BDData.parameters,
       urlResponses: BDData.apiURL + 'participantsResponse/',
-      urlDimensions: BDData.apiURL + 'dimensions/',
-      urlCategories: BDData.apiURL + 'categories/',
-      urlComponents: BDData.apiURL + 'components/',
+      urlAverageData: BDData.apiURL + 'averageFilters/',
       responsesList: [],
-      scoresByDimensions: [],
-      scoresByCategories: [],
-      scoresByComponents: [],
+      n: 0,
+      average_by_dimensions: [],
+      average_by_categories: [],
+      average_by_components: [],
+      categories_average_by_directives: [],
       errorConsultingData: false,
       noResponses: false,
       showResponsesSummaryTables: false, // Controla la visualizacion de las tablas que resumen los resultados por categoria dimension y componente
       responsesHeadersList: [],
-      chartsVisualParameters: [],
-      promedioGeneral: 0.0,
+      overall_average: 0.0,
       promedioBarra: 0.0,
       max: 9,
       isLoading: true
     }
   },
   created () {
-    axios(
+    this.consultAverageData()
+    /* axios(
       { // Este servicio retorna una arreglo de un solo elemento
         method: 'GET', 'url': this.urlResponses
       }).then(result => {
       console.info('LOG: consultó las respuestas')
       // Se verifica que halla al menos un valor en la respuesta
       if (result.data.length > 0) {
-        this.responsesHeadersList = result.data
+        this.nlt.data
         for (var i = 0; i < result.data.length; i++) {
           Array.prototype.push.apply(this.responsesList, result.data[i].responsesList)
         }
+        // Se consultan los datos del promedio
+        this.consultAverageData()
       } else {
         this.noResponses = true
       }
-      axios.get(this.urlDimensions).then(response => {
-        this.scoresByDimensions = response.data
-        console.info('LOG: consultó lista de dimensiones')
-        axios.get(this.urlCategories).then(response => {
-          this.scoresByCategories = response.data
-          console.info('LOG: consultó lista de categorias')
-          axios.get(this.urlComponents).then(response => {
-            this.scoresByComponents = response.data
-            console.info('LOG: consultó lista de componentes')
-            this.prepareData()
-            this.drawChart(this.scoresByDimensions, 'Dimensiones', this.$refs.chartByDimensions, i18n.tc('message.rendimiento_dimension'))
-            // this.drawColumnChart(this.scoresByDimensions, 'Dimensiones', this.$refs.chartByDimensionsFull, i18n.tc('message.rendimiento_dimension'))
-            this.drawChart(this.scoresByComponents, 'Componentes', this.$refs.chartByComponents, i18n.tc('message.rendimiento_componente'))
-            this.drawRadarChart(this.scoresByCategories, 'Categorias', this.$refs.chartByCategories, i18n.tc('message.rendimiento_categoria'))
-            // Se cambia la bandera que controla si se muestran las tablas de resultados para indicar que si se pueden mostrar
-            this.showResponsesSummaryTables = true
-            this.isLoading = false
-            // Se ordenan los resultados para mostrarlos ordenados en las tablas que resumen los resultados
-            this.sortJSON(this.scoresByDimensions, 'promedio', 'asc')
-            this.sortJSON(this.scoresByComponents, 'promedio', 'asc')
-            this.sortJSON(this.scoresByCategories, 'promedio', 'asc')
-          }, error => {
-            // FIXMEscoresByComponents
-            console.error(error)
-            console.error(i18n.tc('message.error_consuming_service_dimensions', [this.urlDimensions]))
-            console.error('Service path:' + this.urlCategories)
-            alert(i18n.tc('message.error_consuming_service'))
-            this.errorConsultingData = true
-            this.isLoading = false
-          })
-        }, error => {
-          // FIXME
-          console.error(error)
-          console.error(i18n.tc('message.error_consuming_service_dimensions', this.urlDimensions))
-          console.error('Service path:' + this.urlCategories)
-          alert(i18n.tc('message.error_consuming_service'))
-          this.isLoading = false
-        })
-      }, error => {
-        // FIXME
-        console.error(error)
-        console.error(i18n.tc('message.error_consuming_service_dimensions', this.urlDimensions))
-        console.error('Service path:' + this.urlDimensions)
-        alert(i18n.tc('message.error_consuming_service'))
-        this.errorConsultingData = true
-        this.isLoading = false
-      })
     }, error => {
       console.error(error)
       console.error(i18n.tc('message.error_consuming_service_instructions'))
@@ -199,85 +153,46 @@ export default {
       this.errorConsultingData = true
       this.isLoading = false
     }
-    )
+    ) */
   },
   methods: {
-    prepareData: function () {
-      // Calculo el score por dimensiones
-      for (var i = 0; i < this.scoresByDimensions.length; i++) {
-        var agrupador = this.scoresByDimensions[i]
-        var contAgrupador = 0
-        var acumDimension = 0
-        for (var j = 0; j < this.responsesList.length; j++) {
-          var response = this.responsesList[j]
-          if (response.item.dimension_id === agrupador.id && response.answer_numeric != null) {
-            contAgrupador = 1 + contAgrupador
-            acumDimension = acumDimension + response.answer_numeric
-          }
-        }
-        if (contAgrupador > 0 && acumDimension > 0) {
-          agrupador.promedio = (acumDimension / contAgrupador).toFixed(2)
-          agrupador.cantItems = contAgrupador
+    consultAverageData: function () {
+      axios.get(this.urlAverageData).then(response => {
+        var averageChartsData = response.data
+        console.info('LOG: consultó average data')
+        if (averageChartsData['n'] > 0) {
+          this.overall_average = averageChartsData['overall_average'].toFixed(2)
+          this.n = averageChartsData['n']
+          this.promedioBarra = averageChartsData['overall_average']
+          this.average_by_categories = averageChartsData['average_by_categories']
+          this.average_by_dimensions = averageChartsData['average_by_dimensions']
+          this.average_by_components = averageChartsData['average_by_components']
+          this.categories_average_by_directives = averageChartsData['categories_average_by_directives']
+          this.categories_average_by_no_directives = averageChartsData['categories_average_by_no_directives']
+          // this.average_by_categories = averageChartsData['average_by_categories']
+          this.drawChart(this.average_by_dimensions, 'Dimensiones', this.$refs.chartByDimensions, i18n.tc('message.rendimiento_dimension'))
+          // this.drawColumnChart(this.average_by_dimensions, 'Dimensiones', this.$refs.chartByDimensionsFull, i18n.tc('message.rendimiento_dimension'))
+          this.drawChart(this.average_by_components, 'Componentes', this.$refs.chartByComponents, i18n.tc('message.rendimiento_componente'))
+          this.drawRadarChart('Categorias', this.$refs.chartByCategories, i18n.tc('message.rendimiento_categoria'))
+          // Se cambia la bandera que controla si se muestran las tablas de resultados para indicar que si se pueden mostrar
+          this.showResponsesSummaryTables = true
+          this.isLoading = false
+          // Se ordenan los resultados para mostrarlos ordenados en las tablas que resumen los resultados
+          // this.sortJSON(this.average_by_dimensions, 'average', 'asc')
+          // this.sortJSON(this.average_by_components, 'average', 'asc')
+          // this.sortJSON(this.average_by_categories, 'average', 'asc')
         } else {
-          agrupador.promedio = 0
-          agrupador.cantItems = 0
+          this.noResponses = true
         }
-      }
-      // Calculo del score por categorias
-      for (var s = 0; s < this.scoresByCategories.length; s++) {
-        var agrupadorCategoria = this.scoresByCategories[s]
-        var contCategoria = 0
-        var acumCategoria = 0
-        for (var t = 0; t < this.responsesList.length; t++) {
-          var responseCategoria = this.responsesList[t]
-          if (responseCategoria.item.category_id === agrupadorCategoria.id && responseCategoria.answer_numeric != null) {
-            contCategoria = 1 + contCategoria
-            acumCategoria = acumCategoria + responseCategoria.answer_numeric
-          }
-        }
-        if (contCategoria > 0 && acumCategoria > 0) {
-          agrupadorCategoria.promedio = (acumCategoria / contCategoria).toFixed(2)
-          agrupadorCategoria.cantItems = contCategoria
-        } else {
-          agrupadorCategoria.promedio = 0
-          agrupadorCategoria.cantItems = 0
-        }
-      }
-      // Calculo el promedio general
-      for (var m = 0; m < this.responsesList.length; m++) {
-        var responsePromedio = this.responsesList[m]
-        // Promedio general
-        this.promedioGeneral = this.promedioGeneral + responsePromedio.answer_numeric
-      }
-      if (this.responsesList.length > 0) {
-        var calculo = (this.promedioGeneral / this.responsesList.length)
-        this.promedioBarra = calculo
-        calculo = calculo.toFixed(2)
-        this.promedioGeneral = calculo
-      }
-      // Calulo de score por componente
-      for (var c = 0; c < this.scoresByComponents.length; c++) {
-        var agrupadorComponente = this.scoresByComponents[c]
-        var contComponente = 0
-        var acumComponente = 0
-        for (var o = 0; o < this.responsesList.length; o++) {
-          var responseComponent = this.responsesList[o]
-          // El criterio tiene componentes
-          if (responseComponent.item.component_id != null) {
-            if (responseComponent.item.component_id === agrupadorComponente.id && responseComponent.answer_numeric != null) {
-              contComponente = 1 + contComponente
-              acumComponente = acumComponente + responseComponent.answer_numeric
-            }
-          }
-        }
-        if (contComponente > 0 && acumComponente > 0) {
-          agrupadorComponente.promedio = (acumComponente / contComponente).toFixed(2)
-          agrupadorComponente.cantItems = contComponente
-        } else {
-          agrupadorComponente.promedio = 0
-          agrupadorComponente.cantItems = 0
-        }
-      }
+      }, error => {
+        // FIXME
+        console.error(error)
+        console.error(i18n.tc('message.error_consuming_service', this.urlAverageData))
+        console.error('Service path:' + this.urlAverageData)
+        alert(i18n.tc('message.error_consuming_service'))
+        this.errorConsultingData = true
+        this.isLoading = false
+      })
     },
     drawChart: function (data, label, div, titleText) {
       // we will create the chart here
@@ -334,10 +249,10 @@ export default {
       chart.data = data
       /* Series */
       var series = chart.series.push(new am4charts.ColumnSeries())
-      series.dataFields.valueX = 'promedio'
+      series.dataFields.valueX = 'average'
       series.dataFields.categoryY = 'name'
       series.columns.template.tooltipText = '{categoryY}\nValor: {valueX}'
-      series.name = 'Rendimiento por ' + label + ' (n = ' + this.responsesHeadersList.length + ')'
+      series.name = 'Rendimiento por ' + label + ' (n = ' + this.n + ')'
       var columnTemplate = series.columns.template
       columnTemplate.height = am4core.percent(25)
       // Preload style for doing circular bulltets
@@ -367,30 +282,54 @@ export default {
       // And, for a good measure, let's add a legend
       chart.legend = new am4charts.Legend()
     },
-    drawRadarChart: function (data, label, div, titleText) {
+    drawRadarChart: function (label, div, titleText) {
       let chart = am4core.create(div, am4charts.RadarChart)
-      chart.data = data
+      // Organiza la categorias para que se pinten todos enel mismo orden y se vea bien el area
+      this.sortJSON(this.categories_average_by_no_directives, 'name', 'asc')
+      this.sortJSON(this.categories_average_by_directives, 'name', 'asc')
+      this.sortJSON(this.average_by_categories, 'name', 'asc')
+      chart.data = this.average_by_categories
       chart.padding(10, 10, 10, 10)
       let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis())
       categoryAxis.renderer.grid.template.location = 0
       categoryAxis.dataFields.category = 'name'
       // categoryAxis.title.text = label + ' ( ' + (data.length) + ' ) '
-      categoryAxis.renderer.minGridDistance = 10
+      categoryAxis.renderer.minGridDistance = 5
       // Values
       let valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
       valueAxis.min = 0
       valueAxis.max = 9
-
-      let axisTooltip = valueAxis.tooltip
-      axisTooltip.value = '{categoryX}\nValor: {valueY}'
       let series = chart.series.push(new am4charts.RadarSeries())
+      // chart.toolTip = axisTooltip
       series.dataFields.categoryX = 'name'
-      series.dataFields.valueY = 'promedio'
+      series.dataFields.valueY = 'average'
       // Le pone fondo al area
       series.fillOpacity = 0.1
-      series.name = 'Rendimiento por ' + label + ' (n = ' + this.responsesHeadersList.length + ')'
+      series.name = 'Todos (n =' + this.n + ')'
       // Da el grosor de la linea
       series.strokeWidth = 4
+
+      // Series no directores
+      if (this.categories_average_by_no_directives.length > 0) {
+        let seriesNoDirectors = chart.series.push(new am4charts.RadarSeries())
+        seriesNoDirectors.data = this.categories_average_by_no_directives
+        seriesNoDirectors.dataFields.categoryX = 'name'
+        seriesNoDirectors.dataFields.valueY = 'average'
+        seriesNoDirectors.strokeWidth = 4
+        seriesNoDirectors.name = 'No directores (n = ' + this.categories_average_by_no_directives[0].n + ')'
+        seriesNoDirectors.bullets.push(new am4charts.CircleBullet())
+      }
+      // Series directores
+      if (this.categories_average_by_directives.length > 0) {
+        let seriesDirectors = chart.series.push(new am4charts.RadarSeries())
+        seriesDirectors.data = this.categories_average_by_directives
+        seriesDirectors.dataFields.categoryX = 'name'
+        seriesDirectors.dataFields.valueY = 'average'
+        seriesDirectors.strokeWidth = 4
+        seriesDirectors.name = 'Directores (n = ' + this.categories_average_by_directives[0].n + ')'
+        seriesDirectors.bullets.push(new am4charts.CircleBullet())
+      }
+
       chart.legend = new am4charts.Legend()
       // Le pone bolitas en cada cambio de valor
       series.bullets.push(new am4charts.CircleBullet())
@@ -421,19 +360,6 @@ export default {
       valueAxis.max = 9
       valueAxis.calculateTotals = false
       valueAxis.strictMinMax = true
-
-      /* Linea de referencia
-      var middleLine = chart.plotContainer.createChild(am4core.Line)
-      middleLine.strokeOpacity = 1
-      middleLine.stroke = am4core.color('#DC3545')
-      middleLine.strokeDasharray = '2,2'
-      middleLine.align = 'center'
-      middleLine.zIndex = 1
-      middleLine.adapter.add('y2', function (y2, target) {
-        return target.parent.pixelHeight
-      })
-
-      */
       // Customize labels appareance
       valueAxis.renderer.labels.template.fill = am4core.color('#000000')
       valueAxis.renderer.labels.template.fontSize = 15
@@ -453,10 +379,10 @@ export default {
       chart.data = data
       /* Series */
       var series = chart.series.push(new am4charts.ColumnSeries())
-      series.dataFields.valueY = 'promedio'
+      series.dataFields.valueY = 'average'
       series.dataFields.categoryX = 'name'
       series.columns.template.tooltipText = '{categoryX}\nValor: {valueY}'
-      series.name = 'Rendimiento por ' + label + ' (n = ' + this.responsesHeadersList.length + ')'
+      series.name = 'Rendimiento por ' + label + ' (n = ' + this.n + ')'
       var columnTemplate = series.columns.template
       columnTemplate.height = am4core.percent(25)
       // Label
@@ -475,9 +401,9 @@ export default {
     },
     calculateVariantResults: function (type) {
       var variant = ''
-      if (this.promedioGeneral >= 7) {
+      if (this.overall_average >= 7) {
         variant = 'success'
-      } else if (this.promedioGeneral <= 3) {
+      } else if (this.overall_average <= 3) {
         variant = 'danger'
       } else {
         variant = 'warning'

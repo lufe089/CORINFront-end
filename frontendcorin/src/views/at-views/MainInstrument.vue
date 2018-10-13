@@ -127,7 +127,7 @@
 <script>
 
 import BDData from './_BDData.js'
-import itemLevel2Table from './ItemLevel2Table.vue'
+// import itemLevel2Table from './ItemLevel2Table.vue'
 import i18n from '../../lang/config'
 import axios from 'axios'
 
@@ -171,7 +171,10 @@ export default {
   },
   components: {
     /* tag, component name */
-    itemLevel2Table
+    // itemLevel2Table()
+    // dynamic import wrapped in a function
+    // 'item-level2-table': () => import('./ItemLevel2Table')
+    itemLevel2Table: () => import('./ItemLevel2Table')
   },
   methods: {
     click () {

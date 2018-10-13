@@ -3,13 +3,17 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
+import VueNumeric from 'vue-numeric'
 import App from './App'
 import router from './router'
 import i18n from './lang/config.js'
 
 Vue.use(BootstrapVue)
-    // Vue.http.headers.common['Access-Control-Allow-Origin'] = '*'
-    // Vue.http.headers.common['Access-Control-Request-Method'] = '*'
+    // Plugin para usar formateador de numeros 
+Vue.use(VueNumeric)
+
+// Vue.http.headers.common['Access-Control-Allow-Origin'] = '*'
+// Vue.http.headers.common['Access-Control-Request-Method'] = '*'
 
 /* eslint-disable no-new */
 new Vue({
