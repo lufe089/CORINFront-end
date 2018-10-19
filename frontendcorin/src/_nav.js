@@ -29,6 +29,11 @@ export default {
             url: '/result',
             icon: 'fa fa-pie-chart'
         },
+        {
+            name: 'Clientes',
+            url: '/clients',
+            icon: 'fa icon-call-out'
+        },
         /*{
             title: true,
             name: 'Satisfaction evaluation',

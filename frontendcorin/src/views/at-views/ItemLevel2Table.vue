@@ -5,7 +5,8 @@
     <!--<div class="loading">Loading&#8230;</div>-->
     <b-form @submit="onSubmit">
       <div v-for="categoryAndItems in responsesByCategoriesList" :key="categoryAndItems.id">
-       <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='categoryAndItems.responsesByCategory' :fields='fields' :current-page='currentPage' :per-page='perPage' caption-top>
+       <!-- Tabla -->
+        <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='categoryAndItems.responsesByCategory' :fields='fields' :current-page='currentPage' :per-page='perPage' caption-top>
         <template slot="table-caption">
         <!-- Progress section -->
         <div class='float-right'>
@@ -182,14 +183,14 @@ export default {
           // console.info(JSON.stringify(this.dataLevelTwo))
           // Solo para control alert(JSON.stringify(this.dataLevelTwo))
         }, error => {
-          console.error(error)
+          console.error(JSON.stringify(error))
           console.error(i18n.tc('message.error_consuming_service_detail_categories'))
           console.error('Service path:' + this.urlGetCategories)
           alert(i18n.tc('message.error_consuming_service'))
           this.isLoading = false
         })
       }, error => {
-        console.error(error)
+        console.error(JSON.stringify(error))
         console.error(i18n.tc('message.error_consuming_service_detail_items'))
         console.error('Service path:' + this.urlGetItems)
         alert(i18n.tc('message.error_consuming_service'))

@@ -27,7 +27,17 @@ export default {
                 text: 'No directivo'
             }
 
-        ]
+        ],
+        yes_no: [{
+                value: true,
+                text: 'Si'
+            },
+            {
+                value: false,
+                text: 'No'
+            }
+
+        ],
     },
     appliesLikertOptions: [
         { text: '1', value: 1 },
@@ -50,5 +60,19 @@ export default {
         is_complete: false,
         responsesList: [],
         customized_instrument_id: 1
-    }
+    },
+    validation_attr_dictionnary: {
+        // Contiene el nombre de los atributos de los campos que se muestran cuando hay mensajes de error
+        en: {
+            attributes: {
+            constitutionYear: 'pedro Address'
+            }
+        },
+        es: {  
+            attributes: {
+            constitutionYear: 'البريد الاليكتروني'
+            }
+        }
+    },
+    pageOptions: [ 5, 10, 15, 40 ],
 }

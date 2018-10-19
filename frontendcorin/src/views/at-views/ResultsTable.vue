@@ -2,7 +2,27 @@
   <b-card class="card-body">
     <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{caption}}</div>
     <hr>
-    <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='items' :fields='fields' :current-page='currentPage' :per-page='perPage'>
+    <b-card>
+    <b-row>
+      <b-col md="8" sm="12" class="my-1">
+          <b-form-group :label="$t('message.filtro')" class="mb-0">
+            <b-input-group>
+              <b-form-input v-model="filter" :placeholder="$t('message.type_to_search')" />
+              <b-input-group-append>
+                <b-btn :disabled="!filter" @click="filter = ''">{{$t('message.clear')}}</b-btn>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
+        </b-col>
+        <b-col md="4" sm="12" class="my-1">
+          <b-form-group :label="$t('message.peer_page')" class="mb-0">
+            <b-form-select :options="pageOptions" v-model="perPage" />
+          </b-form-group>
+        </b-col>
+      </b-row>
+    </b-card>
+    <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='items' :fields='fields' :current-page='currentPage' :per-page="perPage"
+        :filter="filter" @filtered="onFiltered">
     <template slot='average' slot-scope='data'>
       <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
       <b-progress height={} class="progress-xs my-0" variant="info" :value= "data.item.average" max="9"/>
@@ -61,8 +81,10 @@ export default {
         {key: 'posicion', label: 'Es directivo?', sortable: true},
         {key: 'promedio', sortable: true} */ ],
       currentPage: 1,
-      perPage: 7,
-      totalRows: 0
+      perPage: 15,
+      totalRows: 0,
+      pageOptions: [ 5, 10, 15, 40 ],
+      filter: null
     }
   },
   created: { },
@@ -78,6 +100,11 @@ export default {
     },
     calculateProgress (average) {
       return (average * 100) / 9
+    },
+    onFiltered (filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
     }
   },
   components: {

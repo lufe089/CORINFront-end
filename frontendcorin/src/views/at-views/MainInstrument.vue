@@ -51,7 +51,7 @@
                   <b-col md="6">
                     <b-form-group :description="$t('message.please_enter_email')" :label="$t('message.email')" label-for="basicEmail" :label-cols="2"
                       :horizontal="true">
-                      <b-form-input id="basicEmail" type="email" placeholder=" " v-model.lazy="participantResponse.email" required></b-form-input>
+                      <b-form-input id="basicEmail" type="email" placeholder=" " v-model.lazy="participantResponse.email" required ></b-form-input>
                     </b-form-group>
                   </b-col>
                   <b-col md="6">
@@ -161,7 +161,7 @@ export default {
       this.instruccionData.thanks = result.data[0].thanks
       this.isLoading = false
     }, error => {
-      console.error(error)
+      console.error(JSON.stringify(error))
       console.error(i18n.tc('message.error_consuming_service_instructions'))
       console.error('Service path:' + this.urlGetItems)
       alert(i18n.tc('message.error_consuming_service'))

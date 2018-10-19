@@ -20,6 +20,7 @@ import Router from 'vue-router'
 import Full from '@/containers/Full'
 import MainInstrument from '@/views/at-views/MainInstrument'
 import Results from '@/views/at-views/Results.vue'
+import ClientManager from '@/views/at-views/ClientManager.vue'
 
 Vue.use(Router)
 
@@ -42,7 +43,13 @@ export default new Router({
                 path: 'result',
                 name: 'Resultados',
                 component: Results
-            }
+            },
+            {
+                path: 'clients',
+                name: 'Clientes',
+                component: ClientManager
+            },
+
         ]
     }]
 })

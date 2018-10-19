@@ -41,9 +41,21 @@
           <b-col sm="12" md="12">
             <b-card >
             <div class="chart-wrapper">
-              <div class="chartStyle" ref="chartByCategories"> </div>
+              <div class="radarStyle" ref="chartByCategories"> </div>
             </div>
-          </b-card>
+            </b-card>
+          </b-col>
+        </b-row>
+        <b-row>
+          <!-- Resultados por categorias -->
+          <b-col md="4"  sm="12">
+            <c-table-results :caption="$t('message.resultado_categorias')"  hover  :items="average_by_categories"></c-table-results>
+          </b-col>
+          <b-col md="4"  sm="12">
+            <c-table-results :caption="$t('message.resultado_categorias_directivos')"  hover  :items="categories_average_by_directives"></c-table-results>
+          </b-col>
+          <b-col md="4"  sm="12">
+            <c-table-results :caption="$t('message.resultado_categorias_no_directivos')"  hover  :items="categories_average_by_no_directives"></c-table-results>
           </b-col>
         </b-row>
         <b-row>
@@ -62,16 +74,13 @@
             </b-card>
           </b-col>
         </b-row>
-        <!-- Tabla con resultados -->
+        <!-- Tabla con resultados dimensiones y componentes -->
         <b-row>
-          <b-col md="4">
+          <b-col md="6">
             <c-table-results :caption="$t('message.resultado_dimensiones')" hover :items="average_by_dimensions"></c-table-results>
           </b-col><!--/.col-->
-          <b-col md="4">
+          <b-col md="6">
             <c-table-results :caption="$t('message.resultado_componentes')"  hover :items="average_by_components"></c-table-results>
-          </b-col><!--/.col-->
-          <b-col md="4">
-            <c-table-results :caption="$t('message.resultado_categorias')"  hover  :items="average_by_categories"></c-table-results>
           </b-col><!--/.col-->
         </b-row><!--/.row-->
         <!-- Tabla que muestra los participantes que han contestado -->
@@ -117,6 +126,7 @@ export default {
       average_by_categories: [],
       average_by_components: [],
       categories_average_by_directives: [],
+      categories_average_by_no_directives: [],
       errorConsultingData: false,
       noResponses: false,
       showResponsesSummaryTables: false, // Controla la visualizacion de las tablas que resumen los resultados por categoria dimension y componente
@@ -186,7 +196,7 @@ export default {
         }
       }, error => {
         // FIXME
-        console.error(error)
+        console.error(JSON.stringify(error))
         console.error(i18n.tc('message.error_consuming_service', this.urlAverageData))
         console.error('Service path:' + this.urlAverageData)
         alert(i18n.tc('message.error_consuming_service'))
@@ -252,7 +262,7 @@ export default {
       series.dataFields.valueX = 'average'
       series.dataFields.categoryY = 'name'
       series.columns.template.tooltipText = '{categoryY}\nValor: {valueX}'
-      series.name = 'Rendimiento por ' + label + ' (n = ' + this.n + ')'
+      series.name = label + ' (n = ' + this.n + ')'
       var columnTemplate = series.columns.template
       columnTemplate.height = am4core.percent(25)
       // Preload style for doing circular bulltets
@@ -307,7 +317,7 @@ export default {
       series.fillOpacity = 0.1
       series.name = 'Todos (n =' + this.n + ')'
       // Da el grosor de la linea
-      series.strokeWidth = 4
+      series.strokeWidth = 3
 
       // Series no directores
       if (this.categories_average_by_no_directives.length > 0) {
@@ -315,7 +325,7 @@ export default {
         seriesNoDirectors.data = this.categories_average_by_no_directives
         seriesNoDirectors.dataFields.categoryX = 'name'
         seriesNoDirectors.dataFields.valueY = 'average'
-        seriesNoDirectors.strokeWidth = 4
+        seriesNoDirectors.strokeWidth = 2
         seriesNoDirectors.name = 'No directores (n = ' + this.categories_average_by_no_directives[0].n + ')'
         seriesNoDirectors.bullets.push(new am4charts.CircleBullet())
       }
@@ -325,7 +335,7 @@ export default {
         seriesDirectors.data = this.categories_average_by_directives
         seriesDirectors.dataFields.categoryX = 'name'
         seriesDirectors.dataFields.valueY = 'average'
-        seriesDirectors.strokeWidth = 4
+        seriesDirectors.strokeWidth = 2
         seriesDirectors.name = 'Directores (n = ' + this.categories_average_by_directives[0].n + ')'
         seriesDirectors.bullets.push(new am4charts.CircleBullet())
       }
@@ -382,7 +392,7 @@ export default {
       series.dataFields.valueY = 'average'
       series.dataFields.categoryX = 'name'
       series.columns.template.tooltipText = '{categoryX}\nValor: {valueY}'
-      series.name = 'Rendimiento por ' + label + ' (n = ' + this.n + ')'
+      series.name = label + ' (n = ' + this.n + ')'
       var columnTemplate = series.columns.template
       columnTemplate.height = am4core.percent(25)
       // Label
@@ -431,9 +441,13 @@ export default {
 }
 </script>
 <style scoped>
+.radarStyle {
+  width: 95%;
+  height: 400px;
+}
 .chartStyle {
   width: 95%;
-  height: 800px;
+  height: 700px;
 }
 .loading {
   position: fixed;
