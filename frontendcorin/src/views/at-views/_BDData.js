@@ -1,8 +1,8 @@
 /* eslint-disable */
 export default {
 
-    apiURL: 'http://localhost:8000/',
-    // apiURL: 'http://zalonore.pythonanywhere.com/',
+    // apiURL: 'http://localhost:8000/',
+    apiURL: 'http://zalonore.pythonanywhere.com/',
     parameters: {
         directivePositions: [
             { value: undefined, text: '--' },
@@ -61,18 +61,23 @@ export default {
         responsesList: [],
         customized_instrument_id: 1
     },
+    pageOptions: [5, 10, 15, 40],
     validation_attr_dictionnary: {
         // Contiene el nombre de los atributos de los campos que se muestran cuando hay mensajes de error
         en: {
             attributes: {
-            constitutionYear: 'pedro Address'
+                constitutionYear: 'Constitution year'
             }
         },
-        es: {  
+        es: {
             attributes: {
-            constitutionYear: 'البريد الاليكتروني'
+                constitutionYear: 'Año de constitución',
+                numberEmployees: 'Número de empleados',
+                constitutionYear: 'Año de constitución',
+                corporativeGroup: '¿Grupo empresarial?',
+                familyCompany: '¿Empresa familiar?',
+                company: 'Compañía'
             }
         }
-    },
-    pageOptions: [ 5, 10, 15, 40 ],
+    }
 }

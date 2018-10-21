@@ -137,7 +137,7 @@ export default {
       isLoading: true
     }
   },
-  created () {
+  created: function () {
     this.consultAverageData()
     /* axios(
       { // Este servicio retorna una arreglo de un solo elemento
@@ -443,7 +443,7 @@ export default {
 <style scoped>
 .radarStyle {
   width: 95%;
-  height: 400px;
+  height: 500px;
 }
 .chartStyle {
   width: 95%;

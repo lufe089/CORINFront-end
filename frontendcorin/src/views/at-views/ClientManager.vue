@@ -37,7 +37,7 @@
     <b-card class="card-body">
       <b-row> <b-col>
         <!-- Create button -->
-        <b-button type="submit" size="m" variant="primary" class="float-right my-1" id="create" @click.stop="process(none, none, $event.target)">
+        <b-button type="submit" size="m" variant="primary" class="float-right my-1" id="create" @click.stop="process(null, null, $event.target)">
           <i class="fa icon-plus"></i> {{ $t("message.create") }}
         </b-button>
       </b-col>
@@ -48,7 +48,7 @@
         <b-table show-empty hover
                 stacked="md"
                 :items="items"
-                :fields="fields"
+                :fields="columns"
                 :current-page="currentPage"
                 :per-page="perPage"
                 :filter="filter"
@@ -156,7 +156,7 @@ const items = []
 export default {
   data () {
     return {
-      fields: [
+      columns: [
         { key: 'client_company_name', label: 'Nombre', sortable: true, sortDirection: 'desc' },
         { key: 'constitution_year', label: 'Año constitución', sortable: true, 'class': 'text-center' },
         { key: 'number_employees', label: 'Número de empleados', sortable: true, 'class': 'text-center' },
@@ -167,6 +167,7 @@ export default {
       currentPage: 1,
       perPage: 10,
       totalRows: items.length,
+      parameters: BDData.parameters,
       pageOptions: BDData.pageOptions,
       sortBy: null,
       sortDesc: false,
@@ -175,37 +176,33 @@ export default {
       modalInfo: {title: ''},
       // Real data
       servicePath: 'clients/',
-      isBusy: false,
       loading: false,
       items: [],
-      // FIXME company id no siempre puede ser uno
-      obj: {},
-      parameters: BDData.parameters
+      obj: {}
     }
   },
   async created () {
+    // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado
     this.refreshData()
     this.obj = this.clearObj()
   },
   computed: {
     sortOptions () {
-      // Create an options list from our fields
-      return this.fields
+      // Create an options list from our columns
+      return this.columns
         .filter(f => f.sortable)
         .map(f => { return { text: f.label, value: f.key } })
     }
   },
   methods: {
     process (item, index, button) {
-      // this.modalInfo.title = `Row index: ${index}`
-      // Metodo que se llama en caso de crear o editar
+      // Metodo que se llama en caso de crear o editar desde los botones de la tabla
       if (button.id === 'edit') {
         // Se le pone la información a los campos del modal con un metodo para copiar
         // los objetos de manera que no se vayan a cambian si el usuario cancela
         this.obj = JSON.parse(JSON.stringify(item))
         this.modalInfo.title = i18n.tc('message.edit')
       } else if (button.id === 'create') {
-        // this.obj = this.obj // FIXME
         this.obj = this.clearObj()
         this.modalInfo.title = i18n.tc('message.create')
       }
@@ -214,10 +211,10 @@ export default {
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
     clearObj () {
+      // FIXME: company_id no puede ser siempre uno.
+      // Se llama este metodo cuando se selecciona el boton para crear o cuando se guarda para dajar el objeto que tendrá la información preparado
       var obj = {id: null, company_id: 1, client_company_name: null, constitution_year: null, number_employees: null, is_corporate_group: null, is_family_company: null}
       return obj
-      // this.obj.id = null
-      // this.obj.company_id = 1
     },
     resetModal () {
       this.modalInfo.title = ''
@@ -239,7 +236,6 @@ export default {
         // Se pone vacio para evitar errores
         this.items = []
       }
-      console.log(this.items)
       this.loading = false
     },
     onSubmit (evt) {

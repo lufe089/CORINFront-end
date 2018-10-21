@@ -25,7 +25,7 @@
         :filter="filter" @filtered="onFiltered">
     <template slot='average' slot-scope='data'>
       <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
-      <b-progress height={} class="progress-xs my-0" variant="info" :value= "data.item.average" max="9"/>
+      <b-progress height={} class="progress-xs my-0" variant="info" :value= "data.item.average" :max="max"/>
     </template>
     </b-table>
     <nav>
@@ -84,10 +84,10 @@ export default {
       perPage: 15,
       totalRows: 0,
       pageOptions: [ 5, 10, 15, 40 ],
-      filter: null
+      filter: null,
+      max: 9
     }
   },
-  created: { },
   methods: {
     getBadge (status) {
       return status === 'Active' ? 'success'
