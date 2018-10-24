@@ -166,7 +166,7 @@
           <b-col md="12">
             <b-form-group>
               <label for="maxSurveys">{{$t("message.max_surveys") }}</label>
-              <b-form-input type="number" name="maxSurveys" id="maxSurveys" v-model="surveyConfig.max_surveys" v-validate="'required|numeric|min_value:0'"></b-form-input>
+              <b-form-input type="number" name="maxSurveys" id="maxSurveys" v-model="surveyConfig.max_surveys" v-validate="{required: true, numeric: true, min_value:surveyConfig.used_surveys }"></b-form-input>
               <p class="text-danger" v-if="errors.has('maxSurveys')">{{ errors.first('maxSurveys') }}</p>
             </b-form-group>
           </b-col>
