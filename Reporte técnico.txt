@@ -94,6 +94,17 @@ Correr servidor : python manage.py runserver
 Elaborar nuevas migraciones: manage.py makemigrations
 
 
+#############VUE.js ################
+Instale paquete para manejo de numeros en la visualización
+$ npm install vue-numeric --save
+https://www.npmjs.com/package/vue-numeric
+
+Instalé paquete para controlar la validación de los formularios
+npm install vee-validate --save
+https://m.dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d
+https://www.npmjs.com/package/vee-validate
+
+
 ############## REST FRAMEWORK #############################
 http://www.django-rest-framework.org/tutorial/2-requests-and-responses/
 
