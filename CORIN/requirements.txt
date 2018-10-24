@@ -1,9 +1,0 @@
-# Newer versions available
-
-#Mysql database connection
-cymysql
-django-cymysql
-
-#Restframework
-djangorestframework
-django-cors-headers
