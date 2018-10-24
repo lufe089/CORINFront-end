@@ -21,6 +21,7 @@ import Full from '@/containers/Full'
 import MainInstrument from '@/views/at-views/MainInstrument'
 import Results from '@/views/at-views/Results.vue'
 import ClientManager from '@/views/at-views/ClientManager.vue'
+import ConfigSurveyManager from '@/views/at-views/ConfigSurveyManager.vue'
 
 Vue.use(Router)
 
@@ -49,6 +50,12 @@ export default new Router({
                 name: 'Clientes',
                 component: ClientManager
             },
+            {
+                path: 'configSurveys',
+                name: 'Clientes',
+                component: ConfigSurveyManager
+
+            }
 
         ]
     }]

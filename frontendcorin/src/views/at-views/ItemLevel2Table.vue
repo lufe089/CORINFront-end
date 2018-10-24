@@ -125,7 +125,7 @@ export default {
         // {key: 'dimension', sortable: true, label: 'Dimensión'}, // No se deben mostrar
         // {key: 'component', sortable: true, label: 'Componente'},// No se deben mostrar
         {key: 'name', sortable: true, label: 'Item'},
-        {key: 'responseFormat', label: 'Total desacuerdo (1) -- Total acuerdo (9)', class: 'scaleWidth'}
+        {key: 'responseFormat', label: 'Total desacuerdo (1) -- Total acuerdo (9)', class: 'scaleWidthResults'}
         // {key: 'upperAnchor', label: ''}
       ],
       currentPage: 1,
@@ -310,7 +310,7 @@ export default {
 .table table td {
   text-align: center
 }
-.scaleWidth {
+.scaleWidthResults {
   width: 60%;
   /* text-align: center  */
 }

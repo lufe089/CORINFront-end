@@ -193,6 +193,7 @@ export default {
           // this.sortJSON(this.average_by_categories, 'average', 'asc')
         } else {
           this.noResponses = true
+          this.isLoading = false
         }
       }, error => {
         // FIXME

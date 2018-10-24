@@ -34,6 +34,11 @@ export default {
             url: '/clients',
             icon: 'fa icon-call-out'
         },
+        {
+            name: 'Configuración de encuestas',
+            url: '/configSurveys',
+            icon: 'fa icon-call-out'
+        },
         /*{
             title: true,
             name: 'Satisfaction evaluation',

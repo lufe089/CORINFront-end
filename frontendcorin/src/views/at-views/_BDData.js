@@ -1,8 +1,8 @@
 /* eslint-disable */
 export default {
 
-    // apiURL: 'http://localhost:8000/',
-    apiURL: 'http://zalonore.pythonanywhere.com/',
+    apiURL: 'http://localhost:8000/',
+    // apiURL: 'http://zalonore.pythonanywhere.com/',
     parameters: {
         directivePositions: [
             { value: undefined, text: '--' },

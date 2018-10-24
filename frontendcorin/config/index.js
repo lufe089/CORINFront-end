@@ -52,7 +52,7 @@ module.exports = {
         assetsSubDirectory: 'static',
         // assetsPublicPath: '/',
         // Se modifica para que no incluya la ruta /static pq sino no carga la aplicacion
-        assetsPublicPath: '',
+        assetsPublicPath: './',
 
         /**
          * Source Maps

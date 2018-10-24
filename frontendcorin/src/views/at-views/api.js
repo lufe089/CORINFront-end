@@ -28,6 +28,8 @@ export default {
               Authorization: `Bearer ${accessToken}`
             } */
         }).then(req => {
+            // console.log(req)
+            // alert(JSON.stringify(req))
             return req
                 //FIXME
         }).catch(error => {
