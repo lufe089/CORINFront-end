@@ -1,18 +1,14 @@
 <template>
   <b-container fluid>
     <loading :isLoading="isLoading"></loading>
-    <div v-show="obj.id === none">
-        <b-card class="mx-auto card-accent-warning" >
-          <h4>Arreglar - poner que no se ha configurado el survey aun</h4>
-        </b-card>
-    </div>
+      <b-alert variant="warning" :show="obj.id === none"><h4>{{$t("message.no_survey_config")}}</h4></b-alert>
     <form>
       <!-- Control de acceso -->
-      <b-card header="Configurar control de acceso - arreglar mensaje">
+      <b-card :header="$t('message.access_config')">
         <b-row>
           <b-col md="6" class="my-1" >
             <div class="h5 text-info mb-2 pt-2">
-                {{$t("message.used_surveys") }}
+                {{$t("message.access_key") }}
             </div>
             <b-card :no-body="true">
               <b-card-body class="p-0 clearfix align-middle">
@@ -35,7 +31,7 @@
           </b-col>
           <b-col md="6" class="my-1" >
            <div class="h5 text-info mb-2 pt-2">
-              {{$t("message.used_surveys") }}
+              {{$t("message.share_link") }}
            </div>
            <b-card :no-body="true">
                 <b-card-body class="p-0 mb-0 clearfix ">
@@ -48,14 +44,14 @@
       <b-btn variant="primary" type="submit"  class="float-right"  v-on:click.prevent="onSubmit" >{{$t("message.save")}}</b-btn>
       </b-card>
       <!-- Personalizar mensajes-->
-      <b-card header="Personalizar mensajes arreglar">
+      <b-card :header="$t('message.customization_information')">
         <b-row>
         <!-- Instructions -->
         <b-col md="12" class="my-1" >
           <b-card>
           <div class="customForm">
             <div class="h5 text-info mb-2 pt-2">
-              {{$t("message.used_surveys") }}
+              {{$t("message.survey_instructions") }}
             </div>
             <div >
               <VueTrix id='surveyInstructions' inputId="userInstructionsText" v-model="obj.custom_user_instructions"/>
@@ -70,7 +66,7 @@
         <b-card>
           <div class="customForm">
             <div class="h5 text-info mb-2 pt-2">
-              {{$t("message.used_surveys") }}
+              {{$t("message.contact_information") }}
             </div>
             <div >
               <VueTrix id='surveyContact' inputId="contactText" v-model="obj.custom_contact_info"/>
@@ -85,7 +81,7 @@
           <b-card>
             <div class="customForm">
               <div class="h5 text-info mb-2 pt-2">
-                {{$t("message.used_surveys") }}
+                {{$t("message.thanks_information") }}
               </div>
               <div >
                 <VueTrix id='surveyThanks' inputId="thanksText" v-model="obj.custom_thanks"/>
@@ -128,7 +124,7 @@ export default {
       servicePath2: 'customizedInstrument/',
       isLoading: false,
       obj: {},
-      idClient: 11
+      idClient: 1
     }
   },
   async created () {
