@@ -59,7 +59,7 @@ export default {
         is_directive: undefined,
         is_complete: false,
         responsesList: [],
-        customized_instrument_id: 1
+        customized_instrument_id: undefined
     },
     pageOptions: [5, 10, 15, 40],
     validation_attr_dictionnary: {

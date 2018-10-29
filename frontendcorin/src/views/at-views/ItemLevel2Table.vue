@@ -233,7 +233,7 @@ export default {
           itemResponse.answer_numeric = null
           itemResponse.isFilled = false
           itemResponse.is_complete = true
-          // this.createFakeResponses(itemResponse)
+          this.createFakeResponses(itemResponse)
           responsesSubItemsByCategory.push(itemResponse)
           this.responsesList.push(itemResponse)
         }

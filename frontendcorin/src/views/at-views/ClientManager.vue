@@ -279,7 +279,7 @@ export default {
       this.loading = true
       // Se limpia el objeto de referencia
       this.clearObj()
-      var urlService = 'clientsAndSurveyConf'
+      var urlService = 'clients-and-survey-conf'
       var response = await api.getAll(urlService)
       // Estuvo exitosa la busqueda
       if (response.status === 200) {

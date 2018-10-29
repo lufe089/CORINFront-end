@@ -39,6 +39,11 @@ export default {
             url: '/configSurveys',
             icon: 'fa icon-call-out'
         },
+        {
+            name: 'Personalizar encuesta',
+            url: '/customSurvey',
+            icon: 'fa icon-puzzle'
+        },
         /*{
             title: true,
             name: 'Satisfaction evaluation',

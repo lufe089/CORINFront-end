@@ -22,6 +22,7 @@ import MainInstrument from '@/views/at-views/MainInstrument'
 import Results from '@/views/at-views/Results.vue'
 import ClientManager from '@/views/at-views/ClientManager.vue'
 import ConfigSurveyManager from '@/views/at-views/ConfigSurveyManager.vue'
+import CustomizeSurvey from '@/views/at-views/CustomizeSurvey.vue'
 
 Vue.use(Router)
 
@@ -52,8 +53,14 @@ export default new Router({
             },
             {
                 path: 'configSurveys',
-                name: 'Clientes',
+                name: 'Configurar encuestas',
                 component: ConfigSurveyManager
+
+            },
+            {
+                path: 'customSurvey',
+                name: 'Personalizar encuesta',
+                component: CustomizeSurvey
 
             }
 

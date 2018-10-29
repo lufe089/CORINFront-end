@@ -1,8 +1,9 @@
 <template>
   <div class="animated fadeIn">
-    <div v-show="isLoading">
+    <!--<div v-show="isLoading">
       <img class="loading" src="https://vignette.wikia.nocookie.net/judo/images/0/03/Cargando.gif/revision/latest?cb=20110601212206&path-prefix=es" alt="loading">
-    </div>
+    </div>-->
+    <loading :isLoading="isLoading"></loading>
     <b-row fluid v-show="!isSurveyVisible && !showThanksMessage">
       <b-col md=12>
          <b-jumbotron bg-variant="light">
@@ -14,9 +15,9 @@
            <b-row fluid>
              <b-col md="12">
                <b-card class="mx-auto" border-variant="info">
-                <span v-html="instruccionData.user_instructions"></span>
+                <span v-html="instruccionData.custom_user_instructions"></span>
                 <div slot="footer">
-                  <small class="text-muted" v-html="instruccionData.contact_info"></small>
+                  <small class="text-muted" v-html="instruccionData.custom_contact_info"></small>
                 </div>
                 </b-card>
              </b-col>
@@ -51,7 +52,7 @@
                   <b-col md="6">
                     <b-form-group :description="$t('message.please_enter_email')" :label="$t('message.email')" label-for="basicEmail" :label-cols="2"
                       :horizontal="true">
-                      <b-form-input id="basicEmail" type="email" placeholder=" " v-model.lazy="participantResponse.email" required ></b-form-input>
+                      <b-form-input id="basicEmail" type="email" placeholder=" " autocomplete='email' v-model.lazy="participantResponse.email" required ></b-form-input>
                     </b-form-group>
                   </b-col>
                   <b-col md="6">
@@ -116,7 +117,7 @@
                   <h4 class="alert-heading">{{ $t("message.fin_encuesta") }}</h4>
                   <hr>
                   <p>
-                    <span v-html="instruccionData.thanks"></span>
+                    <span v-html="instruccionData.custom_thanks"></span>
                   </p>
                 </b-alert>
           </b-card>
@@ -130,6 +131,7 @@ import BDData from './_BDData.js'
 // import itemLevel2Table from './ItemLevel2Table.vue'
 import i18n from '../../lang/config'
 import axios from 'axios'
+import api from './api'
 
 export default {
   name: 'main_instrument',
@@ -140,45 +142,47 @@ export default {
       result: '',
       isSurveyVisible: false,
       parameters: BDData.parameters,
-      ulrInstructions: BDData.apiURL + 'instructionsSpanish/',
+      ulrInstructions: 'consult-custom-inst/?idClient=',
+      // FIXME
+      idClient: 10,
       urlSaveSubItems: BDData.apiURL + 'participantsResponse/',
       selected: [], // Must be an array reference!,
       showDirective: undefined,
       showQuestions: false,
-      instruccionData: {user_instructions: '', contact_info: '', thanks: ' '},
+      instruccionData: {custom_user_instructions: '', custom_contact_info: '', custom_thanks: ' '},
       showThanksMessage: false,
-      isLoading: true
+      isLoading: null
 
     }
   },
-  mounted () {
-    axios(
-      { // Este servicio retorna una arreglo de un solo elemento
-        method: 'GET', 'url': this.ulrInstructions
-      }).then(result => {
-      this.instruccionData.user_instructions = result.data[0].user_instructions
-      this.instruccionData.contact_info = result.data[0].contact_info
-      this.instruccionData.thanks = result.data[0].thanks
-      this.isLoading = false
-    }, error => {
-      console.error(JSON.stringify(error))
-      console.error(i18n.tc('message.error_consuming_service_instructions'))
-      console.error('Service path:' + this.urlGetItems)
-      alert(i18n.tc('message.error_consuming_service'))
-      this.isLoading = false
-    }
-    )
+  async created () {
+    /* Duplicar aqui toda la informacion que pueda cambiar por cada persona que response el instrumento
+    para tomar como objeto de referencia el json que esta en el archivo parametrico pero no modificarlo */
+    this.participantResponse = this.clone(BDData.participantResponse)
+    // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado
+    this.refreshData()
   },
   components: {
     /* tag, component name */
     // itemLevel2Table()
     // dynamic import wrapped in a function
     // 'item-level2-table': () => import('./ItemLevel2Table')
-    itemLevel2Table: () => import('./ItemLevel2Table')
+    itemLevel2Table: () => import('./ItemLevel2Table'),
+    loading: () => import('./Loading')
   },
   methods: {
-    click () {
-      // do nothing
+    async refreshData () {
+      this.isLoading = true
+      // FIXME: preguntar por el id del cliente correcto
+      var response = await api.getAll(this.ulrInstructions + this.idClient)
+      // Estuvo exitosa la busqueda
+      if (response.status === 200) {
+        this.instruccionData = response.data
+      } else {
+        // Se pone vacio para evitar errores
+        this.instruccionData = {user_instructions: '', contact_info: '', thanks: ' '}
+      }
+      this.isLoading = false
     },
     clone (obj) {
       // var outpurArr = []
@@ -219,8 +223,7 @@ export default {
       this.isLoading = true
       console.log('Emitio guardado')
       this.participantResponse.responsesList = responsesList
-      console.log(JSON.stringify(this.participantResponse))
-      // console.log(this.$parent.participantResponse.customized_instrument_id)
+      this.participantResponse.customized_instrument_id = this.instruccionData.id
       axios.post(this.urlSaveSubItems, this.participantResponse).then(response => {
         console.log('Guardado de respuestas en BD fue correcto')
         this.showThanksMessage = true
@@ -238,13 +241,6 @@ export default {
       value = value.toFixed(2)
       return value
     }
-  },
-  created: function () {
-    /* Duplicar aqui toda la informacion que pueda cambiar por cada persona que response el instrumento
-    para tomar como objeto de referencia el json que esta en el archivo parametrico pero no modificarlo */
-    this.participantResponse = this.clone(BDData.participantResponse)
-  },
-  computed: {
   }
 }
 </script>

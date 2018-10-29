@@ -1,8 +1,6 @@
 <template>
   <div class="animated fadeIn">
-    <div v-show="isLoading">
-      <img class="loading" src="https://vignette.wikia.nocookie.net/judo/images/0/03/Cargando.gif/revision/latest?cb=20110601212206&path-prefix=es" alt="loading">
-    </div>
+    <loading :isLoading="isLoading"></loading>
     <div v-show="!isLoading">
       <div v-show="noResponses">
         <b-card class="mx-auto" border-variant="info">
@@ -110,7 +108,8 @@ export default {
   name: 'results-module',
   components: {
     /* tag, component name */
-    'c-table-results': ResultsTable
+    'c-table-results': ResultsTable,
+    loading: () => import('./Loading')
   },
   data () {
     return {
