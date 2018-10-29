@@ -158,7 +158,9 @@ export default {
       this.$validator.validate().then(result => {
         // Si no hay errores
         if (result) {
+          this.isLoading = true
           this.save(this.obj, this.servicePath2)
+          this.isLoading = false
         }
       })
     },
