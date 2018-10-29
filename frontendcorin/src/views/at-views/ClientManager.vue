@@ -352,7 +352,7 @@ export default {
 </script>
 <style>
 .scaleWidth {
-  width: 40%;
+  width: 30%;
   /* text-align: center  */
 }
 </style>

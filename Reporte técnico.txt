@@ -104,6 +104,49 @@ npm install vee-validate --save
 https://m.dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d
 https://www.npmjs.com/package/vee-validate
 
+Para el despliegue de vue tube que agrgar un archvio en la raiz llamado vue.config.js en este archivo puse un codigo en el que si la llamada era en rpoduction entonces se usara /corin/ sino se usara /
+
+Instale paquete para la edición de los textos de manera más interactiva ese paquete se llama tiptap
+(Al fin no funciono)
+npm install tiptap
+npm install --save tiptap-extensions
+
+(probe este otro vue-trix)
+https://vuejsexamples.com/simple-and-lightweight-trix-rich-text-editor-component-for-vue-js/
+
+
+
+
+**  Flex-box properties
+justify-content: center, flex-start, flex-end, center, space-around( equal amount of space) space-between space-evenly
+
+// put an item at the left side.  Y todos los elementos que tiene relacionados también lso pone abajo.
+margin-left:auto; 
+margin-right: auto;
+
+
+//Make the items responsive according to the size of the container
+We can as many items as we want and make them responsive
+flex: 1; This is a short-hand of three properties flex-grow flex -shrink and flex-basis
+
+If I want to have a container twice bigger than another then we can use 
+flex: 2
+.container > div  // class + item
+
+// Align vertical
+align-items: center, stretch, flex-end
+
+// Vertical high responsive
+Se pone en el body el height del 100 % y luego con eso y ase puede poner en el contenedor el height del resto del porcentaje
+
+//Alinear un solo item
+align-self: flex-start
+
+// Permite que se agrupen los paneles y que se muvan como cuando en el grid de bootstrap no caben el número de columnas. 
+flex-wrap: wrap
+
+order: permite cambiar laubicacónde los items en el domdel mismo content. Numeros menoreds a 0 se ubican primero y numeros mayors a cero se ubican de ultimos
+
 
 ############## REST FRAMEWORK #############################
 http://www.django-rest-framework.org/tutorial/2-requests-and-responses/
