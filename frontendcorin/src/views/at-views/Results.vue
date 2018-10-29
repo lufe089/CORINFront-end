@@ -2,11 +2,7 @@
   <div class="animated fadeIn">
     <loading :isLoading="isLoading"></loading>
     <div v-show="!isLoading">
-      <div v-show="noResponses">
-        <b-card class="mx-auto" border-variant="info">
-          <h4> {{ $t("message.no_resultados") }}</h4>
-        </b-card>
-      </div>
+      <b-alert :show="noResponses"><h4>{{$t("message.no_resultados")}}</h4></b-alert>
       <!-- Si existen resultados para mostrar -->
       <div id="results" v-show="!noResponses">
         <b-row>

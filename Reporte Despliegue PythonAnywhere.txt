@@ -1,0 +1,98 @@
+PythonAnywhere ya cuenta con aplicaciones instaladas de modo que no es necesario instalar git por ejemplo
+
+* Se ejecutó:
+git clone https://github.com/lufe089/CORIN-backend
+Para descargar todos los archivos del backend del proyecto
+
+* Se creo un entorno virutal (no es necesario instalarlo) con el comando:
+virutalenv --python=python3.6 envcorin
+Para usar la versión python 3.6 y llamamos el ambiente envcorin
+
+* Se activa el virutalenv con la carpeta del ambiente creada:
+	OJO, se debe activar el entorno virtual cada que se use la consola.
+source envcorin/bin/activate
+
+* Con el entorno activo se instalan todos los paquetes necesarios, en nuestro caso el requirements.txt así:
+pip install -r requirements.txt
+
+* Se creó la BD para utilizar la aplicación, para ello por la interfaz gráfica de PythonAnywhere se creó la BD CORINDB. Importante: no se asigna contraseña, ya que usa por defecto la contraseña que maneja la cuenta de Mysql, ella puede ser vista yendo a Flies--> my.cnf
+
+posteriormente se modificó el settings.py así:
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'mysql_cymysql',
+        'NAME': 'zalonore$CORINDB',
+        'USER': 'zalonore',
+        'PASSWORD': 'basepass18',
+        'HOST': 'zalonore.mysql.pythonanywhere-services.com',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306',
+    }
+}
+
+* Se creó la migración:
+python manage.py makemigrations
+
+* se corrio la migración
+Python manage.py migrate
+
+* Se va al menú de PythonAnywhere sección web apps, para crear una nueva aplicación, se utiliza python 3.6 y en lugar de elegir Django, se va por la opción de configuracón manual.
+
+* En la ventana que abre se va a la sección código, donde aparece el wsgi.py y se abre el archivo para editarlo con la siguiente configuración.
+
+import os
+
+import sys
+
+
+path = '/home/zalonore/CORIN-backend'
+
+if path not in sys.path:
+
+    sys.path.append(path)
+
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'CORIN.settings'
+
+
+from django.core.wsgi import get_wsgi_application
+
+application = get_wsgi_application()
+
+* Como estamos usando un virtualenv, se debe escribir en el espacio que se muestra para ello, la ruta es:
+
+/home/zalonore/CORIN-backend/envcorin
+
+* Se debe crear la URL para los archivos estáticos, que sirven para mejorar el entorno gráfico (Creo), la ruta es:
+
+URL: /static/
+Directorio: /home/zalonore/CORIN-backend/static
+
+* Se deben cambiar algunas configuraciones del settings.py para que funcione correctamente el despliegue y el whitenoise. El archivo con el settings.py que funcionó está en:
+
+/Pjulia/ settings.py que funciono.txt
+
+Los principales cambios son:
+
+TEMPLATE_DEBUG= True
+ALLOWED_HOSTS = ['127.0.0.1', 'zalonore.pythonanywhere.com']
+dentro del middleware: 'whitenoise.middleware.WhiteNoiseMiddleware',
+WSGI_APPLICATION = 'CORIN.wsgi.application'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+* Por consola se deben copiar los archivos estáticos al directorio de Django, para ello se usa la instrucción:
+
+python manage.py collectsatitic # o collectstatic
+
+* Finalmente de da clic en la página de las apps web de pythonanywhere, en a parte de arriba, al botón verde de reload, para que se actualicen todos los cambios.
+
+* Ya se puede ingresar a la URL que ofrece el PaaS donde se encuentra desplegada la aplicación, en nuestro caso está alojada en:
+
+http://zalonore.pythonanywhere.com
+
+

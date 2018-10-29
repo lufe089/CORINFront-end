@@ -76,7 +76,9 @@ export default {
                 constitutionYear: 'Año de constitución',
                 corporativeGroup: '¿Grupo empresarial?',
                 familyCompany: '¿Empresa familiar?',
-                company: 'Compañía'
+                company: 'Compañía',
+                access_code: 'Código de acceso',
+                maxSurveys: 'Máximo de encuestas'
             }
         }
     }

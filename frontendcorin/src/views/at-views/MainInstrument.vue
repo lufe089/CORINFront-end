@@ -144,7 +144,7 @@ export default {
       parameters: BDData.parameters,
       ulrInstructions: 'consult-custom-inst/?idClient=',
       // FIXME
-      idClient: 10,
+      idClient: 1,
       urlSaveSubItems: BDData.apiURL + 'participantsResponse/',
       selected: [], // Must be an array reference!,
       showDirective: undefined,
