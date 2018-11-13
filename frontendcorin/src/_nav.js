@@ -25,15 +25,28 @@ export default {
           icon: 'fa fa-thermometer-1'
         }, */
         {
+            title: true,
             name: 'Resultados',
             url: '/result',
             icon: 'fa fa-pie-chart',
-            children: [{
-                name: 'Por categorías',
-                url: '/result',
-                icon: 'icon-puzzle'
-                    //TODO completar
-            }]
+        },
+        {
+            name: 'El original',
+            url: '/result',
+            icon: 'icon-puzzle'
+                //TODO completar
+        },
+        {
+            name: 'Por categorías',
+            url: '/result-by-categories',
+            icon: 'fa fa-pie-chart'
+                //TODO completar
+        },
+        {
+            name: 'Por directivos/no directivos',
+            url: '/result-by-directives',
+            icon: 'fa fa-pie-chart'
+                //TODO completar
         },
         {
             name: 'Clientes',

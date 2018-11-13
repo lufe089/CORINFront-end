@@ -26,6 +26,9 @@ import CustomizeSurvey from '@/views/at-views/CustomizeSurvey.vue'
 
 Vue.use(Router)
 
+const ResultsByCategories = () =>
+    import ('@/views/at-views/ResultsByCategories.vue')
+
 export default new Router({
     mode: 'hash',
     linkActiveClass: 'open active',
@@ -44,6 +47,16 @@ export default new Router({
             {
                 path: 'result',
                 name: 'Resultados',
+                component: ResultsByCategories
+            },
+            {
+                path: '/result-by-categories',
+                name: 'Resultados por categorías',
+                component: Results
+            },
+            {
+                path: '/result-by-directives',
+                name: 'Resultados para directivos y no directivos',
                 component: Results
             },
             {

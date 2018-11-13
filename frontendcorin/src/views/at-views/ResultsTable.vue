@@ -15,7 +15,7 @@
           </b-form-group>
         </b-col>
         <b-col md="4" sm="12" class="my-1">
-          <b-form-group :label="$t('message.peer_page')" class="mb-0">
+          <b-form-group :label="$t('message.peer_page')" class="mb-0" v-show="totalRows>=perPage">
             <b-form-select :options="pageOptions" v-model="perPage" />
           </b-form-group>
         </b-col>
@@ -25,7 +25,7 @@
         :filter="filter" @filtered="onFiltered">
     <template slot='average' slot-scope='data'>
       <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
-      <b-progress height={} class="progress-xs my-0" variant="info" :value= "data.item.average" :max="max"/>
+      <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults(data.item.average)"  :value= "data.item.average" :max="max"/>
     </template>
     </b-table>
     <nav>
@@ -105,6 +105,17 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
       this.currentPage = 1
+    },
+    calculateVariantResults: function (number) {
+      var variant = ''
+      if (number >= 7) {
+        variant = 'success'
+      } else if (number <= 3) {
+        variant = 'danger'
+      } else {
+        variant = 'warning'
+      }
+      return variant
     }
   },
   components: {
