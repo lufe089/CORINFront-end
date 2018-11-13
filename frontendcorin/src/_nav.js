@@ -49,9 +49,13 @@ export default {
                 //TODO completar
         },
         {
-            name: 'Clientes',
-            url: '/clients',
-            icon: 'fa icon-call-out'
+            name: 'Exportar',
+            url: '/export',
+            icon: 'fa fa-pie-chart',
+        },
+        {
+            title: true,
+            name: 'Configuración',
         },
         {
             name: 'Configuración de encuestas',
@@ -62,6 +66,11 @@ export default {
             name: 'Personalizar encuesta',
             url: '/customSurvey',
             icon: 'fa icon-puzzle'
+        },
+        {
+            name: 'Clientes',
+            url: '/clients',
+            icon: 'fa icon-call-out'
         },
         /*{
             title: true,

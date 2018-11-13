@@ -29,6 +29,9 @@ Vue.use(Router)
 const ResultsByCategories = () =>
     import ('@/views/at-views/ResultsByCategories.vue')
 
+const ExportResults = () =>
+    import ('@/views/at-views/ExportResults.vue')
+
 export default new Router({
     mode: 'hash',
     linkActiveClass: 'open active',
@@ -58,6 +61,11 @@ export default new Router({
                 path: '/result-by-directives',
                 name: 'Resultados para directivos y no directivos',
                 component: Results
+            },
+            {
+                path: '/export',
+                name: 'Exportar resultados',
+                component: ExportResults
             },
             {
                 path: 'clients',

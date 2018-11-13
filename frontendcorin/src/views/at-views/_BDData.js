@@ -74,5 +74,6 @@ export default {
                 maxSurveys: 'Máximo de encuestas'
             }
         }
-    }
+    },
+    exportFileNames: { 'items': 'Preguntas.xlsx', 'responses': 'RespuestasTodas.xlsx', 'clients': 'Clientes.xlsx' }
 }
