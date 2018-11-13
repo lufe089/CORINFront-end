@@ -120,10 +120,12 @@ export default {
     }
   },
   created: function () {
-    this.consultAverageData()
     this.requestPath = this.$route.path
-    this.drawCharts()
     console.log(this.requestPath)
+  },
+  mounted: function () {
+    this.consultAverageData()
+    this.drawCharts()
   },
   watch: {
     '$route' (to, from) {
@@ -221,7 +223,6 @@ export default {
       categoryAxis.dataFields.category = 'name'
       categoryAxis.title.text = label
       categoryAxis.title.fontWeight = 'bold'
-      categoryAxis.labelRotation = '30git stat'
       // Value axis
       var valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
       valueAxis.title.text = 'Promedio'
@@ -238,7 +239,17 @@ export default {
       categoryAxis.renderer.grid.template.disabled = true
       valueAxis.renderer.grid.template.disabled = false
       // Separacion entre los elementos que se dibujan
-      categoryAxis.renderer.minGridDistance = 10
+      categoryAxis.renderer.minGridDistance = 3
+      categoryAxis.renderer.labels.template.rotation = 330
+      categoryAxis.renderer.labels.template.verticalCenter = 'middle'
+      categoryAxis.renderer.labels.template.horizontalCenter = 'middle'
+
+      var labelAxis = categoryAxis.renderer.labels.template
+      // labelAxis.wrap = true
+      // labelAxis.maxWidth = 120
+      labelAxis.truncate = true
+      labelAxis.maxWidth = 160
+      labelAxis.tooltipText = '{name}'
 
       // Title
       var title = chart.titles.create()

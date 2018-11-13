@@ -75,5 +75,5 @@ export default {
             }
         }
     },
-    exportFileNames: { 'items': 'Preguntas.xlsx', 'responses': 'RespuestasTodas.xlsx', 'clients': 'Clientes.xlsx' }
+    exportFileNames: { 'items': 'Preguntas.xls', 'responses': 'RespuestasTodas.xls', 'clients': 'Clientes.xls' }
 }
