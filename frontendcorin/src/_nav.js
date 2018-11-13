@@ -49,6 +49,25 @@ export default {
                 //TODO completar
         },
         {
+            name: 'Por áreas',
+            url: '/result-by-areas',
+            icon: 'icon-puzzle'
+
+        },
+        {
+            title: true,
+            name: 'Resultados específicos',
+            url: '/especific_results',
+            icon: 'icon-puzzle'
+
+        },
+        {
+            name: 'Por dimensiones y componentes',
+            url: '/results_by_dim_comp',
+            icon: 'icon-puzzle'
+
+        },
+        {
             name: 'Exportar',
             url: '/export',
             icon: 'fa fa-pie-chart',

@@ -16,6 +16,7 @@ dist/
 downloads/
 eggs/
 .eggs/
+.instruccionesdelpush.txt
 lib/
 lib64/
 parts/

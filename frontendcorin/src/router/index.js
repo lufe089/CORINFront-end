@@ -58,6 +58,16 @@ export default new Router({
                 component: Results
             },
             {
+                path: '/result-by-areas',
+                name: 'Resultados por áreas',
+                component: Results
+            },
+            {
+                path: '/results_by_dim_comp',
+                name: 'Resultados por dimensiones y componentes',
+                component: Results
+            },
+            {
                 path: '/result-by-directives',
                 name: 'Resultados para directivos y no directivos',
                 component: Results

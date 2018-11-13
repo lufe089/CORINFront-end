@@ -1,0 +1,10 @@
+PARA HACAER PUSH EN GIT
+
+* Primero hacer pull para verificar cambios en el master
+* Hacer un git status para ver lo que está en rojo
+* primero se hace add sobre los archivos que deseo modificar o agregar en el repositorio (hay que organizar todo lo que está en rojo, sino no se podrá actualizar).
+* para hacer un add general se escribe: git add . (esto sube los arvhivos al stage área)
+si se desea agregar archivos parcuales es: git add RUTA Y NOMBRE DEL ARCHIVO
+* Luego de hacer el add todo debe quedar en verde. Ahora si se puede hacer el commit.
+* Para hacer el commit se escribe: git commit -m "mensaje de actualización" (el mensaje sigue el estandar: MODIFY: NEW: FIX:)
+
