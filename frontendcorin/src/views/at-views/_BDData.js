@@ -7,10 +7,10 @@ export default {
         area: [
             { value: undefined, text: '--' },
             { value: 1, text: 'Área de Producción/operaciones' },
-            { value: 1, text: 'Área comercial' },
-            { value: 1, text: 'Área de tecnología' },
-            { value: 1, text: 'Área de gestión humana' },
-            { value: 1, text: 'Área de investigación y desarrollo' }
+            { value: 2, text: 'Área comercial' },
+            { value: 3, text: 'Área de tecnología' },
+            { value: 4, text: 'Área de gestión humana' },
+            { value: 5, text: 'Área de investigación y desarrollo' }
         ],
         position: [{
                 value: true,
