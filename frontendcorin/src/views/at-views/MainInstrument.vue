@@ -69,12 +69,6 @@
                       <b-form-radio-group id="positionDirective" v-model="participantResponse.is_directive" :options="parameters.position" name="positionDirective"  @change="changeDirectiveVisibility" required></b-form-radio-group>
                     </b-form-group>
                   </b-col>
-                  <b-col md="6">
-                    <b-form-group v-show ="showDirective" :description="$t('message.seleccion_cargo')" :label="$t('message.cargo')" label-for="cargo" :label-cols="2"
-                      :horizontal="true">
-                      <b-form-select id="cargo" name="cargo" v-model="participantResponse.position" :options="parameters.directivePositions" :required="showDirective"/>
-                    </b-form-group>
-                  </b-col>
                 </b-row>
                 <b-row>
                   <b-col md="12">

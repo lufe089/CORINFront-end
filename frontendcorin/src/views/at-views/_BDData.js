@@ -4,12 +4,6 @@ export default {
     apiURL: 'http://localhost:8000/',
     // apiURL: 'http://zalonore.pythonanywhere.com/',
     parameters: {
-        directivePositions: [
-            { value: undefined, text: '--' },
-            { value: 1, text: 'Alta Gerencia' },
-            { value: 2, text: 'Gerencia media' },
-            { value: 3, text: 'Gerencia baja' }
-        ],
         area: [
             { value: undefined, text: '--' },
             { value: 1, text: 'Área de Producción/operaciones' },
@@ -51,7 +45,6 @@ export default {
         { text: '9', value: 9 },
     ],
     participantResponse: {
-        position: undefined,
         area: undefined,
         email: '',
         last_update: '',

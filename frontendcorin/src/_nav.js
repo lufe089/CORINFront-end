@@ -27,7 +27,13 @@ export default {
         {
             name: 'Resultados',
             url: '/result',
-            icon: 'fa fa-pie-chart'
+            icon: 'fa fa-pie-chart',
+            children: [{
+                name: 'Por categorías',
+                url: '/result',
+                icon: 'icon-puzzle'
+                    //TODO completar
+            }]
         },
         {
             name: 'Clientes',
