@@ -83,8 +83,7 @@
         </b-row>
         <b-row>
           <b-col md="12"  sm="12">
-            <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='items' :fields='fields' :current-page='currentPage' :per-page="perPage"
-                :filter="filter" @filtered="onFiltered">
+            <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='items' :fields='fields' :current-page='currentPage' :per-page="perPage">
                 <template slot='average' slot-scope='data'>
                   <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
                   <b-progress height={} class="progress-xs my-0" :variant="info"  :value= "data.item.average" :max="max"/>
@@ -143,7 +142,16 @@ export default {
       promedioBarra: 0.0,
       max: 9,
       isLoading: true,
-      requestPath: '' // Controla cual es la ruta para la que se quieren ver los resultados
+      requestPath: '', // Controla cual es la ruta para la que se quieren ver los resultados
+      areaFields: [
+        {key: 'area', label: 'Nombre', sortable: true, class: 'widthColumn'},
+        {key: 'name', label: 'Promedio', sortable: true}
+        /* {key: 'email', label: 'Email', sortable: true, class: 'widthColumn'},
+        {key: 'comments', label: 'Comentarios', sortable: true},
+        {key: 'area', label: 'Area', sortable: true},
+        {key: 'is_directive', label: 'Es directivo?', sortable: true},
+        {key: 'posicion', label: 'Es directivo?', sortable: true},
+        {key: 'promedio', sortable: true} */ ],
     }
   },
   created: function () {
@@ -207,7 +215,7 @@ export default {
         this.drawDirectivesNoDirectivesChart('Categorías', this.$refs.chartByDirectivesNoDirectives, i18n.tc('message.rendimiento_dir_no_dir'))
       }
       if (this.requestPath === '/result-by-areas') {
-        this.sortJSON(this.average_by_areas, 'name', 'asc')
+        this.sortJSON(this.average_by_areas, 'average', 'asc')
         this.drawRadarChart(this.$refs.chartCategoriesByArea, i18n.tc('message.rendimiento_areas'), this.average_by_areas)
       }
     },
