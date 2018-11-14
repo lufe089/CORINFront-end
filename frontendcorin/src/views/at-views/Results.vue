@@ -67,6 +67,23 @@
           </b-col>
         </b-row>
         </div> <!-- End result-by-directives-div-->
+         <!-- Results by areas-->
+        <div id="result-by-areas" v-show="showView('/result-by-areas')">
+        <b-row>
+           <b-col md="4"  sm="12">
+            <c-table-results :caption="$t('message.rendimiento_areas')"  hover  :items="average_by_areas"></c-table-results>
+          </b-col>
+           <b-col md="8">
+            <b-card >
+            <div class="chart-wrapper">
+               <div class="radarStyle" ref="chartCategoriesByArea"> </div>
+            </div>
+            </b-card>
+          </b-col>
+        </b-row>
+        <b-row>
+        </b-row>
+        </div> <!-- End result-by-areas-div-->
       </div>
     </div>
   </div>
@@ -106,6 +123,7 @@ export default {
       average_by_dimensions: [],
       average_by_categories: [],
       average_by_components: [],
+      average_by_area: [],
       categories_average_by_directives: [],
       categories_average_by_no_directives: [],
       errorConsultingData: false,
@@ -125,7 +143,6 @@ export default {
   },
   mounted: function () {
     this.consultAverageData()
-    this.drawCharts()
   },
   watch: {
     '$route' (to, from) {
@@ -147,10 +164,12 @@ export default {
           this.average_by_categories = averageChartsData['average_by_categories']
           this.average_by_dimensions = averageChartsData['average_by_dimensions']
           this.average_by_components = averageChartsData['average_by_components']
+          this.average_by_areas = averageChartsData['average_by_area']
           this.categories_average_by_directives = averageChartsData['categories_average_by_directives']
           this.categories_average_by_no_directives = averageChartsData['categories_average_by_no_directives']
           // Se cambia la bandera que controla si se muestran las tablas de resultados para indicar que si se pueden mostrar
           this.showResponsesSummaryTables = true
+          this.drawCharts()
           this.isLoading = false
           // Se ordenan los resultados para mostrarlos ordenados en las tablas que resumen los resultados
           // this.sortJSON(this.average_by_dimensions, 'average', 'asc')
@@ -172,22 +191,28 @@ export default {
     },
     drawCharts: function () {
       if (this.requestPath === '/result-by-categories') {
-        this.drawRadarChart('Categorias', this.$refs.chartByCategories, i18n.tc('message.rendimiento_categoria'))
+        this.sortJSON(this.average_by_categories, 'name', 'asc')
+        this.drawRadarChart(this.$refs.chartByCategories, i18n.tc('message.rendimiento_categoria'), this.average_by_categories)
       }
       if (this.requestPath === '/result-by-directives') {
-        this.drawDirectivesNoDirectivesChart('Categorias', this.$refs.chartByDirectivesNoDirectives, i18n.tc('message.rendimiento_dir_no_dir'))
+        this.drawDirectivesNoDirectivesChart('Categorías', this.$refs.chartByDirectivesNoDirectives, i18n.tc('message.rendimiento_dir_no_dir'))
+      }
+      if (this.requestPath === '/result-by-areas') {
+        this.sortJSON(this.average_by_areas, 'name', 'asc')
+        this.drawRadarChart(this.$refs.chartCategoriesByArea, i18n.tc('message.rendimiento_areas'), this.average_by_areas)
       }
     },
-    drawRadarChart: function (label, div, titleText) {
+    drawRadarChart: function (div, titleText, data) {
       let chart = am4core.create(div, am4charts.RadarChart)
-      // Organiza la categorias para que se pinten todos enel mismo orden y se vea bien el area
-      this.sortJSON(this.average_by_categories, 'name', 'asc')
-      chart.data = this.average_by_categories
+      if (div === this.$refs.chartByCategories) {
+        chart.data = this.average_by_categories
+      } else if (div === this.$refs.chartCategoriesByArea) {
+        chart.data = this.average_by_areas
+      }
       chart.padding(10, 10, 10, 10)
       let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis())
       categoryAxis.renderer.grid.template.location = 0
       categoryAxis.dataFields.category = 'name'
-      // categoryAxis.title.text = label + ' ( ' + (data.length) + ' ) '
       categoryAxis.renderer.minGridDistance = 5
       // Values
       let valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
