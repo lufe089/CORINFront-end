@@ -231,6 +231,10 @@ export default {
       categoryAxis.renderer.grid.template.location = 0
       categoryAxis.dataFields.category = 'name'
       categoryAxis.renderer.minGridDistance = 5
+
+      var labelAxis = categoryAxis.renderer.labels.template
+      labelAxis.wrap = true
+      labelAxis.maxWidth = 150
       // Values
       let valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
       valueAxis.min = 0
@@ -286,6 +290,7 @@ export default {
       categoryAxis.renderer.labels.template.verticalCenter = 'middle'
       categoryAxis.renderer.labels.template.horizontalCenter = 'middle'
 
+      // Controla el largo de las etiquetas para que se puedan leer
       var labelAxis = categoryAxis.renderer.labels.template
       // labelAxis.wrap = true
       // labelAxis.maxWidth = 120
