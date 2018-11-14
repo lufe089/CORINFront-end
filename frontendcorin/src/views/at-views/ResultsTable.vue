@@ -23,7 +23,7 @@
         </b-col>
       </b-row>
     </b-card>
-    <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='items' :fields='fields' :current-page='currentPage' :per-page="perPage"
+    <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='items' :fields='getColumns()' :current-page='currentPage' :per-page="perPage"
         :filter="filter" @filtered="onFiltered">
     <template slot='average' slot-scope='data'>
       <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
@@ -73,19 +73,14 @@ export default {
     filterValues: {
       type: Boolean,
       default: false
+    },
+    columnsDetail: {
+      type: Number, // Controla si se deben poner datos diferentes en las columnas de la tabla para reutilizar el componente
+      default: 1
     }
   },
   data: () => {
     return {
-      fields: [
-        {key: 'name', label: 'Nombre', sortable: true, class: 'widthColumn'},
-        {key: 'average', label: 'Promedio', sortable: true}
-        /* {key: 'email', label: 'Email', sortable: true, class: 'widthColumn'},
-        {key: 'comments', label: 'Comentarios', sortable: true},
-        {key: 'area', label: 'Area', sortable: true},
-        {key: 'is_directive', label: 'Es directivo?', sortable: true},
-        {key: 'posicion', label: 'Es directivo?', sortable: true},
-        {key: 'promedio', sortable: true} */ ],
       currentPage: 1,
       perPage: 10,
       totalRows: 0,
@@ -122,6 +117,18 @@ export default {
         variant = 'warning'
       }
       return variant
+    },
+    getColumns: function () {
+      var fields = []
+      if (this.columnsDetail === 1) {
+        fields = [ {key: 'name', label: 'Nombre', sortable: true, class: 'widthColumn'},
+          {key: 'average', label: 'Promedio', sortable: true}]
+      } else if (this.columnsDetail === 2) {
+        fields = [ {key: 'name', label: 'Nombre', sortable: true, class: 'widthColumn'},
+          {key: 'category', label: 'Categoría', sortable: true},
+          {key: 'average', label: 'Promedio', sortable: true}]
+      }
+      return fields
     }
   },
   components: {

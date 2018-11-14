@@ -161,7 +161,7 @@
               </b-row>
               <b-row>
                 <b-col md="5"  sm="12">
-                  <c-table-results :filterValues=true hover :items="average_by_dimensions"></c-table-results>
+                  <c-table-results :filterValues=true :columnsDetail=2 hover :items="average_by_dimensions"></c-table-results>
                 </b-col>
                 <b-col md="7">
                   <b-card >
@@ -524,7 +524,7 @@ export default {
 
       // Customize labels appareance
       valueAxis.renderer.labels.template.fill = am4core.color('#A0CA92')
-      valueAxis.renderer.labels.template.fontSize = 10
+      valueAxis.renderer.labels.template.fontSize = 12
 
       // Disable grid values
       categoryAxis.renderer.grid.template.disabled = true
