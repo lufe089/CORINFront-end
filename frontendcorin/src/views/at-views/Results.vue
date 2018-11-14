@@ -35,14 +35,25 @@
         </b-row>
         <b-row>
           <!-- Resultados por categorias -->
-          <b-col md="4"  sm="12">
-            <c-table-results :caption="$t('message.resultado_categorias')"  hover  :items="average_by_categories"></c-table-results>
-          </b-col>
-          <b-col sm="12" md="8">
-            <b-card >
-            <div class="chart-wrapper" height="100%">
-              <div class="radarStyle" ref="chartByCategories"> </div>
-            </div>
+          <b-col md="12">
+            <b-card>
+              <b-row>
+                <b-col>
+                <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{$t("message.resultado_categorias") + ' ('+$t("message.n") +' = '+ this.n +' )'}}</div>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col md="4"  sm="12">
+                  <c-table-results hover  :items="average_by_categories"></c-table-results>
+                </b-col>
+                <b-col md="8">
+                  <b-card >
+                  <div class="chart-wrapper">
+                     <div class="radarStyle" ref="chartByCategories"> </div>
+                  </div>
+                  </b-card>
+                </b-col>
+              </b-row>
             </b-card>
           </b-col>
         </b-row>
@@ -138,6 +149,56 @@
           </b-col>
         </b-row>
         </div> <!-- End result-by-areas-div-->
+        <!-- Results by dimensions and components-->
+        <div id="results_by_dim_comp" v-show="showView('/results_by_dim_comp')">
+          <b-row>
+            <b-col md="12">
+            <b-card>
+              <b-row>
+                <b-col>
+                <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{$t("message.resultado_dimensiones")+ ' ('+$t("message.n") +' = '+ this.n +' )'}}</div>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col md="5"  sm="12">
+                  <c-table-results :filterValues=true hover :items="average_by_dimensions"></c-table-results>
+                </b-col>
+                <b-col md="7">
+                  <b-card >
+                  <div class="chart-wrapper">
+                    <div class="chartStyle" ref="chartByDimensions"> </div>
+                  </div>
+                  </b-card>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+        </b-row>
+        <!-- Tabla con resultados dimensiones y componentes -->
+        <b-row>
+          <b-col md="12">
+            <b-card>
+              <b-row>
+                <b-col>
+                <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{$t("message.resultado_componentes")+ ' ('+$t("message.n") +' = '+ this.n +' )'}}</div>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col md="4"  sm="12">
+                  <c-table-results :filterValues=true hover :items="average_by_components"></c-table-results>
+                </b-col>
+                <b-col md="8">
+                  <b-card >
+                  <div class="chart-wrapper">
+                    <div class="chartStyle" ref="chartByComponents"> </div>
+                  </div>
+                  </b-card>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+        </b-row><!--/.row-->
+        </div><!-- End results_by_dim_comp-div-->
       </div>
     </div>
   </div>
@@ -283,6 +344,11 @@ export default {
         this.sortJSON(this.average_by_areas, 'average', 'asc')
         this.drawRadarChart(this.$refs.chartCategoriesByArea, i18n.tc('message.rendimiento_areas'), this.average_by_areas)
       }
+      if (this.requestPath === '/results_by_dim_comp') {
+        // this.average_by_categories = averageChartsData['average_by_categories']
+        this.drawBarChart(this.average_by_dimensions, i18n.tc('message.dimensions'), this.$refs.chartByDimensions, i18n.tc('message.rendimiento_dimension'))
+        this.drawBarChart(this.average_by_components, i18n.tc('message.components'), this.$refs.chartByComponents, i18n.tc('message.rendimiento_componente'))
+      }
     },
     drawRadarChart: function (div, titleText, data) {
       let chart = am4core.create(div, am4charts.RadarChart)
@@ -313,16 +379,16 @@ export default {
       series.name = 'Todos (n =' + this.n + ')'
       // Da el grosor de la linea
       series.strokeWidth = 3
-      chart.legend = new am4charts.Legend()
+      // chart.legend = new am4charts.Legend()
       // Le pone bolitas en cada cambio de valor
       series.bullets.push(new am4charts.CircleBullet())
-      chart.scrollbarX = new am4core.Scrollbar()
+      // chart.scrollbarX = new am4core.Scrollbar()
       chart.scrollbarY = new am4core.Scrollbar()
       // Title
-      var title = chart.titles.create()
+      /* var title = chart.titles.create()
       title.text = titleText
       title.fontSize = 25
-      title.marginBottom = 30
+      title.marginBottom = 30 */
       // Export the chart
       chart.exporting.menu = new am4core.ExportMenu()
     },
@@ -432,6 +498,77 @@ export default {
       // Export the chart
       chart.exporting.menu = new am4core.ExportMenu()
     },
+    drawBarChart: function (data, label, div, titleText) {
+      // we will create the chart here
+      // let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
+      let chart = am4core.create(div, am4charts.XYChart)
+      var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis())
+      categoryAxis.dataFields.category = 'name'
+      categoryAxis.title.text = label + ' ( ' + (data.length) + ' ) '
+      categoryAxis.title.fontWeight = 'bold'
+      var valueAxis = chart.xAxes.push(new am4charts.ValueAxis())
+      valueAxis.title.text = 'Promedio'
+      valueAxis.title.fontWeight = 'bold'
+      valueAxis.min = 0
+      valueAxis.max = 9
+      valueAxis.calculateTotals = true
+      valueAxis.strictMinMax = true
+
+      var axisRange = valueAxis.axisRanges.create()
+      axisRange.value = 300
+      axisRange.grid.strokeOpacity = 0.1
+      axisRange.label.text = 'Goal'
+      axisRange.label.align = 'righ'
+      axisRange.label.verticalCenter = 'bottom'
+      axisRange.label.fillOpacity = 0.8
+
+      // Customize labels appareance
+      valueAxis.renderer.labels.template.fill = am4core.color('#A0CA92')
+      valueAxis.renderer.labels.template.fontSize = 10
+
+      // Disable grid values
+      categoryAxis.renderer.grid.template.disabled = true
+      valueAxis.renderer.grid.template.disabled = true
+      // Separacion entre los elementos que se dibujan
+      categoryAxis.renderer.minGridDistance = 15
+      var labelAxis = categoryAxis.renderer.labels.template
+      labelAxis.wrap = true
+      labelAxis.maxWidth = 200
+      labelAxis.fontSize = 12
+      labelAxis.tooltipText = '{name}'
+      chart.data = data
+      /* Series */
+      var series = chart.series.push(new am4charts.ColumnSeries())
+      series.dataFields.valueX = 'average'
+      series.dataFields.categoryY = 'name'
+      series.columns.template.tooltipText = '{categoryY}\nValor: {valueX}'
+      series.name = label + ' (n = ' + this.n + ')'
+      var columnTemplate = series.columns.template
+      columnTemplate.height = am4core.percent(25)
+      // Preload style for doing circular bulltets
+      var circleBullet = columnTemplate.createChild(am4charts.CircleBullet)
+      circleBullet.circle.radius = 8
+      circleBullet.valign = 'middle'
+      circleBullet.align = 'right'
+      circleBullet.isMeasured = true
+      circleBullet.mouseEnabled = false
+      circleBullet.verticalCenter = 'middle'
+      // Label
+      var columnLabel = circleBullet.createChild(am4core.Label)
+      columnLabel.text = ' {valueX}   '
+      columnLabel.fontSize = 12
+      // Alinea la etiqueta con las barras para que se vea bonito
+      columnLabel.dy = -5
+      columnLabel.dx = 15
+      // Cursor
+      chart.cursor = new am4charts.XYCursor()
+      chart.cursor.behavior = 'none'
+      // chart.scrollbarX = new am4core.Scrollbar()
+      chart.scrollbarX = new am4core.Scrollbar()
+
+      // Export the chart
+      chart.exporting.menu = new am4core.ExportMenu()
+    },
     calculateVariantResults: function (type, number) {
       var variant = ''
       if (number >= 7) {
@@ -473,12 +610,12 @@ export default {
 </script>
 <style scoped>
 .radarStyle {
-  width: 95%;
-  height: 530px;
+  width: 98%;
+  height: 500px;
 }
 .chartStyle {
-  width: 95%;
-  height: 700px;
+  width: 98%;
+  height: 850px;
 }
 .loading {
   position: fixed;

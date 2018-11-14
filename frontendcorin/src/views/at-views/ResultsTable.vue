@@ -1,10 +1,12 @@
 <template>
   <b-card class="card-body">
-    <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{caption}}</div>
+    <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md" v-show="caption !==''">
+      {{caption}}
+    </div>
     <hr>
-    <b-card v-show="filter">
+    <b-card v-show="filterValues">
     <b-row >
-      <b-col md="8" sm="12" class="my-1">
+      <b-col md="12" sm="12" class="my-1">
           <b-form-group :label="$t('message.filtro')" class="mb-0">
             <b-input-group>
               <b-form-input v-model="filter" :placeholder="$t('message.type_to_search')" />
@@ -14,7 +16,7 @@
             </b-input-group>
           </b-form-group>
         </b-col>
-        <b-col md="4" sm="12" class="my-1">
+        <b-col md="12" sm="12" class="my-1">
           <b-form-group :label="$t('message.peer_page')" class="mb-0" v-show="totalRows>=perPage">
             <b-form-select :options="pageOptions" v-model="perPage" />
           </b-form-group>
@@ -41,7 +43,7 @@ export default {
   props: {
     caption: {
       type: String,
-      default: 'Table'
+      default: ' '
     },
     hover: {
       type: Boolean,
@@ -68,7 +70,7 @@ export default {
       required: true,
       default: () => []
     },
-    filter: {
+    filterValues: {
       type: Boolean,
       default: false
     }
@@ -85,7 +87,7 @@ export default {
         {key: 'posicion', label: 'Es directivo?', sortable: true},
         {key: 'promedio', sortable: true} */ ],
       currentPage: 1,
-      perPage: 15,
+      perPage: 10,
       totalRows: 0,
       pageOptions: [ 5, 10, 15, 40 ],
       filter: null,
