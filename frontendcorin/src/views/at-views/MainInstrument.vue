@@ -58,7 +58,7 @@
                   <b-col md="6">
                     <b-form-group :description="$t('message.please_enter_area')" :label="$t('message.area')" label-for="area" :label-cols="2"
                       :horizontal="true">
-                      <b-form-select id="area" v-model="participantResponse.area" :options="parameters.area" required/>
+                      <b-form-select id="area" v-model="participantResponse.area_id" :options="areas" required/>
                     </b-form-group>
                   </b-col>
                 </b-row>
@@ -66,7 +66,7 @@
                   <b-col md="6">
                     <b-form-group :label="$t('message.es_directivo')" label-for="positionDirective" :label-cols="6"
                       :horizontal="true">
-                      <b-form-radio-group id="positionDirective" v-model="participantResponse.is_directive" :options="parameters.position" name="positionDirective"  @change="changeDirectiveVisibility" required></b-form-radio-group>
+                      <b-form-radio-group id="positionDirective" v-model="participantResponse.is_directive" :options="parameters.position" name="positionDirective" required></b-form-radio-group>
                     </b-form-group>
                   </b-col>
                 </b-row>
@@ -122,9 +122,6 @@
 <script>
 
 import BDData from './_BDData.js'
-// import itemLevel2Table from './ItemLevel2Table.vue'
-import i18n from '../../lang/config'
-import axios from 'axios'
 import api from './api'
 
 export default {
@@ -135,8 +132,10 @@ export default {
       serviceResult: {},
       result: '',
       isSurveyVisible: false,
+      areas: {},
       parameters: BDData.parameters,
       ulrInstructions: 'consult-custom-inst/?idClient=',
+      urlAreas: '/areas/',
       // FIXME
       idClient: 1,
       urlSaveSubItems: BDData.apiURL + 'participantsResponse/',
@@ -176,6 +175,16 @@ export default {
         // Se pone vacio para evitar errores
         this.instruccionData = {user_instructions: '', contact_info: '', thanks: ' '}
       }
+
+      // Carga las areas
+      response = await api.getAll(this.urlAreas)
+      // Estuvo exitosa la busqueda
+      if (response.status === 200) {
+        this.areas = response.data
+      } else {
+        // Se pone vacio para evitar errores
+        this.areas = {}
+      }
       this.isLoading = false
     },
     clone (obj) {
@@ -198,35 +207,28 @@ export default {
       this.isSurveyVisible = true
       // this.inititParticipantResponse()
     },
-    changeDirectiveVisibility: function (value) {
-      this.showDirective = value
-      this.participantResponse.is_directive = this.showDirective
-      // Si no es directivo se borra la posicion para que la persona tenga q seleccionar nuevamente
-      if (this.showDirective === false) {
-        this.participantResponse.position = undefined
-      }
-    },
     onSubmit: function (evt) {
       // the page doesn’t reload when the form is submitted,
       evt.preventDefault()
       // Se activa la visualizacion de las preguntas
       this.showQuestions = true
     },
-    processEnd: function (responsesList) {
+    async processEnd (responsesList) {
       // Cambia la bandera que controla si se muestra el mensaje de fin de encuesta
       this.isLoading = true
       console.log('Emitio guardado')
       this.participantResponse.responsesList = responsesList
       this.participantResponse.customized_instrument_id = this.instruccionData.id
-      axios.post(this.urlSaveSubItems, this.participantResponse).then(response => {
+
+      var response = await api.create(this.participantResponse, this.urlSaveSubItems)
+      if (response.status === 201) {
+        // Estuvo exitosa la busqueda
         console.log('Guardado de respuestas en BD fue correcto')
         this.showThanksMessage = true
         this.isLoading = false
-      }).catch(function (error) {
-        console.error(error)
-        alert(i18n.tc('message.error_consuming_save_service'))
+      } else {
         this.isLoading = false
-      })
+      }
     }
   },
   filters: {

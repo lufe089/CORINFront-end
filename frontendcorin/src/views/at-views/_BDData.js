@@ -45,7 +45,7 @@ export default {
         { text: '9', value: 9 },
     ],
     participantResponse: {
-        area: undefined,
+        area_id: undefined,
         email: '',
         last_update: '',
         comments: '',

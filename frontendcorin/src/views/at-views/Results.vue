@@ -70,7 +70,7 @@
          <!-- Results by areas-->
         <div id="result-by-areas" v-show="showView('/result-by-areas')">
         <b-row>
-           <b-col md="4"  sm="12">
+          <b-col md="4"  sm="12">
             <c-table-results :caption="$t('message.rendimiento_areas')"  hover  :items="average_by_areas"></c-table-results>
           </b-col>
            <b-col md="8">
@@ -82,6 +82,15 @@
           </b-col>
         </b-row>
         <b-row>
+          <b-col md="12"  sm="12">
+            <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='items' :fields='fields' :current-page='currentPage' :per-page="perPage"
+                :filter="filter" @filtered="onFiltered">
+                <template slot='average' slot-scope='data'>
+                  <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
+                  <b-progress height={} class="progress-xs my-0" :variant="info"  :value= "data.item.average" :max="max"/>
+                </template>
+            </b-table>
+          </b-col>
         </b-row>
         </div> <!-- End result-by-areas-div-->
       </div>
