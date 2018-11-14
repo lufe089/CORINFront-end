@@ -29,7 +29,7 @@
     </template>
     </b-table>
     <nav>
-      <b-pagination :total-rows='getRowCount(items)' :per-page='perPage' v-model='currentPage' prev-text='Prev' next-text='Next' hide-goto-end-buttons/>
+      <b-pagination v-show="totalRows>=perPage" :total-rows='getRowCount(items)' :per-page='perPage' v-model='currentPage' prev-text='Prev' next-text='Next' hide-goto-end-buttons/>
     </nav>
   </b-card>
 </template>
