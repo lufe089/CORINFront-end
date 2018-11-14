@@ -71,7 +71,7 @@
         <div id="result-by-areas" v-show="showView('/result-by-areas')">
         <b-row>
           <b-col md="4"  sm="12">
-            <c-table-results :caption="$t('message.rendimiento_areas')"  hover  :items="average_by_areas"></c-table-results>
+            <c-table-results :caption="$t('message.rendimiento_areas')"  :items="average_by_areas"></c-table-results>
           </b-col>
            <b-col md="8">
             <b-card >
@@ -82,13 +82,14 @@
           </b-col>
         </b-row>
         <b-row>
+          <!-- Tabla de areas x categorias -->
           <b-col md="12"  sm="12">
-            <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='items' :fields='fields' :current-page='currentPage' :per-page="perPage">
-                <template slot='average' slot-scope='data'>
-                  <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
-                  <b-progress height={} class="progress-xs my-0" :variant="info"  :value= "data.item.average" :max="max"/>
-                </template>
+            <b-card class="card-body">
+            <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{$t("message.areas_by_categories_average")}}</div>
+            <hr>
+            <b-table hover responsive='md' :items='categories_average_by_area' :fields='area_table_columns'>
             </b-table>
+            </b-card>
           </b-col>
         </b-row>
         </div> <!-- End result-by-areas-div-->
@@ -134,6 +135,8 @@ export default {
       average_by_area: [],
       categories_average_by_directives: [],
       categories_average_by_no_directives: [],
+      categories_average_by_area: [], // Sirve para mostrar el promedio relacionado de cada categoria por area
+      area_table_columns: [{key: 'area', sortable: true}], // El area mas el nombre de las columnas que viene del servicio
       errorConsultingData: false,
       noResponses: false,
       showResponsesSummaryTables: false, // Controla la visualizacion de las tablas que resumen los resultados por categoria dimension y componente
@@ -151,7 +154,7 @@ export default {
         {key: 'area', label: 'Area', sortable: true},
         {key: 'is_directive', label: 'Es directivo?', sortable: true},
         {key: 'posicion', label: 'Es directivo?', sortable: true},
-        {key: 'promedio', sortable: true} */ ],
+        {key: 'promedio', sortable: true} */ ]
     }
   },
   created: function () {
@@ -184,6 +187,21 @@ export default {
           this.average_by_areas = averageChartsData['average_by_area']
           this.categories_average_by_directives = averageChartsData['categories_average_by_directives']
           this.categories_average_by_no_directives = averageChartsData['categories_average_by_no_directives']
+          this.categories_average_by_area = averageChartsData['categories_average_by_area']
+          /* No voy a hacer esto sino que voy a dejar el espacio por facilidad
+          this.categories_average_by_area.map((obj) => {
+            obj.sortable = 'true'
+            if (obj['Capacidades organizacionales'] === undefined) {
+              obj['Capacidades organizacionales'] = '--'
+            }
+            return obj
+          }) */
+          this.area_table_columns = this.area_table_columns.concat(averageChartsData['category_names'])
+          // Se modifican las columna para que todos los campos tengan el atributo de sortable
+          this.area_table_columns.map((obj) => {
+            obj.sortable = 'true'
+            return obj
+          })
           // Se cambia la bandera que controla si se muestran las tablas de resultados para indicar que si se pueden mostrar
           this.showResponsesSummaryTables = true
           this.drawCharts()
@@ -396,6 +414,7 @@ export default {
       })
     },
     showView: function (id) {
+      // Controla cuando se ven o no las vistas de resultados
       if (id === this.requestPath) {
         return true
       } else {
