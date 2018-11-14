@@ -11,7 +11,7 @@
         <b-col sm="12" md="12">
           <b-card :no-body="true">
             <b-card-body class="p-4 clearfix">
-              <div :class="calculateVariantResults('bg')" class=" h1 p-4 px-5 font-2xl mr-3 float-left">{{overall_average}} </div>
+              <div :class="calculateVariantResults('bg',overall_average)" class=" h1 p-4 px-5 font-2xl mr-3 float-left">{{overall_average}} </div>
               <div>
                 <div class="h2 text-primary mb-0 mt-2" >
                   <div v-show="overall_average>=7">{{$t("message.resultado_alta_tendencia")}}
@@ -24,7 +24,7 @@
                     <div class="text-muted font-weight-bold font-xs"> Promedio entre 4 y 6 </div>
                   </div>
                 </div>
-                <b-progress height={} class="progress-xs my-1" :variant=calculateVariantResults()  :max=max :value="promedioBarra"/>
+                <b-progress height={} class="progress-xs my-1" :variant="calculateVariantResults('bar',promedioBarra)" :max=max :value="promedioBarra"/>
                 <div class="text-muted font-weight-bold font-s"> Numero de respuestas: {{n}}
                   <div class="float-right"><small class="text-muted">Valor mínimo 1  -- Valor máximo 9 </small></div>
                 </div>
@@ -70,14 +70,25 @@
          <!-- Results by areas-->
         <div id="result-by-areas" v-show="showView('/result-by-areas')">
         <b-row>
-          <b-col md="4"  sm="12">
-            <c-table-results :caption="$t('message.rendimiento_areas')"  :items="average_by_areas"></c-table-results>
-          </b-col>
-           <b-col md="8">
-            <b-card >
-            <div class="chart-wrapper">
-               <div class="radarStyle" ref="chartCategoriesByArea"> </div>
-            </div>
+          <b-col md="12">
+            <b-card>
+              <b-row>
+                <b-col>
+                <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{$t("message.rendimiento_areas")}}</div>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col md="4"  sm="12">
+                  <c-table-results :items="average_by_areas"></c-table-results>
+                </b-col>
+                <b-col md="8">
+                  <b-card >
+                  <div class="chart-wrapper">
+                    <div class="radarStyle" ref="chartCategoriesByArea"> </div>
+                  </div>
+                  </b-card>
+                </b-col>
+              </b-row>
             </b-card>
           </b-col>
         </b-row>
@@ -88,6 +99,40 @@
             <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{$t("message.areas_by_categories_average")}}</div>
             <hr>
             <b-table hover responsive='md' :items='categories_average_by_area' :fields='area_table_columns'>
+              <!-- Si se cambian los nombres de las categorias esto va a hacer un problema-->
+              <template slot='Capacidades organizacionales' slot-scope='data'>
+                <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Capacidades organizacionales']"></vue-numeric></strong>
+                <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults('bar', data.item['Capacidades organizacionales'])"  :value= "data.item['Capacidades organizacionales']" :max="max"/>
+              </template>
+              <template slot='Competencias organizacionales' slot-scope='data'>
+                <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Competencias organizacionales']"></vue-numeric></strong>
+                <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults('bar', data.item['Competencias organizacionales'])"  :value= "data.item['Competencias organizacionales']" :max="max"/>
+              </template>
+              <template slot='Estructura' slot-scope='data'>
+                <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Estructura']"></vue-numeric></strong>
+                <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults('bar', data.item['Estructura'])"  :value= "data.item['Estructura']" :max="max"/>
+              </template>
+              <template slot='Liderazgo y métricas' slot-scope='data'>
+                <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Liderazgo y métricas']"></vue-numeric></strong>
+                <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults('bar', data.item['Liderazgo y métricas'])"  :value= "data.item['Capacidades organizacionales']" :max="max"/>
+              </template>
+              <template slot='Entorno y estrategia' slot-scope='data'>
+                <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Entorno y estrategia']"></vue-numeric></strong>
+                <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults('bar', data.item['Entorno y estrategia'])"  :value= "data.item['Entorno y estrategia']" :max="max"/>
+              </template>
+              <template slot='Rasgos culturales para la innovación' slot-scope='data'>
+                <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Rasgos culturales para la innovación']"></vue-numeric></strong>
+                <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults('bar', data.item['Rasgos culturales para la innovación'])"  :value= "data.item['Rasgos culturales para la innovación']" :max="max"/>
+              </template>
+              <template slot='Roles comportamentales' slot-scope='data'>
+                <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Roles comportamentales']"></vue-numeric></strong>
+                <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults('bar', data.item['Roles comportamentales'])"  :value= "data.item['Roles comportamentales']" :max="max"/>
+              </template>
+              <!-- No funciono
+                <template v-for='category in categories_names' :slot="category.name" slot-scope='data'>
+                <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item[category.name]"></vue-numeric></strong>
+                <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults(data.item[category.name])"  :value= "data.item[category.name]" :max="max"/>
+              </template>-->
             </b-table>
             </b-card>
           </b-col>
@@ -137,6 +182,7 @@ export default {
       categories_average_by_no_directives: [],
       categories_average_by_area: [], // Sirve para mostrar el promedio relacionado de cada categoria por area
       area_table_columns: [{key: 'area', sortable: true}], // El area mas el nombre de las columnas que viene del servicio
+      categories_names: [],
       errorConsultingData: false,
       noResponses: false,
       showResponsesSummaryTables: false, // Controla la visualizacion de las tablas que resumen los resultados por categoria dimension y componente
@@ -188,6 +234,7 @@ export default {
           this.categories_average_by_directives = averageChartsData['categories_average_by_directives']
           this.categories_average_by_no_directives = averageChartsData['categories_average_by_no_directives']
           this.categories_average_by_area = averageChartsData['categories_average_by_area']
+          this.categories_names = averageChartsData['categories_average_by_area']
           /* No voy a hacer esto sino que voy a dejar el espacio por facilidad
           this.categories_average_by_area.map((obj) => {
             obj.sortable = 'true'
@@ -385,11 +432,11 @@ export default {
       // Export the chart
       chart.exporting.menu = new am4core.ExportMenu()
     },
-    calculateVariantResults: function (type) {
+    calculateVariantResults: function (type, number) {
       var variant = ''
-      if (this.overall_average >= 7) {
+      if (number >= 7) {
         variant = 'success'
-      } else if (this.overall_average <= 3) {
+      } else if (number <= 3) {
         variant = 'danger'
       } else {
         variant = 'warning'
@@ -427,7 +474,7 @@ export default {
 <style scoped>
 .radarStyle {
   width: 95%;
-  height: 700px;
+  height: 530px;
 }
 .chartStyle {
   width: 95%;

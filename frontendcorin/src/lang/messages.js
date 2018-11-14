@@ -41,7 +41,7 @@ export default {
             access_key: 'Clave de acceso',
             access_config: 'Clave de acceso para compartir con los encuestados',
             any_comment: 'Algún comentario?',
-            areas_by_categories_average: 'Promedio de areas por categorias',
+            areas_by_categories_average: 'Promedio de áreas por categorías',
             cargo: 'Cargo',
             cargando: 'Cargando ....',
             comments: 'Commentarios',

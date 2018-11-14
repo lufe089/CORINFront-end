@@ -2,8 +2,8 @@
   <b-card class="card-body">
     <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{caption}}</div>
     <hr>
-    <b-card>
-    <b-row>
+    <b-card v-show="filter">
+    <b-row >
       <b-col md="8" sm="12" class="my-1">
           <b-form-group :label="$t('message.filtro')" class="mb-0">
             <b-input-group>
@@ -67,6 +67,10 @@ export default {
       type: Array,
       required: true,
       default: () => []
+    },
+    filter: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => {
