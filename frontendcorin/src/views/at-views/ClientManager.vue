@@ -279,8 +279,9 @@ export default {
       this.loading = true
       // Se limpia el objeto de referencia
       this.clearObj()
-      var urlService = 'clients-and-survey-conf'
-      var response = await api.getAll(urlService)
+      var urlService = '/clients-and-survey-conf/'
+      // FIXME organizar el id de la compania cuando sepa como resolver el problema de la sesion
+      var response = await api.getWithPost({idCompany: 1}, urlService)
       // Estuvo exitosa la busqueda
       if (response.status === 200) {
         this.items = response.data

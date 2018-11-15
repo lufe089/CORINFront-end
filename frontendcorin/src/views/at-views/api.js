@@ -31,7 +31,6 @@ export default {
             // console.log(req)
             // alert(JSON.stringify(req))
             return req
-                //FIXME
         }).catch(error => {
             // Here we could override the busy state, setting isBusy to false
             console.error(JSON.stringify(error))
@@ -76,4 +75,9 @@ export default {
     getAll(path) {
         return this.execute('get', path)
     },
+    getWithPost(data, path) {
+        var result = this.execute('post', path, data)
+        return result
+    }
+
 }
