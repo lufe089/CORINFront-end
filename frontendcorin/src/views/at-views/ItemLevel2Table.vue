@@ -174,6 +174,7 @@ export default {
       /* Consume los servicios que se exponen en el servidor de django */
       axios.get(this.urlGetItems).then(response => {
         var subItems = response.data
+        this.totalItems = subItems.length
         axios.get(this.urlGetCategories).then(response => {
           var categories = response.data
           this.prepareData(categories, subItems)
@@ -218,7 +219,6 @@ export default {
     prepareItemResponses () { // Crea los objetos de tipo respuesta que son los que se almacena luego en la bd
       /* Creates a list of objects that will save user answers */
       for (var t = 0; t < this.dataLevelTwo.length; t++) {
-        this.totalItems += this.dataLevelTwo[t].responsesList.length
         var itemLevel2 = this.dataLevelTwo[t]
         // Por cada elemento de nivel 2 se recorren su subitems
         var responsesSubItemsByCategory = []

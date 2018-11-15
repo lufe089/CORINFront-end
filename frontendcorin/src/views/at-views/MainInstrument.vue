@@ -4,7 +4,7 @@
       <img class="loading" src="https://vignette.wikia.nocookie.net/judo/images/0/03/Cargando.gif/revision/latest?cb=20110601212206&path-prefix=es" alt="loading">
     </div>-->
     <loading :isLoading="isLoading"></loading>
-    <b-row fluid v-show="!errors && !isSurveyVisible && !showThanksMessage">
+    <b-row fluid v-show="!errores && !isSurveyVisible && !showThanksMessage">
       <b-col md=12>
          <b-jumbotron bg-variant="light">
         <template slot="header">
@@ -28,7 +28,7 @@
       </b-col>
     </b-row>
 
-    <div v-show="isSurveyVisible && !showThanksMessage && !errors">
+    <div v-show="isSurveyVisible && !showThanksMessage && !errores">
       <b-row fluid>
         <b-col md="12">
           <!--<b-card>
@@ -145,7 +145,7 @@ export default {
       instruccionData: {custom_user_instructions: '', custom_contact_info: '', custom_thanks: ' '},
       showThanksMessage: false,
       isLoading: null,
-      errors: false
+      errores: false
 
     }
   },
@@ -172,11 +172,11 @@ export default {
       // Estuvo exitosa la busqueda
       if (response.status === 200) {
         this.instruccionData = response.data
-        this.errors = false
+        this.errores = false
       } else {
         // Se pone vacio para evitar errores
         this.instruccionData = {user_instructions: '', contact_info: '', thanks: ' '}
-        this.errors = true
+        this.errores = true
       }
 
       // Carga las areas
@@ -184,11 +184,11 @@ export default {
       // Estuvo exitosa la busqueda
       if (response.status === 200) {
         this.areas = response.data
-        this.errors = false
+        this.errores = false
       } else {
         // Se pone vacio para evitar errores
         this.areas = {}
-        this.errors = true
+        this.errores = true
       }
       this.isLoading = false
     },

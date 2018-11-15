@@ -509,13 +509,11 @@ export default {
       var valueAxis = chart.xAxes.push(new am4charts.ValueAxis())
       valueAxis.title.text = 'Promedio'
       valueAxis.title.fontWeight = 'bold'
-      valueAxis.min = 0
-      valueAxis.max = 9
-      valueAxis.calculateTotals = true
-      valueAxis.strictMinMax = true
-
+      valueAxis.renderer.minGridDistance = 25
+      // valueAxis.calculateTotals = true
+      // valueAxis.strictMinMax = true
       var axisRange = valueAxis.axisRanges.create()
-      axisRange.value = 300
+      axisRange.value = 50
       axisRange.grid.strokeOpacity = 0.1
       axisRange.label.text = 'Goal'
       axisRange.label.align = 'righ'
@@ -534,7 +532,7 @@ export default {
       var labelAxis = categoryAxis.renderer.labels.template
       labelAxis.wrap = true
       labelAxis.maxWidth = 200
-      labelAxis.fontSize = 12
+      labelAxis.fontSize = 14
       labelAxis.tooltipText = '{name}'
       chart.data = data
       /* Series */
@@ -556,7 +554,7 @@ export default {
       // Label
       var columnLabel = circleBullet.createChild(am4core.Label)
       columnLabel.text = ' {valueX}   '
-      columnLabel.fontSize = 12
+      columnLabel.fontSize = 10
       // Alinea la etiqueta con las barras para que se vea bonito
       columnLabel.dy = -5
       columnLabel.dx = 15
@@ -614,7 +612,7 @@ export default {
   height: 500px;
 }
 .chartStyle {
-  width: 98%;
+  width: 80%;
   height: 850px;
 }
 .loading {

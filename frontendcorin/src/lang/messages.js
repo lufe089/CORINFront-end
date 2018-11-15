@@ -60,7 +60,7 @@ export default {
             customization_information: "Mensajes personalizados",
             delete: 'Eliminar',
             directivo: 'Directivo',
-            dimensiones: 'Dimensiones',
+            dimensions: 'Dimensiones',
             download_data: 'Descargar datos',
             download_parametric_data: 'Descargar datos de parámetros',
             download_answers_data: 'Descargar respuestas',
