@@ -2,11 +2,34 @@
   <div class="animated fadeIn">
     <loading :isLoading="isLoading"></loading>
     <div v-show="!isLoading">
+      <!-- Card to select which client to consult -->
+         <b-row>
+          <b-col md="12">
+            <b-card :no-body="true">
+              <b-card-body class="p-3 clearfix">
+                <b-row>
+                  <b-col md="1" class="text-center">
+                    <i class="fa icon-user bg-dark text-white p-4 font-2xl mr-1 "></i>
+                  </b-col>
+                  <b-col md="11">
+                      <div class="h4 text-dark mb-0 mt-2">
+                      <b-form-group :description="$t('message.seleccion_cliente')" :label="$t('message.cliente')" label-for="clientInput" :label-cols="1"
+                        :horizontal="true" >
+                        <b-form-select id="clientInput" v-model="idClient" :options="clients_by_company"  @change="changeClient" required/>
+                        </b-form-group>
+                      </div>
+                  </b-col>
+                </b-row>
+              </b-card-body>
+            </b-card>
+          </b-col>
+         </b-row>
+       <!-- End Card to select which client to consult -->
       <b-alert :show="noResponses"><h4>{{$t("message.no_resultados")}}</h4></b-alert>
       <!-- Si existen resultados para mostrar -->
-      <div id="results" v-show="!noResponses">
-        <!-- Results by categories only-->
-        <div id="result-by-categories" v-show="showView('/result-by-categories')">
+      <div id="results" v-show="!noResponses && showResponses">
+       <!-- Results by categories only-->
+       <div id="result-by-categories" v-show="showView('/result-by-categories')">
         <b-row>
         <b-col sm="12" md="12">
           <b-card :no-body="true">
@@ -90,7 +113,7 @@
               </b-row>
               <b-row>
                 <b-col md="4"  sm="12">
-                  <c-table-results :items="average_by_areas"></c-table-results>
+                  <c-table-results :items="average_by_areas"></c-table-results>-->
                 </b-col>
                 <b-col md="8">
                   <b-card >
@@ -166,7 +189,7 @@
                 <b-col md="7">
                   <b-card >
                   <div class="chart-wrapper">
-                    <div class="chartStyle" ref="chartByDimensions"> </div>
+                    <div class="chartDimensionStyle" ref="chartByDimensions"> </div>
                   </div>
                   </b-card>
                 </b-col>
@@ -190,7 +213,7 @@
                 <b-col md="8">
                   <b-card >
                   <div class="chart-wrapper">
-                    <div class="chartStyle" ref="chartByComponents"> </div>
+                    <div class="chartComponentStyle" ref="chartByComponents"> </div>
                   </div>
                   </b-card>
                 </b-col>
@@ -206,14 +229,13 @@
 
 <script>
 
-import axios from 'axios'
 import i18n from '../../lang/config'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
-// import am4themesKelly from '@amcharts/amcharts4/themes/kelly'
 import ResultsTable from './ResultsTable'
 import BDData from './_BDData.js'
+import api from './api.js'
 
 // Le da un comportanemiento animado al chart
 am4core.useTheme(am4themesAnimated)
@@ -233,6 +255,7 @@ export default {
       isSurveyVisible: false,
       urlResponses: BDData.apiURL + 'participantsResponse/',
       urlAverageData: BDData.apiURL + 'averageFilters/',
+      urlClients: '/clients-and-survey-conf/',
       responsesList: [],
       n: 0,
       average_by_dimensions: [],
@@ -246,30 +269,23 @@ export default {
       categories_names: [],
       errorConsultingData: false,
       noResponses: false,
-      showResponsesSummaryTables: false, // Controla la visualizacion de las tablas que resumen los resultados por categoria dimension y componente
+      showResponses: false, // Controla la visualizacion de las tablas que resumen los resultados por categoria dimension y componente
       responsesHeadersList: [],
       overall_average: 0.0,
       promedioBarra: 0.0,
       max: 9,
       isLoading: true,
-      requestPath: '', // Controla cual es la ruta para la que se quieren ver los resultados
-      areaFields: [
-        {key: 'area', label: 'Nombre', sortable: true, class: 'widthColumn'},
-        {key: 'name', label: 'Promedio', sortable: true}
-        /* {key: 'email', label: 'Email', sortable: true, class: 'widthColumn'},
-        {key: 'comments', label: 'Comentarios', sortable: true},
-        {key: 'area', label: 'Area', sortable: true},
-        {key: 'is_directive', label: 'Es directivo?', sortable: true},
-        {key: 'posicion', label: 'Es directivo?', sortable: true},
-        {key: 'promedio', sortable: true} */ ]
+      requestPath: '', // Controla cual es la ruta para la que se quieren ver los resultados,
+      idClient: null, // Controla para que cliente ser hará la consulta de los datos
+      clients_by_company: [], // Clientes asociados a la compania para la que se hara la consulta,
+      id_company: 1 // FIXME Esto tiene que venir luego del logino algo asi
     }
   },
   created: function () {
     this.requestPath = this.$route.path
-    console.log(this.requestPath)
+    this.consultClients(this.urlClients, {idCompany: this.id_company})
   },
   mounted: function () {
-    this.consultAverageData()
   },
   watch: {
     '$route' (to, from) {
@@ -280,22 +296,48 @@ export default {
     }
   },
   methods: {
-    consultAverageData: function () {
-      axios.get(this.urlAverageData).then(response => {
+    async consultClients (url, data) {
+      this.isLoading = true
+      var response = await api.getWithPost(data, url)
+      // Estuvo exitosa la busqueda
+      if (response.status === 200) {
+        this.isLoading = false
+        this.clients_by_company = response.data
+      } else {
+        this.isLoading = false
+      }
+    },
+    changeClient: function (value) {
+      this.consultAverageData(this.urlAverageData, {idClient: value})
+    },
+    async consultAverageData (url, data) {
+      this.isLoading = true
+      var response = await api.getWithPost(data, url)
+      // Estuvo exitosa la busqueda
+      if (response !== undefined && response.status === 200) {
+        this.isLoading = false
         var averageChartsData = response.data
         console.info('LOG: consultó average data')
         if (averageChartsData['n'] > 0) {
+          this.noResponses = false
           this.overall_average = averageChartsData['overall_average'].toFixed(2)
           this.n = averageChartsData['n']
           this.promedioBarra = averageChartsData['overall_average']
           this.average_by_categories = averageChartsData['average_by_categories']
           this.average_by_dimensions = averageChartsData['average_by_dimensions']
+          // console.log(JSON.stringify(this.average_by_dimensions))
+          // Se ajusta el nombre de las dimensiones para concaternar la categoria
+          this.average_by_dimensions.map((obj) => {
+            var cat = obj['category'].substring(0, 4)
+            obj['name'] = `${cat} - ${obj['name']}`
+            return obj
+          })
           this.average_by_components = averageChartsData['average_by_components']
           this.average_by_areas = averageChartsData['average_by_area']
           this.categories_average_by_directives = averageChartsData['categories_average_by_directives']
           this.categories_average_by_no_directives = averageChartsData['categories_average_by_no_directives']
           this.categories_average_by_area = averageChartsData['categories_average_by_area']
-          this.categories_names = averageChartsData['categories_average_by_area']
+          this.categories_names = averageChartsData['category_names']
           /* No voy a hacer esto sino que voy a dejar el espacio por facilidad
           this.categories_average_by_area.map((obj) => {
             obj.sortable = 'true'
@@ -311,43 +353,33 @@ export default {
             return obj
           })
           // Se cambia la bandera que controla si se muestran las tablas de resultados para indicar que si se pueden mostrar
-          this.showResponsesSummaryTables = true
+          this.showResponses = true
           this.drawCharts()
           this.isLoading = false
-          // Se ordenan los resultados para mostrarlos ordenados en las tablas que resumen los resultados
-          // this.sortJSON(this.average_by_dimensions, 'average', 'asc')
-          // this.sortJSON(this.average_by_components, 'average', 'asc')
-          // this.sortJSON(this.average_by_categories, 'average', 'asc')
         } else {
           this.noResponses = true
           this.isLoading = false
         }
-      }, error => {
-        // FIXME
-        console.error(JSON.stringify(error))
-        console.error(i18n.tc('message.error_consuming_service', this.urlAverageData))
-        console.error('Service path:' + this.urlAverageData)
-        alert(i18n.tc('message.error_consuming_service'))
-        this.errorConsultingData = true
-        this.isLoading = false
-      })
+      }
+      this.isLoading = false
     },
     drawCharts: function () {
       if (this.requestPath === '/result-by-categories') {
-        this.sortJSON(this.average_by_categories, 'name', 'asc')
+        // this.sortJSON(this.average_by_categories, 'name', 'asc')
         this.drawRadarChart(this.$refs.chartByCategories, i18n.tc('message.rendimiento_categoria'), this.average_by_categories)
       }
       if (this.requestPath === '/result-by-directives') {
         this.drawDirectivesNoDirectivesChart('Categorías', this.$refs.chartByDirectivesNoDirectives, i18n.tc('message.rendimiento_dir_no_dir'))
       }
       if (this.requestPath === '/result-by-areas') {
-        this.sortJSON(this.average_by_areas, 'average', 'asc')
+        // this.sortJSON(this.average_by_areas, 'average', 'asc')
         this.drawRadarChart(this.$refs.chartCategoriesByArea, i18n.tc('message.rendimiento_areas'), this.average_by_areas)
       }
       if (this.requestPath === '/results_by_dim_comp') {
         // this.average_by_categories = averageChartsData['average_by_categories']
-        this.drawBarChart(this.average_by_dimensions, i18n.tc('message.dimensions'), this.$refs.chartByDimensions, i18n.tc('message.rendimiento_dimension'))
-        this.drawBarChart(this.average_by_components, i18n.tc('message.components'), this.$refs.chartByComponents, i18n.tc('message.rendimiento_componente'))
+        // Uso el mismo metodo para dibujar dimensiones y componentes pq el que comence a cambiar para dibujar las dimensiones no me gusto como se veia aunque eventualmente podria verse bn
+        this.drawComponentsChart(this.average_by_dimensions, i18n.tc('message.dimensions'), this.$refs.chartByDimensions, i18n.tc('message.rendimiento_dimension'))
+        this.drawComponentsChart(this.average_by_components, i18n.tc('message.components'), this.$refs.chartByComponents, i18n.tc('message.rendimiento_componente'))
       }
     },
     drawRadarChart: function (div, titleText, data) {
@@ -362,10 +394,12 @@ export default {
       categoryAxis.renderer.grid.template.location = 0
       categoryAxis.dataFields.category = 'name'
       categoryAxis.renderer.minGridDistance = 5
-
+      chart.responsive.enabled = true
       var labelAxis = categoryAxis.renderer.labels.template
       labelAxis.wrap = true
       labelAxis.maxWidth = 150
+      labelAxis.verticalCenter = 'top'
+      // labelAxis.template.horizontalCenter = 'top'
       // Values
       let valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
       valueAxis.min = 0
@@ -396,6 +430,7 @@ export default {
       // we will create the chart here
       // let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
       let chart = am4core.create(div, am4charts.XYChart)
+      chart.responsive.enabled = true
       var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis())
       categoryAxis.dataFields.category = 'name'
       categoryAxis.title.text = label
@@ -419,7 +454,7 @@ export default {
       categoryAxis.renderer.minGridDistance = 3
       categoryAxis.renderer.labels.template.rotation = 330
       categoryAxis.renderer.labels.template.verticalCenter = 'middle'
-      categoryAxis.renderer.labels.template.horizontalCenter = 'middle'
+      categoryAxis.renderer.labels.template.horizontalCenter = 'midlle'
 
       // Controla el largo de las etiquetas para que se puedan leer
       var labelAxis = categoryAxis.renderer.labels.template
@@ -435,8 +470,8 @@ export default {
       title.fontSize = 25
       title.marginBottom = 30
 
-      this.sortJSON(this.categories_average_by_directives, 'name', 'asc')
-      this.sortJSON(this.categories_average_by_no_directives, 'name', 'asc')
+      // this.sortJSON(this.categories_average_by_directives, 'name', 'asc')
+      // this.sortJSON(this.categories_average_by_no_directives, 'name', 'asc')
       /* Series */
       /*
       var series = chart.series.push(new am4charts.ColumnSeries())
@@ -498,20 +533,21 @@ export default {
       // Export the chart
       chart.exporting.menu = new am4core.ExportMenu()
     },
-    drawBarChart: function (data, label, div, titleText) {
-      // we will create the chart here
+    drawComponentsChart: function (data, label, div, titleText) {
       // let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
       let chart = am4core.create(div, am4charts.XYChart)
+      chart.responsive.enabled = true
       var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis())
       categoryAxis.dataFields.category = 'name'
       categoryAxis.title.text = label + ' ( ' + (data.length) + ' ) '
       categoryAxis.title.fontWeight = 'bold'
+      categoryAxis.renderer.inside = true
+      categoryAxis.renderer.labels.template.dy = -14
+      // Separacion entre los elementos que se dibujan
+      categoryAxis.renderer.minGridDistance = 25
       var valueAxis = chart.xAxes.push(new am4charts.ValueAxis())
       valueAxis.title.text = 'Promedio'
       valueAxis.title.fontWeight = 'bold'
-      valueAxis.renderer.minGridDistance = 25
-      // valueAxis.calculateTotals = true
-      // valueAxis.strictMinMax = true
       var axisRange = valueAxis.axisRanges.create()
       axisRange.value = 50
       axisRange.grid.strokeOpacity = 0.1
@@ -519,7 +555,9 @@ export default {
       axisRange.label.align = 'righ'
       axisRange.label.verticalCenter = 'bottom'
       axisRange.label.fillOpacity = 0.8
-
+      valueAxis.renderer.minGridDistance = 25
+      valueAxis.renderer.min = 0
+      valueAxis.renderer.max = 9
       // Customize labels appareance
       valueAxis.renderer.labels.template.fill = am4core.color('#A0CA92')
       valueAxis.renderer.labels.template.fontSize = 12
@@ -527,11 +565,10 @@ export default {
       // Disable grid values
       categoryAxis.renderer.grid.template.disabled = true
       valueAxis.renderer.grid.template.disabled = true
-      // Separacion entre los elementos que se dibujan
-      categoryAxis.renderer.minGridDistance = 15
       var labelAxis = categoryAxis.renderer.labels.template
-      labelAxis.wrap = true
-      labelAxis.maxWidth = 200
+      // labelAxis.wrap = true
+      labelAxis.truncate = true
+      labelAxis.maxWidth = 250
       labelAxis.fontSize = 14
       labelAxis.tooltipText = '{name}'
       chart.data = data
@@ -566,6 +603,87 @@ export default {
 
       // Export the chart
       chart.exporting.menu = new am4core.ExportMenu()
+      chart.legend = new am4charts.Legend()
+    },
+    // Pintaba cada categoria de un color diferente, pero igual no se veia bonito
+    drawDimensionsChart: function (data, label, div, titleText) {
+      // let chart = am4core.create(this.$refs.chartdiv, am4charts.XYChart)
+      let chart = am4core.create(div, am4charts.XYChart)
+      chart.responsive.enabled = true
+      var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis())
+      categoryAxis.dataFields.category = 'name'
+      categoryAxis.title.text = label + ' ( ' + (data.length) + ' ) '
+      categoryAxis.title.fontWeight = 'bold'
+      categoryAxis.renderer.inside = true
+      categoryAxis.renderer.labels.template.dy = -8
+      // Separacion entre los elementos que se dibujan
+      categoryAxis.renderer.minGridDistance = 22
+      var valueAxis = chart.xAxes.push(new am4charts.ValueAxis())
+      valueAxis.title.text = 'Promedio'
+      valueAxis.title.fontWeight = 'bold'
+      var axisRange = valueAxis.axisRanges.create()
+      axisRange.value = 50
+      axisRange.grid.strokeOpacity = 0.1
+      axisRange.label.text = 'Goal'
+      axisRange.label.align = 'righ'
+      axisRange.label.verticalCenter = 'bottom'
+      axisRange.label.fillOpacity = 0.8
+      valueAxis.renderer.minGridDistance = 25
+      valueAxis.renderer.min = 0
+      valueAxis.renderer.max = 9
+      // Customize labels appareance
+      valueAxis.renderer.labels.template.fill = am4core.color('#A0CA92')
+      valueAxis.renderer.labels.template.fontSize = 12
+      // Disable grid values
+      categoryAxis.renderer.grid.template.disabled = true
+      valueAxis.renderer.grid.template.disabled = true
+      var labelAxis = categoryAxis.renderer.labels.template
+      // labelAxis.wrap = true
+      labelAxis.truncate = true
+      labelAxis.maxWidth = 250
+      labelAxis.fontSize = 14
+      labelAxis.tooltipText = '{name}'
+      chart.data = data
+      /* Series */
+      /* var series = chart.series.push(new am4charts.ColumnSeries())
+      series.dataFields.valueX = 'average'
+      series.dataFields.categoryY = 'name'
+      series.columns.template.tooltipText = '{categoryY}\nValor: {valueX}'
+      series.name = label + ' (n = ' + this.n + ')' */
+      for (var i = 0; i < this.categories_names.length; i++) {
+        var series1 = chart.series.push(new am4charts.ColumnSeries())
+        series1.dataFields.valueX = 'average'
+        series1.dataFields.categoryY = 'name'
+        series1.columns.template.tooltipText = '{categoryY}\nValor: {valueX}'
+        series1.name = this.categories_names[i]['key'] + ' (n = ' + this.n + ')'
+        series1.data = data.filter(result => result.category === this.categories_names[i]['key'])
+        var columnTemplate = series1.columns.template
+        columnTemplate.height = am4core.percent(2)
+        // Preload style for doing circular bulltets
+        var circleBullet = columnTemplate.createChild(am4charts.CircleBullet)
+        circleBullet.circle.radius = 8
+        circleBullet.valign = 'middle'
+        circleBullet.align = 'right'
+        circleBullet.isMeasured = true
+        circleBullet.mouseEnabled = false
+        circleBullet.verticalCenter = 'middle'
+        // Label
+        var columnLabel = circleBullet.createChild(am4core.Label)
+        columnLabel.text = ' {valueX}   '
+        columnLabel.fontSize = 10
+        // Alinea la etiqueta con las barras para que se vea bonito
+        columnLabel.dy = -5
+        columnLabel.dx = 15
+      }
+      // Cursor
+      chart.cursor = new am4charts.XYCursor()
+      chart.cursor.behavior = 'none'
+      // chart.scrollbarX = new am4core.Scrollbar()
+      chart.scrollbarX = new am4core.Scrollbar()
+
+      // Export the chart
+      chart.exporting.menu = new am4core.ExportMenu()
+      chart.legend = new am4charts.Legend()
     },
     calculateVariantResults: function (type, number) {
       var variant = ''
@@ -611,9 +729,13 @@ export default {
   width: 98%;
   height: 500px;
 }
-.chartStyle {
+.chartDimensionStyle {
   width: 80%;
-  height: 850px;
+  height: 1200px;
+}
+.chartComponentStyle {
+  width: 80%;
+  height:650px;
 }
 .loading {
   position: fixed;

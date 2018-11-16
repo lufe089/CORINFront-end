@@ -6,7 +6,7 @@
     <b-form @submit="onSubmit">
       <div v-for="categoryAndItems in responsesByCategoriesList" :key="categoryAndItems.id">
        <!-- Tabla -->
-        <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='categoryAndItems.responsesByCategory' :fields='fields' :current-page='currentPage' :per-page='perPage' caption-top>
+        <b-table :hover='hover' :bordered='bordered' :small='small'  responsive stacked='sm' :items='categoryAndItems.responsesByCategory' :fields='fields' :current-page='currentPage' :per-page='perPage' caption-top>
         <template slot="table-caption">
         <!-- Progress section -->
         <div class='float-right'>
@@ -312,7 +312,7 @@ export default {
 }
 .scaleWidthResults {
   width: 60%;
-  /* text-align: center  */
+  text-align: center
 }
 
 .loading {

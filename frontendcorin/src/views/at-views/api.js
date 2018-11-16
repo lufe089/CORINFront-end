@@ -34,7 +34,7 @@ export default {
         }).catch(error => {
             // Here we could override the busy state, setting isBusy to false
             console.error(JSON.stringify(error))
-            console.log(error)
+            console.error(error)
             alert(i18n.tc('message.error_consuming_service'))
                 // Returning an empty array, allows table to correctly handle busy state in case of error
             return error.response
@@ -59,7 +59,7 @@ export default {
             console.error('Service path:' + this.urlClients)
             alert(i18n.tc('message.error_consuming_service'))
                 // Returning an empty array, allows table to correctly handle busy state in case of error
-            return []
+            return error
         })
     },
     create(data, path) {

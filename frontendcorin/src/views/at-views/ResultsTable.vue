@@ -2,8 +2,8 @@
   <b-card class="card-body">
     <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md" v-show="caption !==''">
       {{caption}}
+      <hr>
     </div>
-    <hr>
     <b-card v-show="filterValues">
     <b-row >
       <b-col md="12" sm="12" class="my-1">
@@ -23,7 +23,7 @@
         </b-col>
       </b-row>
     </b-card>
-    <b-table :hover='hover' :bordered='bordered' :small='small'  responsive='sm' :items='items' :fields='getColumns()' :current-page='currentPage' :per-page="perPage"
+    <b-table :hover='hover' :bordered='bordered' :small='small'  responsive stacked='sm' :items='items' :fields='getColumns()' :current-page='currentPage' :per-page="perPage"
         :filter="filter" @filtered="onFiltered">
     <template slot='average' slot-scope='data'>
       <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>

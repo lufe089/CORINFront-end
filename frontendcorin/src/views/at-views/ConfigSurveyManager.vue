@@ -41,7 +41,7 @@
         <!-- Main table to list -->
         <b-col md="12">
         <b-table show-empty hover
-                stacked="md"
+                responsive stacked='sm'
                 :items="items"
                 :fields="columns"
                 :current-page="currentPage"

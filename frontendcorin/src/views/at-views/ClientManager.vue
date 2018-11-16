@@ -49,7 +49,7 @@
         <!-- Main table to list -->
         <b-col md="12">
         <b-table show-empty hover
-                stacked="md"
+                stacked="sm"
                 :items="items"
                 :fields="columns"
                 :current-page="currentPage"
@@ -58,6 +58,7 @@
                 :sort-by.sync="sortBy"
                 :sort-desc.sync="sortDesc"
                 :sort-direction="sortDirection"
+                responsive
                 @filtered="onFiltered"
         >
           <template slot="name" slot-scope="row">{{row.value.first}} {{row.value.last}}</template>
