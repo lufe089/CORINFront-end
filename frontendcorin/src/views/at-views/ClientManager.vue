@@ -103,14 +103,21 @@
           <p class="text-danger" v-if="errors.has('company')">{{ errors.first('company') }}</p>
         </b-form-group>
         <b-row>
-          <b-col md="6">
+          <b-col md="4">
+            <b-form-group>
+              <label for="identification">{{$t("message.identification_client") }}</label>
+              <b-form-input type="text" name="identification" id="identification" v-model="obj.identification" v-validate="'required|numeric|min_value:1'"></b-form-input>
+              <p class="text-danger" v-if="errors.has('identification')">{{ errors.first('identification') }}</p>
+            </b-form-group>
+          </b-col>
+          <b-col md="4">
             <b-form-group>
               <label for="numberEmployees">{{$t("message.number_employees") }}</label>
               <b-form-input type="number" name="numberEmployees" id="numberEmployees" v-model="obj.number_employees" v-validate="'required|numeric|min_value:1'"></b-form-input>
               <p class="text-danger" v-if="errors.has('numberEmployees')">{{ errors.first('numberEmployees') }}</p>
             </b-form-group>
           </b-col>
-          <b-col md="6">
+          <b-col md="4">
             <b-form-group>
               <label for="constitutionYear">{{$t("message.constitution_year") }}</label>
               <b-form-input type="number" name="constitutionYear" id="constitutionYear" v-model="obj.constitution_year" v-validate="'required|numeric|min_value:1900'"></b-form-input>
@@ -198,6 +205,7 @@ export default {
     return {
       columns: [
         { key: 'client_company_name', label: 'Nombre', sortable: true, sortDirection: 'desc' },
+        { key: 'identification', label: 'Id', sortable: true, class: 'text-center'},
         { key: 'constitution_year', label: 'Año constitución', sortable: true, class: 'text-center' },
         { key: 'number_employees', label: 'Número de empleados', sortable: true, class: 'text-center' },
         { key: 'is_corporate_group', label: 'Grupo corporativo?', sortable: true },
@@ -260,7 +268,7 @@ export default {
     clearObj () {
       // FIXME: company_id no puede ser siempre uno.
       // Se llama este metodo cuando se selecciona el boton para crear o cuando se guarda para dajar el objeto que tendrá la información preparado
-      var obj = {id: null, company_id: 1, client_company_name: null, constitution_year: null, number_employees: null, is_corporate_group: null, is_family_company: null}
+      var obj = {id: null, identification: null, company_id: 1, client_company_name: null, constitution_year: null, number_employees: null, is_corporate_group: null, is_family_company: null}
       return obj
     },
     clearSurveyConf () {
