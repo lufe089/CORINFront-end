@@ -290,8 +290,6 @@ export default {
   watch: {
     '$route' (to, from) {
       this.requestPath = this.$route.path
-      console.log('cambio la ruta')
-      console.log(this.requestPath)
       this.drawCharts()
     }
   },
