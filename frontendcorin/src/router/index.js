@@ -19,15 +19,14 @@ import Router from 'vue-router'
 // Containers
 import Full from '@/containers/Full'
 import MainInstrument from '@/views/at-views/MainInstrument'
-import Results from '@/views/at-views/Results.vue'
 import ClientManager from '@/views/at-views/ClientManager.vue'
 import ConfigSurveyManager from '@/views/at-views/ConfigSurveyManager.vue'
 import CustomizeSurvey from '@/views/at-views/CustomizeSurvey.vue'
 
 Vue.use(Router)
 
-const ResultsByCategories = () =>
-    import ('@/views/at-views/ResultsByCategories.vue')
+const Results = () =>
+    import ('@/views/at-views/Results.vue')
 
 const ExportResults = () =>
     import ('@/views/at-views/ExportResults.vue')
@@ -46,11 +45,6 @@ export default new Router({
                 path: 'main_instrument',
                 name: 'Encuesta',
                 component: MainInstrument
-            },
-            {
-                path: 'result',
-                name: 'Resultados',
-                component: ResultsByCategories
             },
             {
                 path: '/result-by-categories',

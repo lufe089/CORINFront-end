@@ -31,12 +31,6 @@ export default {
             icon: 'fa fa-pie-chart',
         },
         {
-            name: 'El original',
-            url: '/result',
-            icon: 'icon-puzzle'
-                //TODO completar
-        },
-        {
             name: 'Por categorías',
             url: '/result-by-categories',
             icon: 'fa fa-pie-chart'
@@ -77,11 +71,6 @@ export default {
             name: 'Configuración',
         },
         {
-            name: 'Configuración de encuestas',
-            url: '/configSurveys',
-            icon: 'fa icon-call-out'
-        },
-        {
             name: 'Personalizar encuesta',
             url: '/customSurvey',
             icon: 'fa icon-puzzle'
@@ -91,6 +80,11 @@ export default {
             url: '/clients',
             icon: 'fa icon-call-out'
         },
+        {
+            name: 'Configuración de encuestas',
+            url: '/configSurveys',
+            icon: 'fa icon-call-out'
+        }
         /*{
             title: true,
             name: 'Satisfaction evaluation',
