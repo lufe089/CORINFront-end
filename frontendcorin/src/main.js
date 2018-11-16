@@ -24,6 +24,8 @@ Vue.use(VueNumeric)
     }) */
 Vue.use(VeeValidate, { locale: 'es', fieldsBagName: 'vvFields' })
 
+// Ignora este editor pues parece que hay algun error cuando carga la primera vez aunque el renderizado funciona bn
+Vue.config.ignoredElements = ['trix-editor']
 Validator.localize('es', es); // changes the locale
 Validator.localize('es', BDData.validation_attr_dictionnary.es) // changes the locale
     // Validator.localize('es', dictionary) // changes the locale

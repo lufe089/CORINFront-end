@@ -1,7 +1,7 @@
 <template>
   <b-container fluid>
     <loading :isLoading="isLoading"></loading>
-      <b-alert variant="warning" :show="obj.id === none"><h4>{{$t("message.no_survey_config")}}</h4></b-alert>
+    <b-alert variant="warning" :show="obj.id === null"><h4>{{$t("message.no_survey_config")}}</h4></b-alert>
     <form>
       <!-- Control de acceso -->
       <b-card :header="$t('message.access_config')">
@@ -54,7 +54,7 @@
               {{$t("message.survey_instructions") }}
             </div>
             <div >
-              <VueTrix id='surveyInstructions' inputId="userInstructionsText" v-model="obj.custom_user_instructions"/>
+              <trix-editor id='surveyInstructions' inputId="userInstructionsText" v-model="obj.custom_user_instructions"/>
             </div>
           </div>
         </b-card>
@@ -69,7 +69,7 @@
               {{$t("message.contact_information") }}
             </div>
             <div >
-              <VueTrix id='surveyContact' inputId="contactText" v-model="obj.custom_contact_info"/>
+              <trix-editor id='surveyContact' inputId="contactText" v-model="obj.custom_contact_info"/>
             </div>
           </div>
         </b-card>
@@ -84,7 +84,7 @@
                 {{$t("message.thanks_information") }}
               </div>
               <div >
-                <VueTrix id='surveyThanks' inputId="thanksText" v-model="obj.custom_thanks"/>
+                <trix-editor id='surveyThanks' inputId="thanksText" v-model="obj.custom_thanks"/>
               </div>
             </div>
           </b-card>
@@ -99,13 +99,12 @@
 <script>
 import api from './api'
 import i18n from '../../lang/config'
-// import BDData from './_BDData.js'
-// Import the editor
+import VueTrix from 'vue-trix'
 
 export default {
   components: {
-    VueTrix: () => import('vue-trix'),
-    loading: () => import('./Loading')
+    loading: () => import('./Loading'),
+    'trix-editor': VueTrix
   },
   data () {
     return {
