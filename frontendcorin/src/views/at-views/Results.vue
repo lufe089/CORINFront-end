@@ -2,11 +2,11 @@
   <div class="animated fadeIn">
     <loading :isLoading="isLoading"></loading>
     <!-- Card to select which client to consult -->
-         <b-row>
-          <b-col md="12">
-            <client-selector @client-selector:change='changeClient'></client-selector>
-          </b-col>
-         </b-row>
+    <b-row>
+    <b-col md="12">
+      <client-selector @client-selector:change='changeClient'></client-selector>
+    </b-col>
+    </b-row>
        <!-- End Card to select which client to consult -->
     <div v-show="!isLoading">
       <b-alert :show="noResponses"><h4>{{$t("message.no_resultados")}}</h4></b-alert>
@@ -703,11 +703,11 @@ export default {
   height: 500px;
 }
 .chartDimensionStyle {
-  width: 80%;
+  width: 95%;
   height: 1200px;
 }
 .chartComponentStyle {
-  width: 80%;
+  width: 95%;
   height:650px;
 }
 .loading {
