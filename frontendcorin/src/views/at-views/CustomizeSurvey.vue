@@ -128,11 +128,11 @@ export default {
         /* { key: 'survey_conf_desc', label: i18n.tc('message.survey_conf_desc'), sortable: true }, */
         { key: 'actions', label: 'Acciones', class: 'scaleWidth, text-center' }
       ],
-      servicePath1: 'consult-custom-inst/?idClient=',
+      servicePath1: 'consult-custom-inst/',
       servicePath2: 'customizedInstrument/',
       isLoading: false,
       obj: {},
-      idClient: 1,
+      idClient: null,
       showData: false,
       error: ''
     }
@@ -145,6 +145,7 @@ export default {
   },
   methods: {
     async refreshData (idClient) {
+      this.idClient = idClient
       this.isLoading = true
       // FIXME: preguntar por el id del cliente correcto
       var data = {idClient: idClient}
@@ -189,7 +190,7 @@ export default {
       // Fue exitoso
       if (response.status >= 200 && response.status <= 300) {
         alert(i18n.tc('message.guardar_modificar_exito'))
-        await this.refreshData()
+        await this.refreshData(this.idClient)
       }
     }
   }
