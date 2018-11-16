@@ -11,7 +11,7 @@ export default {
         {
             name: 'Evaluación',
             url: '/main_instrument',
-            icon: 'fa fa-thermometer-1'
+            icon: 'fa icon-notebook'
                 /* children: [ ] */
         },
         /*  {
@@ -33,38 +33,38 @@ export default {
         {
             name: 'Por categorías',
             url: '/result-by-categories',
-            icon: 'fa fa-pie-chart'
+            icon: 'fa icon-graph'
                 //TODO completar
         },
         {
             name: 'Por directivos/no directivos',
             url: '/result-by-directives',
-            icon: 'fa fa-pie-chart'
+            icon: 'fa icon-graph'
                 //TODO completar
         },
         {
             name: 'Por áreas',
             url: '/result-by-areas',
-            icon: 'icon-puzzle'
+            icon: 'fa icon-graph'
 
         },
         {
             title: true,
             name: 'Resultados específicos',
             url: '/especific_results',
-            icon: 'icon-puzzle'
+            icon: 'fa icon-puzzle'
 
         },
         {
             name: 'Por dimensiones y componentes',
             url: '/results_by_dim_comp',
-            icon: 'icon-puzzle'
+            icon: 'fa icon-chart'
 
         },
         {
             name: 'Exportar',
             url: '/export',
-            icon: 'fa fa-pie-chart',
+            icon: 'fa icon-cloud-download',
         },
         {
             title: true,
@@ -73,17 +73,17 @@ export default {
         {
             name: 'Personalizar encuesta',
             url: '/customSurvey',
-            icon: 'fa icon-puzzle'
+            icon: 'fa icon-settings'
         },
         {
             name: 'Clientes',
             url: '/clients',
-            icon: 'fa icon-call-out'
+            icon: 'fa icon-people'
         },
         {
             name: 'Configuración de encuestas',
             url: '/configSurveys',
-            icon: 'fa icon-call-out'
+            icon: 'fa icon-docs'
         }
         /*{
             title: true,
