@@ -22,18 +22,18 @@
               <div>
                 <div class="h2 text-primary mb-0 mt-2" >
                   <div v-show="overall_average>=7">{{$t("message.resultado_alta_tendencia")}}
-                    <div class="text-muted font-weight-bold font-xs"> Promedio entre 7 y 9 </div>
+                    <div class="text-muted font-weight-bold font-xs"> {{$t("message.average_7to9")}} </div>
                   </div>
                   <div v-show="overall_average<=3">{{$t("message.resultado_baja_tendencia")}}
-                    <div class="text-muted font-weight-bold font-xs"> Promedio entre 1 y 3 </div>
+                    <div class="text-muted font-weight-bold font-xs"> {{$t("message.average_1to3")}} </div>
                   </div>
                   <div v-show="overall_average> 3 && overall_average< 7">{{$t("message.resultado_media_tendencia")}}
-                    <div class="text-muted font-weight-bold font-xs"> Promedio entre 4 y 6 </div>
+                    <div class="text-muted font-weight-bold font-xs"> {{$t("message.average_4to6")}} </div>
                   </div>
                 </div>
                 <b-progress height={} class="progress-xs my-1" :variant="calculateVariantResults('bar',promedioBarra)" :max=max :value="promedioBarra"/>
-                <div class="text-muted font-weight-bold font-s"> Numero de respuestas: {{n}}
-                  <div class="float-right"><small class="text-muted">Valor mínimo 1  -- Valor máximo 9 </small></div>
+                <div class="text-muted font-weight-bold font-s"> {{$t("message.answer_number")}}: {{n}}
+                  <div class="float-right"><small class="text-muted"> {{$t("message.value1to9")}} </small></div>
                 </div>
               </div>
             </b-card-body>

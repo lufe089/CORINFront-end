@@ -58,7 +58,8 @@
                   <b-col md="6">
                     <b-form-group :description="$t('message.please_enter_email')" :label="$t('message.email')" label-for="basicEmail" :label-cols="2"
                       :horizontal="true">
-                      <b-form-input id="basicEmail" type="email" placeholder=" " autocomplete='email' v-model.lazy="participantResponse.email" required ></b-form-input>
+                      <b-form-input id="basicEmail" type="email" placeholder=" " autocomplete='email' v-model.lazy="participantResponse.email" required v-validate="'required|email'" name='basicEmail'></b-form-input>
+                      <p class="text-danger" v-if="errors.has('basicEmail')">{{ errors.first('basicEmail') }}</p>
                     </b-form-group>
                   </b-col>
                   <b-col md="6">
@@ -231,8 +232,14 @@ export default {
     onSubmit: function (evt) {
       // the page doesn’t reload when the form is submitted,
       evt.preventDefault()
-      // Se activa la visualizacion de las preguntas
-      this.showQuestions = true
+      // Se validan los resultados
+      this.$validator.validate().then(result => {
+        // Si no hay errores
+        if (result) {
+          // Se activa la visualizacion de las preguntas
+          this.showQuestions = true
+        }
+      })
     },
     async processEnd (responsesList) {
       // Cambia la bandera que controla si se muestra el mensaje de fin de encuesta
