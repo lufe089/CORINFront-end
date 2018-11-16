@@ -3,8 +3,14 @@
     <!--<div v-show="isLoading">
       <img class="loading" src="https://vignette.wikia.nocookie.net/judo/images/0/03/Cargando.gif/revision/latest?cb=20110601212206&path-prefix=es" alt="loading">
     </div>-->
+    <b-row>
+      <b-col md="12">
+        <client-selector @client-selector:change='refreshData'></client-selector>
+      </b-col>
+    </b-row>
+    <b-alert variant="danger" :show="errorMsg !==''"><h4>{{errorMsg}}</h4></b-alert>
     <loading :isLoading="isLoading"></loading>
-    <b-row fluid v-show="!errores && !isSurveyVisible && !showThanksMessage">
+    <b-row fluid v-show="!hasErrors && !isSurveyVisible && !showThanksMessage">
       <b-col md=12>
          <b-jumbotron bg-variant="light">
         <template slot="header">
@@ -28,7 +34,7 @@
       </b-col>
     </b-row>
 
-    <div v-show="isSurveyVisible && !showThanksMessage && !errores">
+    <div v-show="isSurveyVisible && !showThanksMessage && !hasErrors">
       <b-row fluid>
         <b-col md="12">
           <!--<b-card>
@@ -123,7 +129,7 @@
 
 import BDData from './_BDData.js'
 import api from './api'
-
+import i18n from '../../lang/config'
 export default {
   name: 'main_instrument',
   data () {
@@ -134,10 +140,10 @@ export default {
       isSurveyVisible: false,
       areas: {},
       parameters: BDData.parameters,
-      ulrInstructions: 'consult-custom-inst/?idClient=',
+      ulrInstructions: 'consult-custom-inst/',
       urlAreas: '/areas/',
       // FIXME
-      idClient: 1,
+      idClient: null,
       urlSaveSubItems: BDData.apiURL + 'participantsResponse/',
       selected: [], // Must be an array reference!,
       showDirective: undefined,
@@ -145,7 +151,8 @@ export default {
       instruccionData: {custom_user_instructions: '', custom_contact_info: '', custom_thanks: ' '},
       showThanksMessage: false,
       isLoading: null,
-      errores: false
+      hasErrors: true,
+      errorMsg: '' // Guarda el mensaje de error
 
     }
   },
@@ -154,7 +161,7 @@ export default {
     para tomar como objeto de referencia el json que esta en el archivo parametrico pero no modificarlo */
     this.participantResponse = this.clone(BDData.participantResponse)
     // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado
-    this.refreshData()
+    // this.refreshData(this.idClient)
   },
   components: {
     /* tag, component name */
@@ -162,23 +169,32 @@ export default {
     // dynamic import wrapped in a function
     // 'item-level2-table': () => import('./ItemLevel2Table')
     itemLevel2Table: () => import('./ItemLevel2Table'),
-    loading: () => import('./Loading')
+    loading: () => import('./Loading'),
+    clientSelector: () => import('./ClientSelector')
   },
   methods: {
-    async refreshData () {
+    async refreshData (idClient) {
       this.isLoading = true
-      // FIXME: preguntar por el id del cliente correcto
-      var response = await api.getAll(this.ulrInstructions + this.idClient)
+      this.idClient = idClient
+      var data = {idClient: idClient}
+      var response = await api.getWithPost(data, this.ulrInstructions)
       // Estuvo exitosa la busqueda
       if (response.status === 200) {
-        this.instruccionData = response.data
-        this.errores = false
+        this.obj = response.data
+        if (this.obj.error === undefined) {
+          this.instruccionData = response.data
+          this.hasErrors = false
+          this.errorMsg = ''
+        } else if (this.obj.error === 'config_survey') {
+          this.showData = false
+          this.errorMsg = i18n.tc('message.error_configuracion_cliente')
+          this.hasErrors = true
+        }
       } else {
         // Se pone vacio para evitar errores
         this.instruccionData = {user_instructions: '', contact_info: '', thanks: ' '}
         this.errores = true
       }
-
       // Carga las areas
       response = await api.getAll(this.urlAreas)
       // Estuvo exitosa la busqueda
