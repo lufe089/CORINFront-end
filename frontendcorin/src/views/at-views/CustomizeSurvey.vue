@@ -61,7 +61,7 @@
               {{$t("message.survey_instructions") }}
             </div>
             <div >
-              <trix-editor id='surveyInstructions' inputId="userInstructionsText" v-model="obj.custom_user_instructions"/>
+              <trix-editor id='surveyInstructions' name='surveyInstructions' inputId="userInstructionsText" v-model="obj.custom_user_instructions"/>
             </div>
           </div>
         </b-card>
@@ -76,7 +76,8 @@
               {{$t("message.contact_information") }}
             </div>
             <div >
-              <trix-editor id='surveyContact' inputId="contactText" v-model="obj.custom_contact_info"/>
+              <input id="contactText" v-model="obj.custom_contact_info" type="hidden" name="contactText">
+              <trix-editor id='surveyContact' input="contactText"/>
             </div>
           </div>
         </b-card>
@@ -91,7 +92,7 @@
                 {{$t("message.thanks_information") }}
               </div>
               <div >
-                <trix-editor id='surveyThanks' inputId="thanksText" v-model="obj.custom_thanks"/>
+                <trix-editor name='surveyThanks' id='surveyThanks' inputId="thanksText" v-model="obj.custom_thanks"/>
               </div>
             </div>
           </b-card>
@@ -160,6 +161,10 @@ export default {
         } else if (this.obj.error === 'config_survey') {
           this.showData = false
           this.error = i18n.tc('message.error_configuracion_cliente')
+        } else if(this.obj.error === 'no_customized_instrument') {
+          // Se deja todo disponible para personalizar la encuesta
+          // usando los datos que se reciben de la base de datos
+          this.showData = true
         }
       } else {
         // Se pone vacio para evitar errores

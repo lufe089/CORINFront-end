@@ -189,6 +189,10 @@ export default {
           this.showData = false
           this.errorMsg = i18n.tc('message.error_configuracion_cliente')
           this.hasErrors = true
+        } else if (this.obj.error === 'no_customized_instrument') {
+          this.showData = false
+          this.errorMsg = i18n.tc('message.error_configuracion_encuesta')
+          this.hasErrors = true
         }
       } else {
         // Se pone vacio para evitar errores

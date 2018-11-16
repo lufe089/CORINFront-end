@@ -205,7 +205,7 @@ export default {
     return {
       columns: [
         { key: 'client_company_name', label: 'Nombre', sortable: true, sortDirection: 'desc' },
-        { key: 'identification', label: 'Id', sortable: true, class: 'text-center'},
+        { key: 'identification', label: 'Id', sortable: true, class: 'text-center' },
         { key: 'constitution_year', label: 'Año constitución', sortable: true, class: 'text-center' },
         { key: 'number_employees', label: 'Número de empleados', sortable: true, class: 'text-center' },
         { key: 'is_corporate_group', label: 'Grupo corporativo?', sortable: true },
