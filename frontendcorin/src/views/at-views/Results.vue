@@ -561,16 +561,16 @@ export default {
       circleBullet.isMeasured = true
       circleBullet.mouseEnabled = false
       circleBullet.verticalCenter = 'middle'
-      // Label
+      // Label que muestra el puntaje al lado de la barra
       var columnLabel = circleBullet.createChild(am4core.Label)
-      columnLabel.text = ' {valueX}   '
+      columnLabel.text = ' {valueX}'
       columnLabel.fontSize = 10
       // Alinea la etiqueta con las barras para que se vea bonito
       columnLabel.dy = -5
       columnLabel.dx = 15
       // Cursor
-      chart.cursor = new am4charts.XYCursor()
-      chart.cursor.behavior = 'none'
+      // chart.cursor = new am4charts.XYCursor()
+      // chart.cursor.behavior = 'none'
       // chart.scrollbarX = new am4core.Scrollbar()
       chart.scrollbarX = new am4core.Scrollbar()
 

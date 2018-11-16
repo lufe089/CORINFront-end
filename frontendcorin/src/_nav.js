@@ -71,14 +71,14 @@ export default {
             name: 'Configuración',
         },
         {
-            name: 'Personalizar encuesta',
-            url: '/customSurvey',
-            icon: 'fa icon-settings'
-        },
-        {
             name: 'Clientes',
             url: '/clients',
             icon: 'fa icon-people'
+        },
+        {
+            name: 'Personalizar encuesta',
+            url: '/customSurvey',
+            icon: 'fa icon-settings'
         },
         {
             name: 'Configuración de encuestas',
