@@ -64,7 +64,8 @@ export default {
                 familyCompany: '¿Empresa familiar?',
                 company: 'Compañía',
                 access_code: 'Código de acceso',
-                maxSurveys: 'Máximo de encuestas'
+                maxSurveys: 'Máximo de encuestas',
+                basicEmail: 'Email'
             }
         }
     },
