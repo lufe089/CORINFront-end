@@ -1,30 +1,14 @@
 <template>
   <div class="animated fadeIn">
     <loading :isLoading="isLoading"></loading>
-    <div v-show="!isLoading">
-      <!-- Card to select which client to consult -->
+    <!-- Card to select which client to consult -->
          <b-row>
           <b-col md="12">
-            <b-card :no-body="true">
-              <b-card-body class="p-3 clearfix">
-                <b-row>
-                  <b-col md="1" class="text-center">
-                    <i class="fa icon-user bg-dark text-white p-4 font-2xl mr-1 "></i>
-                  </b-col>
-                  <b-col md="11">
-                      <div class="h4 text-dark mb-0 mt-2">
-                      <b-form-group :description="$t('message.seleccion_cliente')" :label="$t('message.cliente')" label-for="clientInput" :label-cols="1"
-                        :horizontal="true" >
-                        <b-form-select id="clientInput" v-model="idClient" :options="clients_by_company"  @change="changeClient" required/>
-                        </b-form-group>
-                      </div>
-                  </b-col>
-                </b-row>
-              </b-card-body>
-            </b-card>
+            <client-selector @client-selector:change='changeClient'></client-selector>
           </b-col>
          </b-row>
        <!-- End Card to select which client to consult -->
+    <div v-show="!isLoading">
       <b-alert :show="noResponses"><h4>{{$t("message.no_resultados")}}</h4></b-alert>
       <!-- Si existen resultados para mostrar -->
       <div id="results" v-show="!noResponses && showResponses">
@@ -245,7 +229,8 @@ export default {
   components: {
     /* tag, component name */
     'c-table-results': ResultsTable,
-    loading: () => import('./Loading')
+    loading: () => import('./Loading'),
+    clientSelector: () => import('./ClientSelector')
   },
   data () {
     return {
@@ -274,7 +259,7 @@ export default {
       overall_average: 0.0,
       promedioBarra: 0.0,
       max: 9,
-      isLoading: true,
+      isLoading: false,
       requestPath: '', // Controla cual es la ruta para la que se quieren ver los resultados,
       idClient: null, // Controla para que cliente ser hará la consulta de los datos
       clients_by_company: [], // Clientes asociados a la compania para la que se hara la consulta,
@@ -283,7 +268,6 @@ export default {
   },
   created: function () {
     this.requestPath = this.$route.path
-    this.consultClients(this.urlClients, {idCompany: this.id_company})
   },
   mounted: function () {
   },
@@ -294,21 +278,12 @@ export default {
     }
   },
   methods: {
-    async consultClients (url, data) {
-      this.isLoading = true
-      var response = await api.getWithPost(data, url)
-      // Estuvo exitosa la busqueda
-      if (response.status === 200) {
-        this.isLoading = false
-        this.clients_by_company = response.data
-      } else {
-        this.isLoading = false
-      }
+    changeClient: function (idClient) {
+      this.consultAverageData(idClient)
     },
-    changeClient: function (value) {
-      this.consultAverageData(this.urlAverageData, {idClient: value})
-    },
-    async consultAverageData (url, data) {
+    async consultAverageData (idClient) {
+      var url = this.urlAverageData
+      var data = {idClient: idClient}
       this.isLoading = true
       var response = await api.getWithPost(data, url)
       // Estuvo exitosa la busqueda
