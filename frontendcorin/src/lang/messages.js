@@ -66,6 +66,7 @@ export default {
             download_parametric_data: 'Descargar datos de parámetros',
             download_answers_data: 'Descargar respuestas',
             date: 'Date',
+            error_configuracion_cliente: 'No se ha parametrizado el número máximo de encuestas para este cliente, por favor configure primero este valor en el menu de Clientes',
             email: 'Email',
             corporative_group: '¿Grupo empresarial?',
             edit: 'Editar',

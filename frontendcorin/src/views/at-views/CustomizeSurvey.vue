@@ -1,6 +1,13 @@
 <template>
   <b-container fluid>
     <loading :isLoading="isLoading"></loading>
+    <b-row>
+      <b-col md="12">
+        <client-selector @client-selector:change='refreshData'></client-selector>
+      </b-col>
+    </b-row>
+    <b-alert variant="danger" :show="error !== ''"><h4>{{error}}</h4></b-alert>
+    <div v-show="showData">
     <b-alert variant="warning" :show="obj.id === null"><h4>{{$t("message.no_survey_config")}}</h4></b-alert>
     <form>
       <!-- Control de acceso -->
@@ -93,6 +100,7 @@
         <b-btn variant="primary" type="submit"  class="float-right"  v-on:click.prevent="onSubmit" >{{$t("message.save")}}</b-btn>
         </b-card>
       </form>
+    </div>
   </b-container>
 </template>
 
@@ -104,7 +112,8 @@ import VueTrix from 'vue-trix'
 export default {
   components: {
     loading: () => import('./Loading'),
-    'trix-editor': VueTrix
+    'trix-editor': VueTrix,
+    clientSelector: () => import('./ClientSelector')
   },
   data () {
     return {
@@ -123,23 +132,34 @@ export default {
       servicePath2: 'customizedInstrument/',
       isLoading: false,
       obj: {},
-      idClient: 1
+      idClient: 1,
+      showData: false,
+      error: ''
     }
   },
   async created () {
     // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado
-    this.refreshData()
+    // this.refreshData()
   },
   computed: {
   },
   methods: {
-    async refreshData () {
+    async refreshData (idClient) {
       this.isLoading = true
       // FIXME: preguntar por el id del cliente correcto
-      var response = await api.getAll(this.servicePath1 + this.idClient)
+      var data = {idClient: idClient}
+      var response = await api.getWithPost(data, this.servicePath1)
       // Estuvo exitosa la busqueda
       if (response.status === 200) {
         this.obj = response.data
+        // Se verifica que no hayan errores en la respuesta
+        if (this.obj.error === undefined) {
+          this.showData = true
+          this.error = ''
+        } else if (this.obj.error === 'config_survey') {
+          this.showData = false
+          this.error = i18n.tc('message.error_configuracion_cliente')
+        }
       } else {
         // Se pone vacio para evitar errores
         this.obj = {}

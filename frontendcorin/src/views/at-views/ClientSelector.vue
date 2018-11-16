@@ -5,10 +5,10 @@
     <b-card-body class="p-3 clearfix">
       <b-row>
         <b-col md="1" class="text-center">
-          <i class="fa icon-user bg-dark text-white p-4 font-2xl mr-1 "></i>
+          <i class="fa icon-user bg-dark text-white p-3 font-2xl mr-1 "></i>
         </b-col>
         <b-col md="11">
-            <div class="h4 text-dark mb-0 mt-2">
+            <div class="h5 text-dark mb-0 mt-2">
             <b-form-group :description="$t('message.seleccion_cliente')" :label="$t('message.cliente')" label-for="clientInput" :label-cols="1"
               :horizontal="true" >
               <b-form-select id="clientInput" v-model="idClient" :options="clients_by_company"  @change="changeClient" required/>
