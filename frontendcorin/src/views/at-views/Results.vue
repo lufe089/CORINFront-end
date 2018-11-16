@@ -261,7 +261,7 @@ export default {
       average_by_dimensions: [],
       average_by_categories: [],
       average_by_components: [],
-      average_by_area: [],
+      average_by_areas: [],
       categories_average_by_directives: [],
       categories_average_by_no_directives: [],
       categories_average_by_area: [], // Sirve para mostrar el promedio relacionado de cada categoria por area

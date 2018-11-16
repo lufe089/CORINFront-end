@@ -120,7 +120,6 @@ export default {
         { key: 'client.client_company_name', label: 'Nombre', sortable: true, sortDirection: 'desc' },
         { key: 'max_surveys', label: i18n.tc('message.max_surveys'), sortable: true },
         { key: 'used_surveys', label: i18n.tc('message.used_surveys'), sortable: true },
-        // { key: 'survey_conf_desc', label: i18n.tc('message.survey_conf_desc'), sortable: true },
         { key: 'actions', label: 'Acciones', class: 'scaleWidth, text-center' }
       ],
       currentPage: 1,
@@ -173,7 +172,7 @@ export default {
     clearObj () {
       // FIXME: company_id no puede ser siempre uno.
       // Se llama este metodo cuando se selecciona el boton para crear o cuando se guarda para dajar el objeto que tendrá la información preparado
-      var obj = {id: null, client_id: null, instrument_header_id: 1, max_surveys: null, used_surveys: null, survey_conf_desc: ''}
+      var obj = {id: null, client_id: null, instrument_header_id: 1, max_surveys: 0, used_surveys: 0}
       return obj
     },
     resetModal () {
@@ -208,7 +207,6 @@ export default {
       this.surveyConfig.client_id = item.id
       this.surveyConfig.max_surveys = item.max_surveys
       this.surveyConfig.used_surveys = item.used_surveys
-      this.surveyConfig.survey_conf_desc = item.survey_conf_desc
       this.$root.$emit('bv::show::modal', 'modalConfigSurvey')
     },
     onSubmit (evt) {
