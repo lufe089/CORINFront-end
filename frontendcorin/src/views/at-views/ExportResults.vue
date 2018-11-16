@@ -92,6 +92,7 @@ export default {
       },
       json_fields_clients: {
         'Cliente': 'client_company_name',
+        'Identificación': 'identification',
         'Año de constitución': 'constitution_year',
         'Número de empleados': 'number_employees',
         'Grupo coorporativo?': {

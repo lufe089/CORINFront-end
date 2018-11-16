@@ -57,6 +57,7 @@ export default {
         es: {
             attributes: {
                 constitutionYear: 'Año de constitución',
+                identification: 'Identificación del cliente',
                 numberEmployees: 'Número de empleados',
                 constitutionYear: 'Año de constitución',
                 corporativeGroup: '¿Grupo empresarial?',
