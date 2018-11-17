@@ -142,6 +142,7 @@ export default {
       areas: {},
       parameters: BDData.parameters,
       ulrInstructions: 'consult-custom-inst/',
+      isAllowedSave: 'is-allowed-save/',
       urlAreas: '/areas/',
       // FIXME
       idClient: null,
@@ -251,16 +252,27 @@ export default {
       console.log('Emitio guardado')
       this.participantResponse.responsesList = responsesList
       this.participantResponse.customized_instrument_id = this.instruccionData.id
-
-      var response = await api.create(this.participantResponse, this.urlSaveSubItems)
-      if (response.status === 201) {
-        // Estuvo exitosa la busqueda
-        console.log('Guardado de respuestas en BD fue correcto')
-        this.showThanksMessage = true
-        this.isLoading = false
-      } else {
-        this.isLoading = false
+      // Consulta si se puede guardar
+      var data = {idCustomizedInstrument: this.participantResponse.customized_instrument_id}
+      var response = await api.getWithPost(data, this.isAllowedSave)
+      // Estuvo exitosa la busqueda
+      if (response.status === 200) {
+        this.obj = response.data
+        if (this.obj.save === true) {
+          response = await api.create(this.participantResponse, this.urlSaveSubItems)
+          this.obj = response.data
+          if (this.obj.error === undefined && response.status === 201) {
+            console.log('Guardado de respuestas en BD fue correcto')
+            this.showThanksMessage = true
+            this.isLoading = false
+          }
+        } else if (this.obj.save === false) {
+          this.showThanksMessage = false
+          this.errorMsg = i18n.tc('message.error_no_espacio_guardar_encuesta')
+          this.hasErrors = true
+        }
       }
+      this.isLoading = false
     }
   },
   filters: {

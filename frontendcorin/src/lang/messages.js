@@ -72,6 +72,7 @@ export default {
             date: 'Date',
             error_configuracion_cliente: 'No se ha parametrizado el número máximo de encuestas para este cliente, por favor configure primero este valor en el menú de Clientes',
             error_configuracion_encuesta: 'No se ha parametrizado la encuesta personalizada para esta compañía, por favor configure primero este valor en el menú de Personalizar encuesta',
+            error_no_espacio_guardar_encuesta: 'No fue posible guardar la encuesta, fue alcanzado el número máximo de respuestas posibles para la compañía',
             email: 'Email',
             corporative_group: '¿Grupo empresarial?',
             edit: 'Editar',

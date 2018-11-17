@@ -161,7 +161,7 @@ export default {
         } else if (this.obj.error === 'config_survey') {
           this.showData = false
           this.error = i18n.tc('message.error_configuracion_cliente')
-        } else if(this.obj.error === 'no_customized_instrument') {
+        } else if (this.obj.error === 'no_customized_instrument') {
           // Se deja todo disponible para personalizar la encuesta
           // usando los datos que se reciben de la base de datos
           this.showData = true
