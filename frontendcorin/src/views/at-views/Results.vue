@@ -367,7 +367,7 @@ export default {
       categoryAxis.renderer.grid.template.location = 0
       categoryAxis.dataFields.category = 'name'
       categoryAxis.renderer.minGridDistance = 5
-      chart.responsive.enabled = true
+      // chart.responsive.enabled = true
       var labelAxis = categoryAxis.renderer.labels.template
       labelAxis.wrap = true
       labelAxis.maxWidth = 150
@@ -412,8 +412,8 @@ export default {
       var valueAxis = chart.yAxes.push(new am4charts.ValueAxis())
       valueAxis.title.text = 'Promedio'
       valueAxis.title.fontWeight = 'bold'
-      // valueAxis.min = 0
-      valueAxis.max = 9
+      valueAxis.min = 0
+      valueAxis.max = 10
       valueAxis.calculateTotals = false
       valueAxis.strictMinMax = true
       // Customize labels appareance
@@ -458,17 +458,24 @@ export default {
       // Series no directores
       if (this.categories_average_by_no_directives.length > 0) {
         chart.data = this.categories_average_by_no_directives
-        let seriesNoDirectors = chart.series.push(new am4charts.LineSeries())
+        var seriesNoDirectors = chart.series.push(new am4charts.LineSeries())
         seriesNoDirectors.data = this.categories_average_by_no_directives
         seriesNoDirectors.dataFields.categoryX = 'name'
         seriesNoDirectors.dataFields.valueY = 'average'
-        seriesNoDirectors.strokeWidth = 5
+        seriesNoDirectors.strokeWidth = 3
+        seriesNoDirectors.properties.strokeDasharray = '5.5'
+        seriesNoDirectors.properties.stroke = am4core.color('#845EC2')
+        seriesNoDirectors.properties.fill = am4core.color('#845EC2')
         // Suaviza los lineas de la serie
         seriesNoDirectors.tensionX = 0.8
         // seriesNoDirectors.stroke = am4core.color('#ff0000')
         seriesNoDirectors.name = 'No directivos (n = ' + this.categories_average_by_no_directives[0].n + ')'
-        seriesNoDirectors.bullets.push(new am4charts.CircleBullet())
-        seriesNoDirectors.tooltipText = '{categoryX}: [bold]{valueY}[/]'
+        var bullet = seriesNoDirectors.bullets.push(new am4charts.Bullet())
+        var circle = bullet.createChild(am4core.Circle)
+        circle.width = 8
+        circle.height = 8
+        // Tooltip with the info
+        circle.tooltipText = '{categoryX}: [bold]{valueY}[/]'
 
         // label bullet
         /* var labelBullet = new am4charts.LabelBullet()
@@ -485,7 +492,7 @@ export default {
         seriesDirectors.data = this.categories_average_by_directives
         seriesDirectors.dataFields.categoryX = 'name'
         seriesDirectors.dataFields.valueY = 'average'
-        seriesDirectors.strokeWidth = 5
+        seriesDirectors.strokeWidth = 3
         seriesDirectors.tensionX = 0.8
         seriesDirectors.name = 'Directivos (n = ' + this.categories_average_by_directives[0].n + ')'
         seriesDirectors.bullets.push(new am4charts.CircleBullet())
@@ -531,6 +538,7 @@ export default {
       valueAxis.renderer.minGridDistance = 25
       valueAxis.renderer.min = 0
       valueAxis.renderer.max = 9
+      valueAxis.strictMinMax = true
       // Customize labels appareance
       valueAxis.renderer.labels.template.fill = am4core.color('#A0CA92')
       valueAxis.renderer.labels.template.fontSize = 12

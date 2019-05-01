@@ -3,6 +3,7 @@ export default {
 
     apiURL: 'http://localhost:8000/api/',
     // apiURL: 'http://zalonore.pythonanywhere.com/api/',
+    //  apiURL: 'http://18.232.93.104:8000/api/',
     parameters: {
         position: [{
                 value: true,
