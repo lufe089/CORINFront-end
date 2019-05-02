@@ -39,7 +39,7 @@
 <script>
 
 export default {
-  name: 'c-table-results',
+  name: 'base-table',
   props: {
     caption: {
       type: String,

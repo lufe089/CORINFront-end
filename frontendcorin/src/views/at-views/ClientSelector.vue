@@ -1,6 +1,6 @@
 <template>
   <div>
-  <loading :isLoading="isLoading"></loading>
+  <base-loading :isLoading="isLoading"></base-loading>
   <b-card :no-body="true">
     <b-card-body class="p-3 clearfix">
       <b-row>
@@ -25,7 +25,7 @@ import api from './api.js'
 export default {
   name: 'client-selector',
   components: {
-    loading: () => import('./Loading')
+    baseLoading: () => import('./BaseLoading')
   },
   data () {
     return {

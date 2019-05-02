@@ -1,6 +1,6 @@
 <template>
   <div class="animated fadeIn">
-    <loading :isLoading="isLoading"></loading>
+    <base-loading :isLoading="isLoading"></base-loading>
     <!-- Card to select which client to consult -->
     <b-row>
     <b-col md="12">
@@ -51,7 +51,7 @@
               </b-row>
               <b-row>
                 <b-col md="4"  sm="12">
-                  <c-table-results hover  :items="average_by_categories"></c-table-results>
+                  <base-table hover  :items="average_by_categories"></base-table>
                 </b-col>
                 <b-col md="8">
                   <b-card >
@@ -78,10 +78,10 @@
         </b-row>
         <b-row>
           <b-col md="6"  sm="12">
-            <c-table-results :caption="$t('message.resultado_categorias_directivos')"  hover  :items="categories_average_by_directives"></c-table-results>
+            <base-table :caption="$t('message.resultado_categorias_directivos')"  hover  :items="categories_average_by_directives"></base-table>
           </b-col>
           <b-col md="6"  sm="12">
-            <c-table-results :caption="$t('message.resultado_categorias_no_directivos')"  hover  :items="categories_average_by_no_directives"></c-table-results>
+            <base-table :caption="$t('message.resultado_categorias_no_directivos')"  hover  :items="categories_average_by_no_directives"></base-table>
           </b-col>
         </b-row>
         </div> <!-- End result-by-directives-div-->
@@ -97,7 +97,7 @@
               </b-row>
               <b-row>
                 <b-col md="4"  sm="12">
-                  <c-table-results :items="average_by_areas"></c-table-results>-->
+                  <base-table :items="average_by_areas"></base-table>
                 </b-col>
                 <b-col md="8">
                   <b-card >
@@ -168,7 +168,7 @@
               </b-row>
               <b-row>
                 <b-col md="5"  sm="12">
-                  <c-table-results :filterValues=true :columnsDetail=2 hover :items="average_by_dimensions"></c-table-results>
+                  <base-table :filterValues=true :columnsDetail=2 hover :items="average_by_dimensions"></base-table>
                 </b-col>
                 <b-col md="7">
                   <b-card >
@@ -192,7 +192,7 @@
               </b-row>
               <b-row>
                 <b-col md="4"  sm="12">
-                  <c-table-results :filterValues=true hover :items="average_by_components"></c-table-results>
+                  <base-table :filterValues=true hover :items="average_by_components"></base-table>
                 </b-col>
                 <b-col md="8">
                   <b-card >
@@ -217,7 +217,7 @@ import i18n from '../../lang/config'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
-import ResultsTable from './ResultsTable'
+import BaseTable from './BaseTable'
 import BDData from './_BDData.js'
 import api from './api.js'
 
@@ -228,8 +228,8 @@ export default {
   name: 'results-module',
   components: {
     /* tag, component name */
-    'c-table-results': ResultsTable,
-    loading: () => import('./Loading'),
+    'base-table': BaseTable,
+    baseLoading: () => import('./BaseLoading'),
     clientSelector: () => import('./ClientSelector')
   },
   data () {

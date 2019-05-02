@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <loading :isLoading="isLoading"></loading>
+    <base-loading :isLoading="isLoading"></base-loading>
     <b-row>
       <b-col md="12">
         <client-selector @client-selector:change='refreshData'></client-selector>
@@ -112,7 +112,7 @@ import VueTrix from 'vue-trix'
 
 export default {
   components: {
-    loading: () => import('./Loading'),
+    baseLoading: () => import('./BaseLoading'),
     'trix-editor': VueTrix,
     clientSelector: () => import('./ClientSelector')
   },

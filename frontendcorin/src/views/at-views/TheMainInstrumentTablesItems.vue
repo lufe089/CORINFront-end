@@ -81,7 +81,7 @@ import i18n from '../../lang/config'
 // import func from './vue-temp/vue-editor-bridge.js'
 
 export default {
-  name: 'item-level2-table',
+  name: 'the-main-instrument-tables-items',
   props: {
     caption: {
       type: String,

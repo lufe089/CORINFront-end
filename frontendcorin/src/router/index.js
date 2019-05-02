@@ -18,7 +18,7 @@ import Router from 'vue-router'
 
 // Containers
 import Full from '@/containers/Full'
-import MainInstrument from '@/views/at-views/MainInstrument'
+import TheMainInstrument from '@/views/at-views/TheMainInstrument'
 import ClientManager from '@/views/at-views/ClientManager.vue'
 import ConfigSurveyManager from '@/views/at-views/ConfigSurveyManager.vue'
 import CustomizeSurvey from '@/views/at-views/CustomizeSurvey.vue'
@@ -44,7 +44,7 @@ export default new Router({
         children: [{
                 path: 'main_instrument',
                 name: 'Encuesta',
-                component: MainInstrument
+                component: TheMainInstrument
             },
             {
                 path: '/result-by-categories',

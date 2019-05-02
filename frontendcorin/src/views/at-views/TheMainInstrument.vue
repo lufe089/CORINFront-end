@@ -9,7 +9,7 @@
       </b-col>
     </b-row>
     <b-alert variant="danger" :show="errorMsg !==''"><h4>{{errorMsg}}</h4></b-alert>
-    <loading :isLoading="isLoading"></loading>
+    <base-loading :isLoading="isLoading"></base-loading>
     <b-row fluid v-show="!hasErrors && !isSurveyVisible && !showThanksMessage">
       <b-col md=12>
          <b-jumbotron bg-variant="light">
@@ -104,7 +104,7 @@
     <!-- Formulario para llenar las dimensiones, subcriterios y criterios -->
     <b-row fluid v-show=showQuestions>
       <b-col lg="12">
-        <item-level2-table hover @item-level2-table:change='processEnd'></item-level2-table>
+        <the-main-instrument-tables-items hover @item-level2-table:change='processEnd'></the-main-instrument-tables-items>
       </b-col><!--/.col-->
     </b-row>
     </div>
@@ -132,7 +132,7 @@ import BDData from './_BDData.js'
 import api from './api'
 import i18n from '../../lang/config'
 export default {
-  name: 'main_instrument',
+  name: 'the_main_instrument',
   data () {
     return {
       participantResponse: null,
@@ -170,8 +170,8 @@ export default {
     // itemLevel2Table()
     // dynamic import wrapped in a function
     // 'item-level2-table': () => import('./ItemLevel2Table')
-    itemLevel2Table: () => import('./ItemLevel2Table'),
-    loading: () => import('./Loading'),
+    theMainInstrumentTablesItems: () => import('./TheMainInstrumentTablesItems'),
+    baseLoading: () => import('./BaseLoading'),
     clientSelector: () => import('./ClientSelector')
   },
   methods: {

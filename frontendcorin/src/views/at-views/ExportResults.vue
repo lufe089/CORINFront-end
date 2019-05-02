@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <loading :isLoading="isLoading"></loading>
+    <base-loading :isLoading="isLoading"></base-loading>
     <div slot="header">
       <b-row >
         <b-col md="12">
@@ -53,7 +53,7 @@ export default {
   name: 'results-module',
   components: {
     DownloadExcel: () => import('vue-json-excel'),
-    loading: () => import('./Loading')
+    baseLoading: () => import('./BaseLoading')
   },
   data () {
     return {
