@@ -23,6 +23,11 @@ import ClientManager from '@/views/at-views/ClientManager.vue'
 import ConfigSurveyManager from '@/views/at-views/ConfigSurveyManager.vue'
 import CustomizeSurvey from '@/views/at-views/CustomizeSurvey.vue'
 
+
+// Views - Pages
+import Page404 from '@/views/pages/Page404'
+import Page500 from '@/views/pages/Page500'
+
 Vue.use(Router)
 
 const Results = () =>
@@ -31,64 +36,100 @@ const Results = () =>
 const ExportResults = () =>
     import ('@/views/at-views/ExportResults.vue')
 
+const LoginAccessCode = () =>
+    import ('@/views/pages/LoginAccessCode.vue')
+
+const LoginUserPassword = () =>
+    import ('@/views/pages/LoginUserPassword.vue')
+
 export default new Router({
     mode: 'hash',
     linkActiveClass: 'open active',
     scrollBehavior: () => ({ y: 0 }),
     routes: [{
-        path: '/',
-        redirect: '/main_instrument',
-        name: 'Home',
-        component: Full,
-        /* así se especifica que el resto de componentes son hijos de full */
-        children: [{
-                path: 'main_instrument',
-                name: 'Encuesta',
-                component: TheMainInstrument
+            path: '/',
+            redirect: '/login-code',
+            name: 'Pages',
+            component: {
+                render(c) { return c('router-view') }
             },
-            {
-                path: '/result-by-categories',
-                name: 'Resultados por categorías',
-                component: Results
-            },
-            {
-                path: '/result-by-areas',
-                name: 'Resultados por áreas',
-                component: Results
-            },
-            {
-                path: '/results_by_dim_comp',
-                name: 'Resultados por dimensiones y componentes',
-                component: Results
-            },
-            {
-                path: '/result-by-directives',
-                name: 'Resultados para directivos y no directivos',
-                component: Results
-            },
-            {
-                path: '/export',
-                name: 'Exportar resultados',
-                component: ExportResults
-            },
-            {
-                path: 'clients',
-                name: 'Clientes',
-                component: ClientManager
-            },
-            {
-                path: 'configSurveys',
-                name: 'Configurar encuestas',
-                component: ConfigSurveyManager
+            children: [{
+                    path: '404',
+                    name: 'Page404',
+                    component: Page404
+                },
+                {
+                    path: '500',
+                    name: 'Page500',
+                    component: Page500
+                },
+                {
+                    path: 'login-code',
+                    name: 'Login',
+                    component: LoginAccessCode
+                },
+                {
+                    path: 'login-pwd',
+                    name: 'Login',
+                    component: LoginUserPassword
+                }
+            ]
+        },
+        {
+            path: '/main',
+            redirect: '/main_instrument',
+            name: 'Home',
+            component: Full,
+            /* así se especifica que el resto de componentes son hijos de full */
+            children: [{
+                    path: '/main_instrument',
+                    name: 'Encuesta',
+                    component: TheMainInstrument
+                },
+                {
+                    path: '/result-by-categories',
+                    name: 'Resultados por categorías',
+                    component: Results
+                },
+                {
+                    path: '/result-by-areas',
+                    name: 'Resultados por áreas',
+                    component: Results
+                },
+                {
+                    path: '/results_by_dim_comp',
+                    name: 'Resultados por dimensiones y componentes',
+                    component: Results
+                },
+                {
+                    path: '/result-by-directives',
+                    name: 'Resultados para directivos y no directivos',
+                    component: Results
+                },
+                {
+                    path: '/export',
+                    name: 'Exportar resultados',
+                    component: ExportResults
+                },
+                {
+                    path: '/clients',
+                    name: 'Clientes',
+                    component: ClientManager
+                },
+                {
+                    path: '/configSurveys',
+                    name: 'Configurar encuestas',
+                    component: ConfigSurveyManager
 
-            },
-            {
-                path: 'customSurvey',
-                name: 'Personalizar encuesta',
-                component: CustomizeSurvey
+                },
+                {
+                    path: '/customSurvey',
+                    name: 'Personalizar encuesta',
+                    component: CustomizeSurvey
 
-            }
+                }
+            ]
+        },
 
-        ]
-    }]
+    ]
 })

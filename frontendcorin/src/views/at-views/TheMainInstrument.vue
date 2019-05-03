@@ -14,7 +14,7 @@
       <b-col md=12>
          <b-jumbotron bg-variant="light">
         <template slot="header">
-          <span class="text-center" v-html="$t('message.welcome_to_applies')"></span>
+          <span class="text-center" v-html="$t('message.welcome')"></span>
           <hr class="my-4">
         </template>
         <template slot="lead">
@@ -178,7 +178,7 @@ export default {
     async refreshData (idClient) {
       this.isLoading = true
       this.idClient = idClient
-      var data = {idClient: idClient}
+      let data = {idClient: idClient} // Solo scope de bloque
       var response = await api.getWithPost(data, this.ulrInstructions)
       // Estuvo exitosa la busqueda
       if (response.status === 200) {
@@ -199,18 +199,18 @@ export default {
       } else {
         // Se pone vacio para evitar errores
         this.instruccionData = {user_instructions: '', contact_info: '', thanks: ' '}
-        this.errores = true
+        this.hasErrors = true
       }
       // Carga las areas
       response = await api.getAll(this.urlAreas)
       // Estuvo exitosa la busqueda
       if (response.status === 200) {
         this.areas = response.data
-        this.errores = false
+        this.hasErrors = false
       } else {
         // Se pone vacio para evitar errores
         this.areas = {}
-        this.errores = true
+        this.hasErrors = true
       }
       this.isLoading = false
     },

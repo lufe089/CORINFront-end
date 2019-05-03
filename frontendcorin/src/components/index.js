@@ -5,13 +5,13 @@ import Footer from './Footer.vue'
 import Header from './Header.vue'
 import Sidebar from './Sidebar/Sidebar.vue'
 import Switch from './Switch.vue'
-
+/* eslint-disable */
 export {
-  Aside,
-  Breadcrumb,
-  Callout,
-  Footer,
-  Header,
-  Sidebar,
-  Switch
+    Aside,
+    Breadcrumb,
+    Callout,
+    Footer,
+    Header,
+    Sidebar,
+    Switch
 }

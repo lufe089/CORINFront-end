@@ -7,6 +7,12 @@
     <button class="navbar-toggler sidebar-toggler d-md-down-none mr-auto" type="button" @click="sidebarToggle">
       <span class="navbar-toggler-icon"></span>
     </button>
+    <b-navbar-nav class="ml-auto">
+      <b-nav-item class="d-md-down-none">
+       <i class="fa fa-lock"></i> Logout
+      </b-nav-item>
+    </b-navbar-nav>
+
     <!-- Ocultar barra pq no sera usada -->
     <!--<button class="navbar-toggler aside-menu-toggler d-md-down-none" type="button" @click="asideToggle">
       <span class="navbar-toggler-icon"></span>
