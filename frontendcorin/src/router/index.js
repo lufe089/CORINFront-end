@@ -33,12 +33,6 @@ Vue.use(Router)
 const Results = () =>
     import ('@/views/at-views/Results.vue')
 
-const ExportResults = () =>
-    import ('@/views/at-views/ExportResults.vue')
-
-const LoginAccessCode = () =>
-    import ('@/views/pages/LoginAccessCode.vue')
-
 const LoginUserPassword = () =>
     import ('@/views/pages/LoginUserPassword.vue')
 
@@ -66,7 +60,8 @@ export default new Router({
                 {
                     path: 'login-code',
                     name: 'Login',
-                    component: LoginAccessCode
+                    component: () =>
+                        import ('@/views/pages/LoginAccessCode.vue')
                 },
                 {
                     path: 'login-pwd',
@@ -109,7 +104,9 @@ export default new Router({
                 {
                     path: '/export',
                     name: 'Exportar resultados',
-                    component: ExportResults
+                    component: () =>
+                        import ('@/views/at-views/ExportResults.vue')
+
                 },
                 {
                     path: '/clients',
