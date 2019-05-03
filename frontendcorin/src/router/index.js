@@ -33,8 +33,6 @@ Vue.use(Router)
 const Results = () =>
     import ('@/views/at-views/Results.vue')
 
-const LoginUserPassword = () =>
-    import ('@/views/pages/LoginUserPassword.vue')
 
 export default new Router({
     mode: 'hash',
@@ -66,7 +64,8 @@ export default new Router({
                 {
                     path: 'login-pwd',
                     name: 'Login',
-                    component: LoginUserPassword
+                    component: () =>
+                        import ('@/views/pages/LoginUserPassword.vue')
                 }
             ]
         },
