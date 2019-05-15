@@ -15,7 +15,8 @@
                   <b-col md="4">
                     <b-input-group class="mb-3">
                      <b-input-group-prepend><b-input-group-text><i class="icon-key"></i></b-input-group-text></b-input-group-prepend>
-                      <b-form-input class="font-md p-2" v-model="obj.prefix" maxlength="12" name="prefix" v-validate="'required'" :placeholder="$t('message.prefijo')" />
+                      <!--<label for="prefix">{{ $t('message.prefijo') }}:</label>-->
+                      <b-form-input id="prefix" class="font-md p-2" v-model="obj.prefix" maxlength="12" name="prefix" v-validate="'required'" :placeholder="$t('message.prefijo')" />
                     </b-input-group>
                     <p class="text-danger" v-if="errors.has('prefix')">{{ errors.first('prefix') }}</p>
                   </b-col>
@@ -55,7 +56,7 @@
 
 <script>
 import api from '../at-views/api'
-import i18n from '../../lang/config'
+// import i18n from '../../lang/config'
 import BDData from '../at-views/_BDData.js'
 
 export default {
@@ -90,10 +91,12 @@ export default {
       // Estuvo exitosa la busqueda
       if (response.status === 200) {
         this.obj = response.data
+        this.$router.push({name: 'Encuesta'})
         this.errorMsg = ''
       }
-      if (response.status === 200 && response.data.error === 'no_customized_instrument') {
-        this.errorMsg = i18n.tc('message.error_login_codigo')
+      if (response.status === 400) {
+        // this.errorMsg = i18n.tc('message.error_login_codigo')
+        this.errorMsg = response.data['non_field_errors']
       }
       this.isLoading = false
     }

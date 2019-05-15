@@ -142,6 +142,7 @@ export default {
             why_question: 'Why?',
             welcome: '<h2><span style="color: #3d94ff;"><strong>Bienvenido!</strong></span> <span>Esta es una encuesta para medir la cultura innovadora</span></h2>',
             error_consuming_service: 'Ocurrió un error inesperado consultando/guardando los datos, informe al administrador',
+            error_consuming_service_permissions: 'No tiene permiso para consultar los datos. Para ver la información autentiquese en el sistema primero',
             error_consuming_save_service: 'Ocurrió un error inesperado guardardando los datos, por favor contacte al administrador',
             error_consuming_service_detail_categories: 'ERROR: unable to consume categories service',
             error_consuming_service_detail_items: 'ERROR: unable to consume service to consult active items',

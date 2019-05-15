@@ -20,13 +20,14 @@ export default {
     async execute(method, resource, data) {
         // inject the accessToken for each request
         // let accessToken = await Vue.prototype.$auth.getAccessToken()
+        let accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXN0b21pemVkX2luc3RydW1lbnRfaWQiOjIsImNvbmZpZ19zdXJ2ZXlfaWQiOjIsIm1vZGUiOiJieUFjY2Vzc0NvZGUiLCJleHAiOjE1NjMxMDQ4NzN9.GZaznlgYti5iJTjzRISVeuL8vxi2HDmW2neC8WDXrf0"
         return client({
             method,
             url: resource,
-            data
-            /* headers: {
-              Authorization: `Bearer ${accessToken}`
-            } */
+            data,
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
         }).then(req => {
             // console.log(req)
             // alert(JSON.stringify(req))
@@ -35,8 +36,18 @@ export default {
             // Here we could override the busy state, setting isBusy to false
             console.error(JSON.stringify(error))
             console.error(error)
-            alert(i18n.tc('message.error_consuming_service'))
-                // Returning an empty array, allows table to correctly handle busy state in case of error
+            switch (error.response.status) {
+                case 400: // bad request
+                    // alert(error.response.data['non_field_errors'])
+                    break;
+                case 403: // FORBBIDEN
+                    alert(i18n.tc('message.error_consuming_service_permissions'));
+                    break;
+                default:
+                    alert(i18n.tc('message.error_consuming_service'))
+                    break;
+
+            }
             return error.response
         })
     },
