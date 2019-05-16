@@ -45,15 +45,15 @@
 </template>
 <script>
 
-import BDData from './_BDData.js'
-import api from './api.js'
-import i18n from '../../lang/config'
+import BDData from '@/common/_BDData'
+import api from '../services/api.js'
+import i18n from '../lang/config'
 
 export default {
   name: 'results-module',
   components: {
     DownloadExcel: () => import('vue-json-excel'),
-    baseLoading: () => import('./BaseLoading')
+    baseLoading: () => import('@/components/BaseComponents/BaseLoading')
   },
   data () {
     return {

@@ -108,9 +108,9 @@
 </template>
 
 <script>
-import api from './api'
-import i18n from '../../lang/config'
-import BDData from './_BDData.js'
+import api from '../services/api.js'
+import i18n from '../lang/config'
+import BDData from '@/common/_BDData'
 const items = []
 
 export default {

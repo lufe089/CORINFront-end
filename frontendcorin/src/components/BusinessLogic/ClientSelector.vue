@@ -21,11 +21,11 @@
   </div>
 </template>
 <script>
-import api from './api.js'
+import api from '@/services/api.js'
 export default {
   name: 'client-selector',
   components: {
-    baseLoading: () => import('./BaseLoading')
+    baseLoading: () => import('@/components/BaseComponents/BaseLoading')
   },
   data () {
     return {

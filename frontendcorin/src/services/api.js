@@ -1,8 +1,8 @@
 /* eslint-disable */
 import Vue from 'vue'
 import axios from 'axios'
-import BDData from './_BDData'
-import i18n from '../../lang/config'
+import BDData from '@/common/_BDData'
+import i18n from '../lang/config'
 
 const client = axios.create({
     baseURL: BDData.apiURL,
@@ -20,7 +20,8 @@ export default {
     async execute(method, resource, data) {
         // inject the accessToken for each request
         // let accessToken = await Vue.prototype.$auth.getAccessToken()
-        let accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXN0b21pemVkX2luc3RydW1lbnRfaWQiOjIsImNvbmZpZ19zdXJ2ZXlfaWQiOjIsIm1vZGUiOiJieUFjY2Vzc0NvZGUiLCJleHAiOjE1NjMxMDQ4NzN9.GZaznlgYti5iJTjzRISVeuL8vxi2HDmW2neC8WDXrf0"
+        // let accessToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXN0b21pemVkX2luc3RydW1lbnRfaWQiOjIsImNvbmZpZ19zdXJ2ZXlfaWQiOjIsIm1vZGUiOiJieUFjY2Vzc0NvZGUiLCJleHAiOjE1NjMxMDQ4NzN9.GZaznlgYti5iJTjzRISVeuL8vxi2HDmW2neC8WDXrf0"
+        let accessToken = ""
         return client({
             method,
             url: resource,

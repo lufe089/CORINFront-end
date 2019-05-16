@@ -213,13 +213,13 @@
 
 <script>
 
-import i18n from '../../lang/config'
+import i18n from '../lang/config'
 import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
-import BaseTable from './BaseTable'
-import BDData from './_BDData.js'
-import api from './api.js'
+import BaseTable from '../components/BaseComponents/BaseTable'
+import BDData from '../common/_BDData.js'
+import api from '../services/api.js'
 
 // Le da un comportanemiento animado al chart
 am4core.useTheme(am4themesAnimated)
@@ -229,8 +229,8 @@ export default {
   components: {
     /* tag, component name */
     'base-table': BaseTable,
-    baseLoading: () => import('./BaseLoading'),
-    clientSelector: () => import('./ClientSelector')
+    baseLoading: () => import('@/components/BaseComponents/BaseLoading'),
+    clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
   },
   data () {
     return {

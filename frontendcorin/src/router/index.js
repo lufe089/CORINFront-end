@@ -18,20 +18,20 @@ import Router from 'vue-router'
 
 // Containers
 import Full from '@/containers/Full'
-import TheMainInstrument from '@/views/at-views/TheMainInstrument'
-import ClientManager from '@/views/at-views/ClientManager.vue'
-import ConfigSurveyManager from '@/views/at-views/ConfigSurveyManager.vue'
-import CustomizeSurvey from '@/views/at-views/CustomizeSurvey.vue'
+import TheMainInstrument from '@/views/TheMainInstrument'
+import ClientManager from '@/views/ClientManager.vue'
+import ConfigSurveyManager from '@/views/ConfigSurveyManager.vue'
+import CustomizeSurvey from '@/views/CustomizeSurvey.vue'
 
 
 // Views - Pages
-import Page404 from '@/views/pages/Page404'
-import Page500 from '@/views/pages/Page500'
+import Page404 from '@/views/Errors/Page404'
+import Page500 from '@/views/Errors/Page500'
 
 Vue.use(Router)
 
 const Results = () =>
-    import ('@/views/at-views/Results.vue')
+    import ('@/views/Results.vue')
 
 
 export default new Router({
@@ -59,13 +59,13 @@ export default new Router({
                     path: 'login-code',
                     name: 'Login',
                     component: () =>
-                        import ('@/views/pages/LoginAccessCode.vue')
+                        import ('@/views/Login/LoginAccessCode.vue')
                 },
                 {
                     path: 'login-pwd',
                     name: 'Login',
                     component: () =>
-                        import ('@/views/pages/LoginUserPassword.vue')
+                        import ('@/views/Login/LoginUserPassword.vue')
                 }
             ]
         },
@@ -104,7 +104,7 @@ export default new Router({
                     path: '/export',
                     name: 'Exportar resultados',
                     component: () =>
-                        import ('@/views/at-views/ExportResults.vue')
+                        import ('@/views/ExportResults.vue')
 
                 },
                 {

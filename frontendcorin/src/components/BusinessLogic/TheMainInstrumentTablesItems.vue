@@ -74,12 +74,10 @@
 </template>
 
 <script>
-
-import BDData from './_BDData.js'
+import BDData from '@/common/_BDData.js'
 import axios from 'axios'
-import i18n from '../../lang/config'
+import i18n from '@/lang/config'
 // import func from './vue-temp/vue-editor-bridge.js'
-
 export default {
   name: 'the-main-instrument-tables-items',
   props: {
@@ -274,7 +272,6 @@ export default {
         return false
       }
     }
-
   },
   components: {
     /* tag, component name */
@@ -314,7 +311,6 @@ export default {
   width: 60%;
   text-align: center
 }
-
 .loading {
   position: fixed;
   z-index: 999;

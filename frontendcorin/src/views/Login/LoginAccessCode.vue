@@ -55,14 +55,14 @@
 </template>
 
 <script>
-import api from '../at-views/api'
+import api from '@/services/api.js'
 // import i18n from '../../lang/config'
-import BDData from '../at-views/_BDData.js'
+import BDData from '@/common/_BDData.js'
 
 export default {
   name: 'LoginAccessCode',
   components: {
-    baseLoading: () => import('../at-views/BaseLoading')
+    baseLoading: () => import('@/components/BaseComponents/BaseLoading')
   },
   data () {
     return {

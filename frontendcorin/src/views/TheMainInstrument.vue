@@ -128,9 +128,9 @@
 </template>
 <script>
 
-import BDData from './_BDData.js'
-import api from './api'
-import i18n from '../../lang/config'
+import BDData from '@/common/_BDData.js'
+import api from '@/services/api.js'
+import i18n from '@/lang/config'
 export default {
   name: 'the_main_instrument',
   data () {
@@ -170,9 +170,9 @@ export default {
     // itemLevel2Table()
     // dynamic import wrapped in a function
     // 'item-level2-table': () => import('./ItemLevel2Table')
-    theMainInstrumentTablesItems: () => import('./TheMainInstrumentTablesItems'),
-    baseLoading: () => import('./BaseLoading'),
-    clientSelector: () => import('./ClientSelector')
+    theMainInstrumentTablesItems: () => import('@/components/BusinessLogic/TheMainInstrumentTablesItems'),
+    baseLoading: () => import('@/components/BaseComponents/BaseLoading'),
+    clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
   },
   methods: {
     async refreshData (idClient) {

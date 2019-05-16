@@ -106,15 +106,15 @@
 </template>
 
 <script>
-import api from './api'
-import i18n from '../../lang/config'
+import api from '../services/api.js'
+import i18n from '../lang/config'
 import VueTrix from 'vue-trix'
 
 export default {
   components: {
-    baseLoading: () => import('./BaseLoading'),
+    baseLoading: () => import('@/components/BaseComponents/BaseLoading'),
     'trix-editor': VueTrix,
-    clientSelector: () => import('./ClientSelector')
+    clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
   },
   data () {
     return {

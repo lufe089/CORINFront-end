@@ -10,7 +10,7 @@ import i18n from './lang/config.js'
 import es from 'vee-validate/dist/locale/es'
 import VeeValidate from 'vee-validate'
 import { Validator } from 'vee-validate'
-import BDData from './views/at-views/_BDData.js'
+import BDData from '@/common/_BDData'
 
 Vue.use(BootstrapVue)
     // Plugin para usar formateador de numeros 
