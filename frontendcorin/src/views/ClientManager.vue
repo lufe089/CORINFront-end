@@ -237,8 +237,8 @@ export default {
   },
   async created () {
     // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado
-    this.refreshData()
-    this.obj = this.clearObj()
+    // this.refreshData()
+    // this.obj = this.clearObj()
   },
   computed: {
     sortOptions () {

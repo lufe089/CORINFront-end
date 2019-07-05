@@ -6,7 +6,7 @@ import i18n from '@/lang/config'
 import {
     FETCH_AREAS
 } from "./actions.type";
-import { SET_AREAS } from "./mutations.type";
+import { SET_AREAS, SET_LOADING } from "./mutations.type";
 
 
 const state = {
@@ -26,15 +26,18 @@ const actions = {
 
     async [FETCH_AREAS](context, data) {
 
+        context.commit(SET_LOADING, true);
         let response = await ApiService.get(BDData.endPoints.urlAreas)
             // Estuvo exitosa la busqueda
         if (response.status === 200) {
-            console.log(response.data)
+            console.log(response.data);
             context.commit(SET_AREAS, response.data);
+            context.commit(SET_LOADING, false);
             // resolve(response.data);
         } else {
             //FIXME mirar aqui como llega el error
             context.commit(SET_ERROR, errorMsg);
+            context.commit(SET_LOADING, false);
         }
         /*
         return new Promise(resolve => {

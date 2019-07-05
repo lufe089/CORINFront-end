@@ -6,6 +6,7 @@ export const SET_AUTH = "setUser";
 export const SET_AUTH_ACCESS_CODE = "setCredentialsAccessCode";
 export const SET_PROFILE = "setProfile";
 export const SET_ERROR = "setError";
+export const SET_LOADING = "setLoading";
 // Propias de la logica del proyecto
 export const SET_ARTICLE = "setArticle";
 export const SET_COMMENTS = "setComments";

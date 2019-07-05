@@ -9,7 +9,6 @@
       </b-col>
     </b-row>
     <!--<b-alert variant="danger" :show="errorMsg !=='' && errors"><h4>{{errorMsg}}</h4></b-alert>-->
-    <base-loading :isLoading="isLoading"></base-loading>
     <b-row fluid v-show="!isSurveyVisible && !showThanksMessage">
       <b-col md=12>
          <b-jumbotron bg-variant="light">
@@ -168,35 +167,15 @@ export default {
     // itemLevel2Table()
     // dynamic import wrapped in a function
     // 'item-level2-table': () => import('./ItemLevel2Table')
-    theMainInstrumentTablesItems: () => import('@/components/BusinessLogic/TheMainInstrumentTablesItems'),
-    baseLoading: () => import('@/components/BaseComponents/BaseLoading')
+    theMainInstrumentTablesItems: () => import('@/components/BusinessLogic/TheMainInstrumentTablesItems')
     // clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
   },
   methods: {
     async loadAreas () {
-      // Carga las areas
-      /* let response = await api.getAll(this.urlAreas)
-      // Estuvo exitosa la busqueda
-      if (response.status === 200) {
-        this.areas = response.data
-        this.hasErrors = false
-      } else {
-        // Se pone vacio para evitar errores
-        this.areas = {}
-        this.hasErrors = true
-      } */
       this.$store.dispatch(FETCH_AREAS)
     },
     refreshDataNoAdmin: function () {
-      this.isLoading = true
-      // this.idClient = this.customized_instrument.config_survey.client.id
-      // Instrucciones del survey
-      // this.instruccionData.custom_user_instructions = this.customized_instrument.custom_user_instructions
-      // this.instruccionData.custom_contact_info = this.customized_instrument.custom_contact_info
-      // this.instruccionData.custom_thanks = this.customized_instrument.custom_thanks
-      // Areas de los participantes
       this.loadAreas()
-      this.isLoading = false
     },
     async refreshData (idClient) {
       // Este metodo funciona en el caso de que el usuario sea un administrador
@@ -227,7 +206,6 @@ export default {
         this.hasErrors = true
       }
       this.loadAreas()
-      this.isLoading = false
     },
     clone (obj) {
       // var outpurArr = []
