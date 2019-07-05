@@ -2,7 +2,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import BDData from '@/common/_BDData'
-import i18n from '../lang/config'
+import i18n from '@/lang/config'
 
 const client = axios.create({
     baseURL: BDData.apiURL,

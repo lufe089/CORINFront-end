@@ -3,14 +3,14 @@
     <!--<div v-show="isLoading">
       <img class="loading" src="https://vignette.wikia.nocookie.net/judo/images/0/03/Cargando.gif/revision/latest?cb=20110601212206&path-prefix=es" alt="loading">
     </div>-->
-    <b-row>
+    <b-row v-show="isAdmin">
       <b-col md="12">
         <client-selector @client-selector:change='refreshData'></client-selector>
       </b-col>
     </b-row>
-    <b-alert variant="danger" :show="errorMsg !==''"><h4>{{errorMsg}}</h4></b-alert>
+    <!--<b-alert variant="danger" :show="errorMsg !=='' && errors"><h4>{{errorMsg}}</h4></b-alert>-->
     <base-loading :isLoading="isLoading"></base-loading>
-    <b-row fluid v-show="!hasErrors && !isSurveyVisible && !showThanksMessage">
+    <b-row fluid v-show="!isSurveyVisible && !showThanksMessage">
       <b-col md=12>
          <b-jumbotron bg-variant="light">
         <template slot="header">
@@ -131,6 +131,9 @@
 import BDData from '@/common/_BDData.js'
 import api from '@/services/api.js'
 import i18n from '@/lang/config'
+import { mapState, mapGetters } from 'vuex'
+import { FETCH_AREAS } from '@/store/actions.type'
+
 export default {
   name: 'the_main_instrument',
   data () {
@@ -139,31 +142,26 @@ export default {
       serviceResult: {},
       result: '',
       isSurveyVisible: false,
-      areas: {},
       parameters: BDData.parameters,
-      ulrInstructions: 'consult-custom-inst/',
+      // ulrInstructions: 'consult-custom-inst/',
       isAllowedSave: 'is-allowed-save/',
-      urlAreas: '/areas/',
       // FIXME
       idClient: null,
       urlSaveSubItems: BDData.apiURL + 'participantsResponse/',
       selected: [], // Must be an array reference!,
       showDirective: undefined,
       showQuestions: false,
-      instruccionData: {custom_user_instructions: '', custom_contact_info: '', custom_thanks: ' '},
       showThanksMessage: false,
-      isLoading: null,
-      hasErrors: true,
-      errorMsg: '' // Guarda el mensaje de error
-
+      isLoading: null
     }
   },
   async created () {
     /* Duplicar aqui toda la informacion que pueda cambiar por cada persona que response el instrumento
     para tomar como objeto de referencia el json que esta en el archivo parametrico pero no modificarlo */
     this.participantResponse = this.clone(BDData.participantResponse)
-    // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado
-    // this.refreshData(this.idClient)
+    if (!this.isAdmin) {
+      this.refreshDataNoAdmin()
+    } // Logica en caso de que si sea admin y tenga que funcionar el selector
   },
   components: {
     /* tag, component name */
@@ -171,11 +169,38 @@ export default {
     // dynamic import wrapped in a function
     // 'item-level2-table': () => import('./ItemLevel2Table')
     theMainInstrumentTablesItems: () => import('@/components/BusinessLogic/TheMainInstrumentTablesItems'),
-    baseLoading: () => import('@/components/BaseComponents/BaseLoading'),
-    clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
+    baseLoading: () => import('@/components/BaseComponents/BaseLoading')
+    // clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
   },
   methods: {
+    async loadAreas () {
+      // Carga las areas
+      /* let response = await api.getAll(this.urlAreas)
+      // Estuvo exitosa la busqueda
+      if (response.status === 200) {
+        this.areas = response.data
+        this.hasErrors = false
+      } else {
+        // Se pone vacio para evitar errores
+        this.areas = {}
+        this.hasErrors = true
+      } */
+      this.$store.dispatch(FETCH_AREAS)
+    },
+    refreshDataNoAdmin: function () {
+      this.isLoading = true
+      // this.idClient = this.customized_instrument.config_survey.client.id
+      // Instrucciones del survey
+      // this.instruccionData.custom_user_instructions = this.customized_instrument.custom_user_instructions
+      // this.instruccionData.custom_contact_info = this.customized_instrument.custom_contact_info
+      // this.instruccionData.custom_thanks = this.customized_instrument.custom_thanks
+      // Areas de los participantes
+      this.loadAreas()
+      this.isLoading = false
+    },
     async refreshData (idClient) {
+      // Este metodo funciona en el caso de que el usuario sea un administrador
+      // FIXME probar si todavia funciona
       this.isLoading = true
       this.idClient = idClient
       let data = {idClient: idClient} // Solo scope de bloque
@@ -201,17 +226,7 @@ export default {
         this.instruccionData = {user_instructions: '', contact_info: '', thanks: ' '}
         this.hasErrors = true
       }
-      // Carga las areas
-      response = await api.getAll(this.urlAreas)
-      // Estuvo exitosa la busqueda
-      if (response.status === 200) {
-        this.areas = response.data
-        this.hasErrors = false
-      } else {
-        // Se pone vacio para evitar errores
-        this.areas = {}
-        this.hasErrors = true
-      }
+      this.loadAreas()
       this.isLoading = false
     },
     clone (obj) {
@@ -232,7 +247,6 @@ export default {
     },
     startSurvey: function () {
       this.isSurveyVisible = true
-      // this.inititParticipantResponse()
     },
     onSubmit: function (evt) {
       // the page doesn’t reload when the form is submitted,
@@ -280,6 +294,17 @@ export default {
       if (!value) return ''
       value = value.toFixed(2)
       return value
+    }
+  },
+  computed: {
+    ...mapState({
+      hasErrors: state => state.auth.errors.length > 0
+      // customized_instrument(state){ return state.auth.customized_instrument}
+    }),
+    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'customizedInstrument', 'areas']), // Trae los getters
+    // customized_instrument: this.$store.getters.customizedInstrument
+    instruccionData () {
+      return this.$store.getters.customizedInstrument
     }
   }
 }

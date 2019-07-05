@@ -131,8 +131,8 @@ export default {
       totalRows: 0,
       totalItems: 0,
       dataLevelTwo: [],
-      urlGetItems: BDData.apiURL + 'activeItemsSpanish/',
-      urlGetCategories: BDData.apiURL + 'categories',
+      urlGetItems: BDData.API_URL + 'activeItemsSpanish/',
+      urlGetCategories: BDData.API_URL + 'categories',
       categories: [],
       responsesByCategoriesList: [],
       isLoading: true, // Control when the web services were alredy consumed
@@ -140,7 +140,7 @@ export default {
     }
   },
   created: function () {
-    this.loadEmptySurvey()
+    // this.loadEmptySurvey()
   },
   methods: {
     getRowCount (items) {

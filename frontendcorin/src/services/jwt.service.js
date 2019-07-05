@@ -1,4 +1,5 @@
-/* From https://github.com/gothinkster/vue-realworld-example-app/blob/master/src/common/jwt.service.js*/
+/* From https://github.com/gothinkster/vue-realworld-example-app/blob/master/src/common/jwt.service.js */
+/* eslint-disable */
 
 const ID_TOKEN_KEY = "id_token";
 

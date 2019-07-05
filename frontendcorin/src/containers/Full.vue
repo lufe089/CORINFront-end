@@ -6,6 +6,7 @@
       <main class="main">
         <breadcrumb :list="list"/>
         <div class="container-fluid">
+          <the-errors-list></the-errors-list>
           <router-view></router-view>
         </div>
       </main>
@@ -18,6 +19,7 @@
 <script>
 import nav from '../_nav'
 import { Header as AppHeader, Sidebar, Aside as AppAside, Footer as AppFooter, Breadcrumb } from '@/components/BaseComponents'
+import TheErrorsList from '@/components/BusinessLogic/TheErrorsList'
 export default {
   name: 'full',
   components: {
@@ -25,7 +27,8 @@ export default {
     Sidebar,
     AppAside,
     AppFooter,
-    Breadcrumb
+    Breadcrumb,
+    TheErrorsList
   },
   data () {
     return {

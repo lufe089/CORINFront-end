@@ -2,7 +2,9 @@
   <div class="app flex-row align-items-center">
     <div class="container">
       <b-row class="justify-content-center">
-        <b-alert variant="danger" :show="errorMsg !==''"><h4>{{errorMsg}}</h4></b-alert>
+        <div :show="errorMsg !==''">
+          <b-alert variant="danger" :show="errorMsg !==''"><h4>{{errorMsg}}</h4></b-alert>
+        </div>
         <base-loading :isLoading="isLoading"></base-loading>
         <b-col md="8">
           <b-card-group>
@@ -55,9 +57,13 @@
 </template>
 
 <script>
-import api from '@/services/api.js'
+// import api from '@/services/api.js'
 // import i18n from '../../lang/config'
-import BDData from '@/common/_BDData.js'
+// import BDData from '@/common/_BDData.js'
+
+import { LOGIN_ACCESS_CODE } from '@/store/actions.type'
+import { MAIN_ENCUESTA } from '@/router/routesNames'
+import { mapState } from 'vuex'
 
 export default {
   name: 'LoginAccessCode',
@@ -67,8 +73,7 @@ export default {
   data () {
     return {
       obj: {access_code: '', prefix: ''},
-      isLoading: false,
-      errorMsg: ''
+      isLoading: false
     }
   },
   methods: {
@@ -79,12 +84,17 @@ export default {
       this.$validator.validate().then(result => {
         // Si no hay errores
         if (result) {
-          // Se activa la visualizacion de las preguntas
+          // Se llama la action que controla el login del store
+          this.isLoading = true
+          // Actions are triggered with the store.dispatch method:
           this.login()
+          this.isLoading = false
+          // FIXME el manejo de errores
         }
       })
     },
     async login () {
+      /*
       this.isLoading = true
       let data = this.obj // Solo scope de bloque
       var response = await api.getWithPost(data, BDData.endPoints.loginByAccessCode)
@@ -98,8 +108,15 @@ export default {
         // this.errorMsg = i18n.tc('message.error_login_codigo')
         this.errorMsg = response.data['non_field_errors']
       }
-      this.isLoading = false
+      this.isLoading = false */
+      this.$store.dispatch(LOGIN_ACCESS_CODE, this.obj).then(
+        () => this.$router.push({ name: MAIN_ENCUESTA }))
     }
+  },
+  computed: {
+    ...mapState({
+      errorMsg: state => state.auth.errors
+    })
   }
 }
 </script>
