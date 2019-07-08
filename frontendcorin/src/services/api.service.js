@@ -31,7 +31,7 @@ const ApiService = {
             this.setHeader()
         }
         return Vue.axios.get(`${resource}/${slug}`).catch(error => {
-            throw new Error(`[RWV] ApiService ${error}`);
+            throw new Error(`ApiService ${error}`);
         });
     },
 

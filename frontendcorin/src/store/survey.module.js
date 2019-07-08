@@ -4,18 +4,32 @@ import ApiService from "@/services/api.service";
 import BDData from '@/common/_BDData.js'
 import i18n from '@/lang/config'
 import {
-    FETCH_AREAS
+    FETCH_AREAS,
+    FETCH_QUESTIONS,
+    FETCH_CATEGORIES,
 } from "./actions.type";
-import { SET_AREAS, SET_LOADING } from "./mutations.type";
+import { SET_AREAS, SET_LOADING, SET_ITEMS, SET_CATEGORIES } from "./mutations.type";
 
 
 const state = {
-    areas: {}
+    areas: {},
+    subItems: {},
+    totalItems: {},
+    categories: {}
 };
 
 const getters = {
     areas(state) {
         return state.areas
+    },
+    subItems(state) {
+        return state.subItems
+    },
+    categories(state) {
+        return state.categories
+    },
+    totalItems(state) {
+        return state.totalItems
     }
 };
 
@@ -27,7 +41,7 @@ const actions = {
     async [FETCH_AREAS](context, data) {
 
         context.commit(SET_LOADING, true);
-        let response = await ApiService.get(BDData.endPoints.urlAreas)
+        let response = await ApiService.get(BDData.endPoints.areas)
             // Estuvo exitosa la busqueda
         if (response.status === 200) {
             console.log(response.data);
@@ -76,12 +90,48 @@ const actions = {
                 })
         });*/
     },
+    async [FETCH_QUESTIONS](context, data) {
+        context.commit(SET_LOADING, true);
+        let response = await ApiService.get(BDData.endPoints.itemsSpanish)
+            // Estuvo exitosa la busqueda
+        if (response.status === 200) {
+            console.log(response.data);
+            context.commit(SET_ITEMS, response.data);
+            context.commit(SET_LOADING, false);
+        } else {
+            //FIXME mirar aqui como llega el error
+            context.commit(SET_ERROR, errorMsg);
+            context.commit(SET_LOADING, false);
+        }
+    },
+    async [FETCH_CATEGORIES](context, data) {
+        context.commit(SET_LOADING, true);
+        let response = await ApiService.get(BDData.endPoints.categories)
+            // Estuvo exitosa la busqueda
+        if (response.status === 200) {
+            console.log(response.data);
+            context.commit(SET_CATEGORIES, response.data);
+            context.commit(SET_LOADING, false);
+        } else {
+            //FIXME mirar aqui como llega el error
+            context.commit(SET_ERROR, errorMsg);
+            context.commit(SET_LOADING, false);
+        }
+    }
 };
 
 const mutations = {
     [SET_AREAS](state, data) {
         // Estos son los datos que llegan cuando la autenticacion es de este tipo 
         state.areas = data;
+    },
+    [SET_CATEGORIES](state, data) {
+        // Estos son los datos que llegan cuando la autenticacion es de este tipo 
+        state.categories = data;
+    },
+    [SET_ITEMS](state, data) {
+        // Estos son los datos que llegan cuando la autenticacion es de este tipo 
+        state.subItems = data;
     }
 };
 

@@ -24,7 +24,11 @@ export const FAVORITE_ADD = "addFavorite";
 export const FAVORITE_REMOVE = "removeFavorite";
 
 export const FETCH_AREAS = "fetchAreas";
-export const FETCH_ARTICLES = "fetchArticles";
+export const FETCH_QUESTIONS = "fetchQuestions";
+export const FETCH_CATEGORIES = "fetchCategories";
+
+
+
 export const FETCH_COMMENTS = "fetchComments";
 export const FETCH_PROFILE = "fetchProfile";
 export const FETCH_PROFILE_FOLLOW = "fetchProfileFollow";

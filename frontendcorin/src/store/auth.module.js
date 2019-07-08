@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import ApiService from "@/services/api.service";
+import api from "@/services/api";
 import JwtService from "@/services/jwt.service";
 import BDData from '@/common/_BDData.js'
 import i18n from '@/lang/config'
@@ -12,11 +12,10 @@ import {
     CHECK_AUTH,
     UPDATE_USER
 } from "./actions.type";
-import { SET_AUTH, SET_AUTH_ACCESS_CODE, PURGE_AUTH, SET_ERROR } from "./mutations.type";
+import { SET_AUTH, SET_AUTH_ACCESS_CODE, PURGE_AUTH, SET_ERROR, CLEAR_ERRORS, SET_LOADING } from "./mutations.type";
 import { ADMIN } from '@/store/profiles.type'
 
 const state = {
-    errors: null,
     user: {},
     customized_instrument: { custom_user_instructions: '', custom_contact_info: '', custom_thanks: ' ' }, // Guarda cual la encuesta que se va a diligenciar
     config_survey: {}, // Guarda la configuracion del survey para saber cuantas encuestas estan autorizadas, etc
@@ -36,9 +35,6 @@ const getters = {
     isAuthenticated(state) {
         return state.isAuthenticated
     },
-    getErrors(state) {
-        return state.errors
-    },
     profile(state) {
         return state.profile
     },
@@ -56,50 +52,22 @@ const actions = {
     // to use a constant as the function name
     // source https://vuex.vuejs.org/guide/mutations.html
     [LOGIN_ACCESS_CODE](context, data) {
+        context.commit(SET_LOADING, true);
         return new Promise(resolve => {
-            ApiService.post(BDData.endPoints.loginByAccessCode, data)
+            api.post(data, BDData.endPoints.loginByAccessCode)
                 .then(response => {
                     alert(JSON.stringify(response.data))
                     console.log(response.data)
                     context.commit(SET_AUTH_ACCESS_CODE, response.data);
+                    context.commit(CLEAR_ERRORS)
                     resolve(response.data);
                 }).catch(error => {
                     // Here we could override the busy state, setting isBusy to false
-                    console.error(JSON.stringify(error))
-                    let errorMsg = ''
-                    if (error.response != undefined && error.response.status != undefined) {
-
-                        switch (error.response.status) {
-                            case 400: // bad request
-                                errorMsg = error.response.data.non_field_errors
-                                    // alert(error.response.data['non_field_errors'])
-                                break;
-                            case 403: // FORBBIDEN
-                                //alert(i18n.tc('message.error_consuming_service_permissions'));
-                                errorMsg = i18n.tc('message.error_consuming_service_permissions')
-                                break;
-                            default:
-                                // alert(i18n.tc('message.error_consuming_service'))
-                                errorMsg = i18n.tc('message.error_consuming_service_permissions')
-                                break;
-                        }
-                    } else {
-                        if (error.message === "Network Error") {
-                            errorMsg = i18n.tc('message.error_connecting_dataBase')
-                        }
-                    }
-                    context.commit(SET_ERROR, errorMsg);
-                })
-                /* .then(({ response }) => {
-                    // LLama a la mutacion que tiene la informacion
-                    //FIXME ver si esto esta enviando bn las cosas
-                    alert(JSON.stringify(response))
-                    context.commit(SET_AUTH_ACCESS_CODE, response.data);
-                    resolve(response.data);
-                }) */
-                /*.catch(({ response }) => {
-                    context.commit(SET_ERROR, response.data.errors);
-                });*/
+                    console.error(JSON.stringify(error.message))
+                    context.commit(SET_ERROR, error.message)
+                }).finally(
+                    context.commit(SET_LOADING, false)
+                )
         });
     },
     [LOGIN](context, credentials) {
@@ -166,9 +134,6 @@ const actions = {
 };
 
 const mutations = {
-    [SET_ERROR](state, error) {
-        state.errors = error
-    },
     [SET_AUTH_ACCESS_CODE](state, data) {
         // Estos son los datos que llegan cuando la autenticacion es de este tipo 
         state.isAuthenticated = true;

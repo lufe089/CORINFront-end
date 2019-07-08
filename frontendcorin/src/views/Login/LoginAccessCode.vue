@@ -2,9 +2,7 @@
   <div class="app flex-row align-items-center">
     <div class="container">
       <b-row class="justify-content-center">
-        <div :show="errorMsg !==''">
-          <b-alert variant="danger" :show="errorMsg !==''"><h4>{{errorMsg}}</h4></b-alert>
-        </div>
+        <errors-list></errors-list>
         <base-loading :isLoading="isLoading"></base-loading>
         <b-col md="8">
           <b-card-group>
@@ -62,61 +60,46 @@
 // import BDData from '@/common/_BDData.js'
 
 import { LOGIN_ACCESS_CODE } from '@/store/actions.type'
+import ErrorsList from '@/components/BusinessLogic/ErrorsList'
 import { MAIN_ENCUESTA } from '@/router/routesNames'
-import { mapState } from 'vuex'
+import { SET_LOADING } from '@/store/mutations.type'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'LoginAccessCode',
   components: {
-    baseLoading: () => import('@/components/BaseComponents/BaseLoading')
+    baseLoading: () => import('@/components/BaseComponents/BaseLoading'),
+    ErrorsList
   },
   data () {
     return {
-      obj: {access_code: '', prefix: ''},
-      isLoading: false
+      obj: {access_code: '', prefix: ''}
     }
   },
   methods: {
     onSubmit: function (evt) {
       // the page doesn’t reload when the form is submitted,
+      this.$store.commit(SET_LOADING, true)
       evt.preventDefault()
       // Se validan los resultados
       this.$validator.validate().then(result => {
         // Si no hay errores
         if (result) {
           // Se llama la action que controla el login del store
-          this.isLoading = true
           // Actions are triggered with the store.dispatch method:
           this.login()
-          this.isLoading = false
-          // FIXME el manejo de errores
         }
       })
     },
     async login () {
-      /*
-      this.isLoading = true
-      let data = this.obj // Solo scope de bloque
-      var response = await api.getWithPost(data, BDData.endPoints.loginByAccessCode)
-      // Estuvo exitosa la busqueda
-      if (response.status === 200) {
-        this.obj = response.data
-        this.$router.push({name: 'Encuesta'})
-        this.errorMsg = ''
-      }
-      if (response.status === 400) {
-        // this.errorMsg = i18n.tc('message.error_login_codigo')
-        this.errorMsg = response.data['non_field_errors']
-      }
-      this.isLoading = false */
-      this.$store.dispatch(LOGIN_ACCESS_CODE, this.obj).then(
-        () => this.$router.push({ name: MAIN_ENCUESTA }))
+      /* En el store se hace el manejo de los errores */
+      this.$store.dispatch(LOGIN_ACCESS_CODE, this.obj)
+        .then(
+          () => this.$router.push({ name: MAIN_ENCUESTA }))
     }
   },
   computed: {
-    ...mapState({
-      errorMsg: state => state.auth.errors
-    })
+    ...mapGetters(['hasErrors', 'isLoading']) // Trae los getters
   }
 }
 </script>

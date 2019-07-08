@@ -8,6 +8,11 @@ export const SET_PROFILE = "setProfile";
 export const SET_ERROR = "setError";
 export const SET_LOADING = "setLoading";
 // Propias de la logica del proyecto
+
+export const SET_ITEMS = "setItems";
+export const SET_CATEGORIES = "setCategories";
+export const CLEAR_ERRORS = "clearErrors";
+
 export const SET_ARTICLE = "setArticle";
 export const SET_COMMENTS = "setComments";
 export const SET_TAGS = "setTags";

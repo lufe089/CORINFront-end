@@ -4,7 +4,11 @@ export default {
     API_URL: 'http://localhost:8000/api/',
     endPoints: {
         loginByAccessCode: 'http://localhost:8000/api/login-code/',
-        urlAreas: '/areas',
+        areas: '/areas',
+        itemsSpanish: '/activeItemsSpanish',
+        categories: '/categories',
+        urlSaveSubItems: '/participantsResponse1/',
+        isAllowedSave: '/is-allowed-save/',
     },
     // apiURL: 'http://zalonore.pythonanywhere.com/api/',
     //  apiURL: 'http://18.232.93.104:8000/api/',

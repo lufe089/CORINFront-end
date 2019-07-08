@@ -144,6 +144,7 @@ export default {
             error_consuming_service: 'Ocurrió un error inesperado consultando/guardando los datos, informe al administrador',
             error_connecting_dataBase: 'NO fue posible conectar con la base de datos. Informe al administrador',
             error_consuming_service_permissions: 'No tiene permiso para consultar los datos. Para ver la información autentiquese primero en el sistema',
+            error_consuming_not_found: 'ERROR: No se pudo consultar la información para cargar/guardar los datos. Contacte al administrador',
             error_consuming_save_service: 'Ocurrió un error inesperado guardardando los datos, por favor contacte al administrador',
             error_consuming_service_detail_categories: 'ERROR: unable to consume categories service',
             error_consuming_service_detail_items: 'ERROR: unable to consume service to consult active items',

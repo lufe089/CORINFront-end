@@ -7,7 +7,7 @@
         <breadcrumb :list="list"/>
         <div class="container-fluid">
           <base-loading :isLoading="isLoading"></base-loading>
-          <the-errors-list></the-errors-list>
+          <errors-list></errors-list>
           <router-view></router-view>
         </div>
       </main>
@@ -20,8 +20,8 @@
 <script>
 import nav from '../_nav'
 import { Header as AppHeader, Sidebar, Aside as AppAside, Footer as AppFooter, Breadcrumb } from '@/components/BaseComponents'
-import TheErrorsList from '@/components/BusinessLogic/TheErrorsList'
-import { mapState, mapGetters } from 'vuex'
+import ErrorsList from '@/components/BusinessLogic/ErrorsList'
+import { mapGetters } from 'vuex'
 export default {
   name: 'full',
   components: {
@@ -30,7 +30,7 @@ export default {
     AppAside,
     AppFooter,
     Breadcrumb,
-    TheErrorsList,
+    ErrorsList,
     baseLoading: () => import('@/components/BaseComponents/BaseLoading')
   },
   data () {
@@ -45,10 +45,6 @@ export default {
     list () {
       return this.$route.matched
     },
-    ...mapState({
-      hasErrors: state => state.auth.errors.length > 0
-      // customized_instrument(state){ return state.auth.customized_instrument}
-    }),
     ...mapGetters(['isLoading']) // Trae los getters
   }
 }

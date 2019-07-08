@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     async consultClients (data, path) {
-      var response = await api.getWithPost(data, path)
+      var response = await api.post(data, path)
       // Estuvo exitosa la busqueda
       if (response.status === 200) {
         this.isLoading = false

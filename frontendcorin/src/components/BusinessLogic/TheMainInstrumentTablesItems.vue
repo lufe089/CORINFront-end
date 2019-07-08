@@ -75,9 +75,10 @@
 
 <script>
 import BDData from '@/common/_BDData.js'
-import axios from 'axios'
-import i18n from '@/lang/config'
-// import func from './vue-temp/vue-editor-bridge.js'
+import api from '@/services/api'
+import { mapGetters } from 'vuex'
+import { FETCH_CATEGORIES } from '@/store/actions.type'
+import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
 export default {
   name: 'the-main-instrument-tables-items',
   props: {
@@ -127,20 +128,17 @@ export default {
         // {key: 'upperAnchor', label: ''}
       ],
       currentPage: 1,
+      subItems: [],
       perPage: 17,
       totalRows: 0,
       totalItems: 0,
       dataLevelTwo: [],
-      urlGetItems: BDData.API_URL + 'activeItemsSpanish/',
-      urlGetCategories: BDData.API_URL + 'categories',
-      categories: [],
       responsesByCategoriesList: [],
-      isLoading: true, // Control when the web services were alredy consumed
       company: {company_contact_name: 'Prueba', company_email: 'luisaEmailTest'}
     }
   },
   created: function () {
-    // this.loadEmptySurvey()
+    this.loadEmptySurvey()
   },
   methods: {
     getRowCount (items) {
@@ -157,7 +155,8 @@ export default {
       this.calculateProgressByCategories()
     },
     clearLikertScale (response) {
-      /* This condition is hired with false because the onchage event is render before the actual value of the control is changed
+      /*
+      This condition is hired with false because the onchage event is render before the actual value of the control is changed
       then the event is hired before the checkbox has the true value that means the N_A field was selected  */
       if (response.N_A === false) {
         // We disable the items selected in case the N/A option was selected
@@ -168,43 +167,42 @@ export default {
         response.isFilled = false
       }
     },
-    loadEmptySurvey () {
-      /* Consume los servicios que se exponen en el servidor de django */
-      axios.get(this.urlGetItems).then(response => {
-        var subItems = response.data
-        this.totalItems = subItems.length
-        axios.get(this.urlGetCategories).then(response => {
-          var categories = response.data
-          this.prepareData(categories, subItems)
-          // TODO hace aqui un arreglo pq si ya existe solo hay que cargar los datos
-          this.prepareItemResponses()
-          console.info('Consultados datos de los items')
-          // console.info(JSON.stringify(this.dataLevelTwo))
-          // Solo para control alert(JSON.stringify(this.dataLevelTwo))
-        }, error => {
-          console.error(JSON.stringify(error))
-          console.error(i18n.tc('message.error_consuming_service_detail_categories'))
-          console.error('Service path:' + this.urlGetCategories)
-          alert(i18n.tc('message.error_consuming_service'))
-          this.isLoading = false
-        })
-      }, error => {
-        console.error(JSON.stringify(error))
-        console.error(i18n.tc('message.error_consuming_service_detail_items'))
-        console.error('Service path:' + this.urlGetItems)
-        alert(i18n.tc('message.error_consuming_service'))
-        this.isLoading = false
-      })
+    async loadEmptySurvey () {
+      /* Consume los servicios que se exponen en el servidor de django  usado el store "survey" de vuex */
+      this.$store.dispatch(FETCH_CATEGORIES)
+      // this.fetchQuestions()
+      this.$store.commit(SET_LOADING, true)
+      // Le pongo el await para que espere que las categorias se hubieran cargado antes de seguir
+      await api.getAll(BDData.endPoints.itemsSpanish)
+        .then(response => {
+          if (response.status === 200) {
+            console.log(response.data)
+            this.subItems = response.data
+            this.totalItems = this.subItems.length
+            // Categories y subItems vienen de getters del local storage
+            this.prepareData(this.categories, this.subItems)
+            // TODO hace aqui un arreglo pq si ya existe solo hay que cargar los datos
+            this.prepareItemResponses()
+            console.info('Consultados datos de los items')
+            this.$store.commit(SET_LOADING, false)
+            this.$store.commit(CLEAR_ERRORS)
+          }
+        }).catch(exception => {
+          this.$store.commit(SET_ERROR, exception.message)
+        }).finally(
+          this.$store.commit(SET_LOADING, false)
+        )
     },
     prepareData: function (categories, items) {
       // Organiza los items agrupandolos por categoria
+      this.$store.commit(SET_LOADING, true)
       for (var i = 0; i < categories.length; i++) {
         var level2 = {}
         level2.category = categories[i]
         level2.responsesList = items.filter(result => result.item.category.id === categories[i].id)
         this.dataLevelTwo.push(level2)
       }
-      this.isLoading = false
+      this.$store.commit(SET_LOADING, false)
     },
     createFakeResponses (itemResponse) {
       itemResponse.answer_numeric = Math.round((Math.random() * 10))
@@ -231,7 +229,7 @@ export default {
           itemResponse.answer_numeric = null
           itemResponse.isFilled = false
           itemResponse.is_complete = true
-          // this.createFakeResponses(itemResponse)
+          this.createFakeResponses(itemResponse)
           responsesSubItemsByCategory.push(itemResponse)
           this.responsesList.push(itemResponse)
         }
@@ -291,7 +289,8 @@ export default {
     },
     progressBar: function () {
       return Number(this.progress)
-    }
+    },
+    ...mapGetters(['categories']) // Trae los getters del store
   }
 }
 </script>

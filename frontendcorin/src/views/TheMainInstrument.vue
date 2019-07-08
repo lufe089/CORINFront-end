@@ -130,8 +130,9 @@
 import BDData from '@/common/_BDData.js'
 import api from '@/services/api.js'
 import i18n from '@/lang/config'
-import { mapState, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import { FETCH_AREAS } from '@/store/actions.type'
+import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
 
 export default {
   name: 'the_main_instrument',
@@ -143,10 +144,8 @@ export default {
       isSurveyVisible: false,
       parameters: BDData.parameters,
       // ulrInstructions: 'consult-custom-inst/',
-      isAllowedSave: 'is-allowed-save/',
       // FIXME
       idClient: null,
-      urlSaveSubItems: BDData.apiURL + 'participantsResponse/',
       selected: [], // Must be an array reference!,
       showDirective: undefined,
       showQuestions: false,
@@ -183,27 +182,28 @@ export default {
       this.isLoading = true
       this.idClient = idClient
       let data = {idClient: idClient} // Solo scope de bloque
-      var response = await api.getWithPost(data, this.ulrInstructions)
-      // Estuvo exitosa la busqueda
-      if (response.status === 200) {
-        this.obj = response.data
-        if (this.obj.error === undefined) {
-          this.instruccionData = response.data
-          this.hasErrors = false
-          this.errorMsg = ''
-        } else if (this.obj.error === 'config_survey') {
-          this.showData = false
-          this.errorMsg = i18n.tc('message.error_configuracion_cliente')
-          this.hasErrors = true
-        } else if (this.obj.error === 'no_customized_instrument') {
-          this.showData = false
-          this.errorMsg = i18n.tc('message.error_configuracion_encuesta')
-          this.hasErrors = true
+      try {
+        var response = await api.getWithPost(data, this.ulrInstructions)
+        // Estuvo exitosa la busqueda
+        if (response.status === 200) {
+          this.obj = response.data
+          if (this.obj.error === undefined) {
+            this.instruccionData = response.data
+            this.$store.commit(CLEAR_ERRORS)
+          } else if (this.obj.error === 'config_survey') {
+            this.showData = false
+            this.errorMsg = i18n.tc('message.error_configuracion_cliente')
+            this.$store.commit(SET_ERROR, this.errorMsg)
+          } else if (this.obj.error === 'no_customized_instrument') {
+            this.showData = false
+            this.errorMsg = i18n.tc('message.error_configuracion_encuesta')
+            this.$store.commit(SET_ERROR, this.errorMsg)
+          }
         }
-      } else {
+      } catch (exception) {
         // Se pone vacio para evitar errores
         this.instruccionData = {user_instructions: '', contact_info: '', thanks: ' '}
-        this.hasErrors = true
+        this.$store.commit(SET_ERROR, exception.message)
       }
       this.loadAreas()
     },
@@ -240,31 +240,36 @@ export default {
     },
     async processEnd (responsesList) {
       // Cambia la bandera que controla si se muestra el mensaje de fin de encuesta
-      this.isLoading = true
+      this.$store.commit(SET_LOADING, true)
       console.log('Emitio guardado')
       this.participantResponse.responsesList = responsesList
       this.participantResponse.customized_instrument_id = this.instruccionData.id
       // Consulta si se puede guardar
       var data = {idCustomizedInstrument: this.participantResponse.customized_instrument_id}
-      var response = await api.getWithPost(data, this.isAllowedSave)
-      // Estuvo exitosa la busqueda
-      if (response.status === 200) {
-        this.obj = response.data
-        if (this.obj.save === true) {
-          response = await api.create(this.participantResponse, this.urlSaveSubItems)
+      // Para verificar que todavia haya espacio para guardar el survey
+      try {
+        var response = await api.post(data, BDData.endPoints.isAllowedSave)
+        // Estuvo exitosa la busqueda
+        if (response.status === 200) {
           this.obj = response.data
-          if (this.obj.error === undefined && response.status === 201) {
-            console.log('Guardado de respuestas en BD fue correcto')
-            this.showThanksMessage = true
-            this.isLoading = false
+          if (this.obj.save === true) {
+            response = await api.create(this.participantResponse, BDData.endPoints.urlSaveSubItems)
+            this.obj = response.data
+            if (this.obj.error === undefined && response.status === 201) {
+              console.log('Guardado de respuestas en BD fue correcto')
+              this.$store.commit(CLEAR_ERRORS)
+              this.showThanksMessage = true
+            }
+          } else if (this.obj.save === false) {
+            this.showThanksMessage = false
+            this.errorMsg = i18n.tc('message.error_no_espacio_guardar_encuesta')
+            this.hasErrors = true
           }
-        } else if (this.obj.save === false) {
-          this.showThanksMessage = false
-          this.errorMsg = i18n.tc('message.error_no_espacio_guardar_encuesta')
-          this.hasErrors = true
         }
+      } catch (exception) {
+        this.$store.commit(SET_ERROR, exception.message)
       }
-      this.isLoading = false
+      this.$store.commit(SET_LOADING, false)
     }
   },
   filters: {
@@ -275,11 +280,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      hasErrors: state => state.auth.errors.length > 0
-      // customized_instrument(state){ return state.auth.customized_instrument}
-    }),
-    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'customizedInstrument', 'areas']), // Trae los getters
+    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'customizedInstrument', 'areas', 'hasErrors']), // Trae los getters
     // customized_instrument: this.$store.getters.customizedInstrument
     instruccionData () {
       return this.$store.getters.customizedInstrument
