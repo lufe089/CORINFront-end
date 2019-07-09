@@ -86,11 +86,13 @@ export default {
             filtro: 'Filtro',
             hello: 'hello world',
             hide: 'Hide',
+            iniciar_sesion_msj: 'Ingrese los valores para iniciar sesión',
             identification_client: 'Identificación del cliente',
             items: 'Preguntas',
             justification: 'Justification',
             lets_start: 'Iniciar encuesta',
             logout: 'Salir',
+            login: 'Login',
             n_a_rating_label: 'If you are unsure or you consider an item does not apply to your organization kindly select the N/A option. This will eliminate the N/A values from the overall score',
             name: 'Nombre',
             max_surveys: 'Número máximo de encuestas',
@@ -105,6 +107,7 @@ export default {
             message_login_code: "Ingrese el código de acceso para iniciar",
             message_ejemplo_login: 'Por ejemplo, C5- abd3E4',
             needs_review: 'Needs review?',
+            pwd: 'Contraseña',
             part1_applies_motivation: 'Part 1. APPLIES-motivation',
             participant_form_header: 'Información general',
             peer_page: 'Por página',
@@ -130,6 +133,7 @@ export default {
             resultado_categorias: 'Promedio por categorías',
             resultado_categorias_no_directivos: 'Promedio por categorías \n ( No directivos)',
             resultado_categorias_directivos: 'Promedio por categorías ( Directivos)',
+            save: 'Guardar',
             start: 'Start',
             seleccion_cargo: 'Seleccione el tipo de cargo que tiene en la empresa',
             seleccion_cliente: 'Seleccione el cliente para el que desea consultar los resultados',
@@ -160,7 +164,8 @@ export default {
             yes: 'Si',
             likert_scale_9_instructions: 'Total desacuerdo (1) -- Total acuerdo (9)',
             all_fill: 'Completado',
-            save: 'Guardar'
+            user: 'Nombre de usuario',
+
         }
     }
 }

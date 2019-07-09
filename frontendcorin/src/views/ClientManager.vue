@@ -195,9 +195,10 @@
 </template>
 
 <script>
-import api from '../services/api.js'
-import i18n from '../lang/config'
+import api from '@/services/api.js'
+import i18n from '@/lang/config'
 import BDData from '@/common/_BDData'
+import { SET_LOADING, SET_ERROR } from '@/store/mutations.type'
 const items = []
 
 export default {
@@ -226,10 +227,6 @@ export default {
       filter: null,
       modalInfo: {title: '', visible: false},
       modalConfigSurvey: {title: '', visible: false},
-      // Real data
-      servicePath: 'clients/',
-      surveyConfigPath: 'configSurveys/',
-      loading: false,
       items: [],
       obj: {},
       surveyConfig: {}
@@ -285,20 +282,23 @@ export default {
       this.currentPage = 1
     },
     async refreshData () {
-      this.loading = true
-      // Se limpia el objeto de referencia
-      this.clearObj()
-      var urlService = '/clients-and-survey-conf/'
-      // FIXME organizar el id de la compania cuando sepa como resolver el problema de la sesion
-      var response = await api.getWithPost({idCompany: 1}, urlService)
-      // Estuvo exitosa la busqueda
-      if (response.status === 200) {
-        this.items = response.data
-      } else {
-        // Se pone vacio para evitar errores
-        this.items = []
+      try {
+        this.$store.commit(SET_LOADING, true)
+        // Se limpia el objeto de referencia
+        this.clearObj()
+        // FIXME organizar el id de la compania cuando sepa como resolver el problema de la sesion
+        var response = await api.post({idCompany: 1}, BDData.endPoints.urlClients)
+        // Estuvo exitosa la busqueda
+        if (response.status === 200) {
+          this.items = response.data
+        } else {
+          // Se pone vacio para evitar errores
+          this.items = []
+        }
+      } catch (exception) {
+        this.$store.commit(SET_ERROR, exception.message)
       }
-      this.loading = false
+      this.$store.commit(SET_LOADING, false)
     },
     loadConfigSurveys (item, index) {
       // Ir a buscar a la bd si hay configuracion para ese cliente
@@ -323,37 +323,45 @@ export default {
         // Si no hay errores
         if (result) {
           if (evt.target.id === 'modalInfo') {
-            this.save(this.obj, this.servicePath)
+            this.save(this.obj, BDData.endPoints.servicePath)
             // this.$root.$emit('bv::hide::modal', 'modalInfo')
           } else {
-            this.save(this.surveyConfig, this.surveyConfigPath)
+            this.save(this.surveyConfig, BDData.endPoints.surveyConfigPath)
             // this.$root.$emit('bv::hide::modal', 'modalConfigSurvey')
           }
         }
       })
     },
     async save (obj, servicePath) {
-      var response = null
-      if (obj.id && obj.id !== 0) {
-        response = await api.update(obj.id, obj, servicePath)
-      } else {
-        response = await api.create(obj, servicePath)
-      }
-      // Fue exitoso
-      if (response.status >= 200 && response.status <= 300) {
-        alert(i18n.tc('message.guardar_modificar_exito'))
-        await this.refreshData()
-        this.modalInfo.visible = false
-        this.modalConfigSurvey.visible = false
+      try {
+        var response = null
+        if (obj.id && obj.id !== 0) {
+          response = await api.update(obj.id, obj, servicePath)
+        } else {
+          response = await api.create(obj, servicePath)
+        }
+        // Fue exitoso
+        if (response.status >= 200 && response.status <= 300) {
+          alert(i18n.tc('message.guardar_modificar_exito'))
+          await this.refreshData()
+          this.modalInfo.visible = false
+          this.modalConfigSurvey.visible = false
+        }
+      } catch (exception) {
+        this.$store.commit(SET_ERROR, exception.message)
       }
     },
     async remove (id) {
       if (confirm(i18n.tc('message.confirm_delete_message'))) {
-        var response = await api.remove(id, this.servicePath)
-        // Fue exitoso
-        if (response.status >= 200 && response.status <= 300) {
-          alert(i18n.tc('message.eliminar_exito'))
-          await this.refreshData()
+        try {
+          var response = await api.remove(id, this.servicePath)
+          // Fue exitoso
+          if (response.status >= 200 && response.status <= 300) {
+            alert(i18n.tc('message.eliminar_exito'))
+            await this.refreshData()
+          }
+        } catch (exception) {
+          this.$store.commit(SET_ERROR, exception.message)
         }
       }
     }

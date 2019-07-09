@@ -5,7 +5,7 @@ import JwtService from "@/services/jwt.service";
 import BDData from '@/common/_BDData.js'
 import i18n from '@/lang/config'
 import {
-    LOGIN,
+    LOGIN_PWD,
     LOGIN_ACCESS_CODE,
     LOGOUT,
     REGISTER,
@@ -69,10 +69,10 @@ const actions = {
                 )
         });
     },
-    [LOGIN](context, credentials) {
+    [LOGIN_PWD](context, data) {
         // La accion se vuelve una promesa para manejar la parte asincrona
         return new Promise(resolve => {
-            ApiService.post("users/login", { user: credentials })
+            api.post(data, BDData.endPoints.loginByAccessCode)
                 .then(({ data }) => {
                     context.commit(SET_AUTH, data.user);
                     resolve(data);
@@ -136,7 +136,7 @@ const mutations = {
         // Estos son los datos que llegan cuando la autenticacion es de este tipo 
         state.isAuthenticated = true
             // state.profile = data.profile
-        state.profile = 3
+        state.profile = 2
         state.customized_instrument = data.customized_instrument
         state.config_survey = data.config_survey
         state.errors = {};

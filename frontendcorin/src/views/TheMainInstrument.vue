@@ -3,7 +3,7 @@
     <!--<div v-show="isLoading">
       <img class="loading" src="https://vignette.wikia.nocookie.net/judo/images/0/03/Cargando.gif/revision/latest?cb=20110601212206&path-prefix=es" alt="loading">
     </div>-->
-    <b-row v-show="isAdmin">
+    <b-row>
       <b-col md="12">
         <client-selector @client-selector:change='refreshData'></client-selector>
       </b-col>
@@ -55,10 +55,10 @@
               <b-form @submit="onSubmit">
                 <b-row>
                   <b-col md="6">
-                    <b-form-group :description="$t('message.please_enter_email')" :label="$t('message.email')" label-for="basicEmail" :label-cols="2"
+                    <b-form-group :description="$t('message.please_enter_email')" :label="$t('message.email')" label-for="email" :label-cols="2"
                       :horizontal="true">
-                      <b-form-input id="basicEmail" type="email" placeholder=" " autocomplete='email' v-model.lazy="participantResponse.email" required v-validate="'required|email'" name='basicEmail'></b-form-input>
-                      <p class="text-danger" v-if="errors.has('basicEmail')">{{ errors.first('basicEmail') }}</p>
+                      <b-form-input id="email" type="email" placeholder=" " autocomplete='email' v-model.lazy="participantResponse.email" required v-validate="'required|email'" name='email'></b-form-input>
+                      <p class="text-danger" v-if="errors.has('email')">{{ errors.first('email') }}</p>
                     </b-form-group>
                   </b-col>
                   <b-col md="6">
@@ -143,7 +143,6 @@ export default {
       result: '',
       isSurveyVisible: false,
       parameters: BDData.parameters,
-      // ulrInstructions: 'consult-custom-inst/',
       // FIXME
       idClient: null,
       selected: [], // Must be an array reference!,
@@ -166,8 +165,8 @@ export default {
     // itemLevel2Table()
     // dynamic import wrapped in a function
     // 'item-level2-table': () => import('./ItemLevel2Table')
-    theMainInstrumentTablesItems: () => import('@/components/BusinessLogic/TheMainInstrumentTablesItems')
-    // clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
+    theMainInstrumentTablesItems: () => import('@/components/BusinessLogic/TheMainInstrumentTablesItems'),
+    clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
   },
   methods: {
     async loadAreas () {
@@ -179,11 +178,11 @@ export default {
     async refreshData (idClient) {
       // Este metodo funciona en el caso de que el usuario sea un administrador
       // FIXME probar si todavia funciona
-      this.isLoading = true
+      this.$store.commit(SET_LOADING, true)
       this.idClient = idClient
       let data = {idClient: idClient} // Solo scope de bloque
       try {
-        var response = await api.getWithPost(data, this.ulrInstructions)
+        var response = await api.post(data, BDData.endPoints.ulrInstructions)
         // Estuvo exitosa la busqueda
         if (response.status === 200) {
           this.obj = response.data

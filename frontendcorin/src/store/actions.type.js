@@ -5,7 +5,7 @@ Source: https://vuex.vuejs.org/guide/mutations.html" */
 /* eslint-disable */
 // LOGIN ACTIONS
 export const CHECK_AUTH = "checkAuth";
-export const LOGIN = "login";
+export const LOGIN_PWD = "loginPwd";
 export const LOGIN_ACCESS_CODE = "loginAccessCode";
 export const LOGOUT = "logout";
 export const REGISTER = "register";
