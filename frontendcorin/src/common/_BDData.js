@@ -7,7 +7,7 @@ export default {
         areas: '/areas',
         itemsSpanish: '/activeItemsSpanish',
         categories: '/categories',
-        urlSaveSubItems: '/participantsResponse1/',
+        urlSaveSubItems: '/participantsResponse/',
         isAllowedSave: '/is-allowed-save/',
     },
     // apiURL: 'http://zalonore.pythonanywhere.com/api/',

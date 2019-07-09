@@ -56,7 +56,6 @@ const actions = {
         return new Promise(resolve => {
             api.post(data, BDData.endPoints.loginByAccessCode)
                 .then(response => {
-                    alert(JSON.stringify(response.data))
                     console.log(response.data)
                     context.commit(SET_AUTH_ACCESS_CODE, response.data);
                     context.commit(CLEAR_ERRORS)
@@ -136,8 +135,9 @@ const actions = {
 const mutations = {
     [SET_AUTH_ACCESS_CODE](state, data) {
         // Estos son los datos que llegan cuando la autenticacion es de este tipo 
-        state.isAuthenticated = true;
-        state.profile = data.profile;
+        state.isAuthenticated = true
+            // state.profile = data.profile
+        state.profile = 3
         state.customized_instrument = data.customized_instrument
         state.config_survey = data.config_survey
         state.errors = {};
