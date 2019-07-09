@@ -28,7 +28,7 @@
              </b-col>
            </b-row>
         </template>
-        <b-btn variant="primary" v-on:click.prevent="startSurvey"  class="float-right">{{$t("message.lets_start")}}</b-btn>
+        <b-btn variant="primary" v-on:click.prevent="startSurvey" v-show="!hasErrors" class="float-right">{{$t("message.lets_start")}}</b-btn>
       </b-jumbotron>
       </b-col>
     </b-row>

@@ -1,6 +1,5 @@
 <template>
   <div class="animated fadeIn">
-    <base-loading :isLoading="isLoading"></base-loading>
     <!-- Card to select which client to consult -->
     <b-row>
     <b-col md="12">
@@ -218,8 +217,10 @@ import * as am4core from '@amcharts/amcharts4/core'
 import * as am4charts from '@amcharts/amcharts4/charts'
 import am4themesAnimated from '@amcharts/amcharts4/themes/animated'
 import BaseTable from '../components/BaseComponents/BaseTable'
-import BDData from '../common/_BDData.js'
-import api from '../services/api.js'
+import BDData from '@/common/_BDData.js'
+import api from '@/services/api.js'
+import { mapGetters } from 'vuex'
+import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
 
 // Le da un comportanemiento animado al chart
 am4core.useTheme(am4themesAnimated)
@@ -229,7 +230,6 @@ export default {
   components: {
     /* tag, component name */
     'base-table': BaseTable,
-    baseLoading: () => import('@/components/BaseComponents/BaseLoading'),
     clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
   },
   data () {
@@ -238,9 +238,6 @@ export default {
       serviceResult: {},
       result: '',
       isSurveyVisible: false,
-      urlResponses: BDData.apiURL + 'participantsResponse/',
-      urlAverageData: BDData.apiURL + 'averageFilters/',
-      urlClients: '/clients-and-survey-conf/',
       responsesList: [],
       n: 0,
       average_by_dimensions: [],
@@ -259,7 +256,6 @@ export default {
       overall_average: 0.0,
       promedioBarra: 0.0,
       max: 9,
-      isLoading: false,
       requestPath: '', // Controla cual es la ruta para la que se quieren ver los resultados,
       idClient: null, // Controla para que cliente ser hará la consulta de los datos
       clients_by_company: [], // Clientes asociados a la compania para la que se hara la consulta,
@@ -277,64 +273,68 @@ export default {
       this.drawCharts()
     }
   },
+  computed: {
+    ...mapGetters(['isLoading']) // Trae los getters
+  },
   methods: {
     changeClient: function (idClient) {
+      this.$store.commit(SET_LOADING, true)
       this.consultAverageData(idClient)
     },
     async consultAverageData (idClient) {
-      var url = this.urlAverageData
       var data = {idClient: idClient}
-      this.isLoading = true
-      var response = await api.getWithPost(data, url)
-      // Estuvo exitosa la busqueda
-      if (response !== undefined && response.status === 200) {
-        this.isLoading = false
-        var averageChartsData = response.data
-        console.info('LOG: consultó average data')
-        if (averageChartsData['n'] > 0) {
-          this.noResponses = false
-          this.overall_average = averageChartsData['overall_average'].toFixed(2)
-          this.n = averageChartsData['n']
-          this.promedioBarra = averageChartsData['overall_average']
-          this.average_by_categories = averageChartsData['average_by_categories']
-          this.average_by_dimensions = averageChartsData['average_by_dimensions']
-          // console.log(JSON.stringify(this.average_by_dimensions))
-          // Se ajusta el nombre de las dimensiones para concaternar la categoria
-          this.average_by_dimensions.map((obj) => {
-            var cat = obj['category'].substring(0, 4)
-            obj['name'] = `${cat} - ${obj['name']}`
-            return obj
-          })
-          this.average_by_components = averageChartsData['average_by_components']
-          this.average_by_areas = averageChartsData['average_by_area']
-          this.categories_average_by_directives = averageChartsData['categories_average_by_directives']
-          this.categories_average_by_no_directives = averageChartsData['categories_average_by_no_directives']
-          this.categories_average_by_area = averageChartsData['categories_average_by_area']
-          this.categories_names = averageChartsData['category_names']
-          /* No voy a hacer esto sino que voy a dejar el espacio por facilidad
-          this.categories_average_by_area.map((obj) => {
-            obj.sortable = 'true'
-            if (obj['Capacidades organizacionales'] === undefined) {
-              obj['Capacidades organizacionales'] = '--'
-            }
-            return obj
-          }) */
-          this.area_table_columns = this.area_table_columns.concat(averageChartsData['category_names'])
-          // Se modifican las columna para que todos los campos tengan el atributo de sortable
-          this.area_table_columns.map((obj) => {
-            obj.sortable = 'true'
-            return obj
-          })
-          // Se cambia la bandera que controla si se muestran las tablas de resultados para indicar que si se pueden mostrar
-          this.showResponses = true
-          this.drawCharts()
-          this.isLoading = false
-        } else {
-          this.noResponses = true
-          this.isLoading = false
+      try {
+        var response = await api.post(data, BDData.endPoints.urlAverageData)
+        // Estuvo exitosa la busqueda
+        if (response !== undefined && response.status === 200) {
+          this.$store.commit(CLEAR_ERRORS)
+          var averageChartsData = response.data
+          console.info('LOG: consultó average data')
+          if (averageChartsData['n'] > 0) {
+            this.noResponses = false
+            this.overall_average = averageChartsData['overall_average'].toFixed(2)
+            this.n = averageChartsData['n']
+            this.promedioBarra = averageChartsData['overall_average']
+            this.average_by_categories = averageChartsData['average_by_categories']
+            this.average_by_dimensions = averageChartsData['average_by_dimensions']
+            // console.log(JSON.stringify(this.average_by_dimensions))
+            // Se ajusta el nombre de las dimensiones para concaternar la categoria
+            this.average_by_dimensions.map((obj) => {
+              var cat = obj['category'].substring(0, 4)
+              obj['name'] = `${cat} - ${obj['name']}`
+              return obj
+            })
+            this.average_by_components = averageChartsData['average_by_components']
+            this.average_by_areas = averageChartsData['average_by_area']
+            this.categories_average_by_directives = averageChartsData['categories_average_by_directives']
+            this.categories_average_by_no_directives = averageChartsData['categories_average_by_no_directives']
+            this.categories_average_by_area = averageChartsData['categories_average_by_area']
+            this.categories_names = averageChartsData['category_names']
+            /* No voy a hacer esto sino que voy a dejar el espacio por facilidad
+            this.categories_average_by_area.map((obj) => {
+              obj.sortable = 'true'
+              if (obj['Capacidades organizacionales'] === undefined) {
+                obj['Capacidades organizacionales'] = '--'
+              }
+              return obj
+            }) */
+            this.area_table_columns = this.area_table_columns.concat(averageChartsData['category_names'])
+            // Se modifican las columna para que todos los campos tengan el atributo de sortable
+            this.area_table_columns.map((obj) => {
+              obj.sortable = 'true'
+              return obj
+            })
+            // Se cambia la bandera que controla si se muestran las tablas de resultados para indicar que si se pueden mostrar
+            this.showResponses = true
+            this.drawCharts()
+          } else {
+            this.noResponses = true
+          }
         }
+      } catch (exception) {
+        this.$store.commit(SET_ERROR, exception.message)
       }
-      this.isLoading = false
+      this.$store.commit(SET_LOADING, false)
     },
     drawCharts: function () {
       if (this.requestPath === '/result-by-categories') {

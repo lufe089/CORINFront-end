@@ -74,7 +74,6 @@ const actions = {
         return new Promise(resolve => {
             ApiService.post("users/login", { user: credentials })
                 .then(({ data }) => {
-
                     context.commit(SET_AUTH, data.user);
                     resolve(data);
                 })

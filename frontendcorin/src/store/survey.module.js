@@ -1,14 +1,13 @@
 /* eslint-disable */
 
-import ApiService from "@/services/api.service";
+import api from "@/services/api";
 import BDData from '@/common/_BDData.js'
 import i18n from '@/lang/config'
 import {
     FETCH_AREAS,
-    FETCH_QUESTIONS,
     FETCH_CATEGORIES,
 } from "./actions.type";
-import { SET_AREAS, SET_LOADING, SET_ITEMS, SET_CATEGORIES } from "./mutations.type";
+import { SET_AREAS, SET_LOADING, SET_ERROR, CLEAR_ERRORS, SET_CATEGORIES } from "./mutations.type";
 
 
 const state = {
@@ -37,76 +36,24 @@ const actions = {
     // we can use the ES2015 computed property name feature
     // to use a constant as the function name
     // source https://vuex.vuejs.org/guide/mutations.html
-
     async [FETCH_AREAS](context, data) {
-
-        context.commit(SET_LOADING, true);
-        let response = await ApiService.get(BDData.endPoints.areas)
+        context.commit(SET_LOADING, true)
+        try {
             // Estuvo exitosa la busqueda
-        if (response.status === 200) {
-            console.log(response.data);
-            context.commit(SET_AREAS, response.data);
-            context.commit(SET_LOADING, false);
-            // resolve(response.data);
-        } else {
-            //FIXME mirar aqui como llega el error
-            context.commit(SET_ERROR, errorMsg);
-            context.commit(SET_LOADING, false);
+            let response = await api.getAll(BDData.endPoints.areas)
+            if (response.status === 200) {
+                console.log(response.data);
+                context.commit(SET_AREAS, response.data)
+            }
+        } catch (exception) {
+            console.error(JSON.stringify(exception.message))
+            context.commit(SET_ERROR, exception.message)
         }
-        /*
-        return new Promise(resolve => {
-            ApiService.get(BDData.endPoints.urlAreas)
-                .then(response => {
-                    alert(JSON.stringify(response.data))
-                    console.log(response.data)
-                    context.commit(SET_AREAS, response.data);
-                    resolve(response.data);
-                }).catch(error => {
-                    // Here we could override the busy state, setting isBusy to false
-                    console.error(JSON.stringify(error))
-                    let errorMsg = ''
-                    if (error.response != undefined && error.response.status != undefined) {
-
-                        switch (error.response.status) {
-                            case 400: // bad request
-                                errorMsg = error.response.data.non_field_errors
-                                    // alert(error.response.data['non_field_errors'])
-                                break;
-                            case 403: // FORBBIDEN
-                                //alert(i18n.tc('message.error_consuming_service_permissions'));
-                                errorMsg = i18n.tc('message.error_consuming_service_permissions')
-                                break;
-                            default:
-                                // alert(i18n.tc('message.error_consuming_service'))
-                                errorMsg = i18n.tc('message.error_consuming_service_permissions')
-                                break;
-                        }
-                    } else {
-                        if (error.message === "Network Error") {
-                            errorMsg = i18n.tc('message.error_connecting_dataBase')
-                        }
-                    }
-                    context.commit(SET_ERROR, errorMsg);
-                })
-        });*/
-    },
-    async [FETCH_QUESTIONS](context, data) {
-        context.commit(SET_LOADING, true);
-        let response = await ApiService.get(BDData.endPoints.itemsSpanish)
-            // Estuvo exitosa la busqueda
-        if (response.status === 200) {
-            console.log(response.data);
-            context.commit(SET_ITEMS, response.data);
-            context.commit(SET_LOADING, false);
-        } else {
-            //FIXME mirar aqui como llega el error
-            context.commit(SET_ERROR, errorMsg);
-            context.commit(SET_LOADING, false);
-        }
+        context.commit(SET_LOADING, false)
     },
     async [FETCH_CATEGORIES](context, data) {
         context.commit(SET_LOADING, true);
-        let response = await ApiService.get(BDData.endPoints.categories)
+        let response = await api.getAll(BDData.endPoints.categories)
             // Estuvo exitosa la busqueda
         if (response.status === 200) {
             console.log(response.data);
@@ -128,10 +75,6 @@ const mutations = {
     [SET_CATEGORIES](state, data) {
         // Estos son los datos que llegan cuando la autenticacion es de este tipo 
         state.categories = data;
-    },
-    [SET_ITEMS](state, data) {
-        // Estos son los datos que llegan cuando la autenticacion es de este tipo 
-        state.subItems = data;
     }
 };
 
