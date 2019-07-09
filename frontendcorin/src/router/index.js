@@ -63,7 +63,7 @@ export default new Router({
                 },
                 {
                     path: 'login-pwd',
-                    name: 'Login',
+                    name: 'LoginPwd',
                     component: () =>
                         import ('@/views/Login/LoginUserPassword.vue')
                 }

@@ -225,6 +225,9 @@ export default {
     },
     startSurvey: function () {
       this.isSurveyVisible = true
+      // Si se puede dar click al boton se limpian los errores de la lista para que se muestren solo los erroes
+      // que llegasen a ocurrir en la siguiente ventana
+      this.$store.commit(CLEAR_ERRORS)
     },
     onSubmit: function (evt) {
       // the page doesn’t reload when the form is submitted,

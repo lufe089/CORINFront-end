@@ -21,7 +21,7 @@
 import { Header as AppHeader, Sidebar, Aside as AppAside, Footer as AppFooter, Breadcrumb } from '@/components/BaseComponents'
 import ErrorsList from '@/components/BusinessLogic/ErrorsList'
 import { mapGetters } from 'vuex'
-import { ADMIN, COMPANY, CLIENT, PARTICIPANT } from '@/store/profiles.type'
+import { ADMIN, COMPANY, PARTICIPANT } from '@/store/profiles.type'
 export default {
   name: 'full',
   components: {
@@ -50,7 +50,7 @@ export default {
           icon: 'fa icon-notebook'
         }])
       }
-      if (profile === CLIENT || profile === ADMIN) {
+      if (profile !== PARTICIPANT) {
         paths = paths.concat([
           {
             title: true,

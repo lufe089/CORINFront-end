@@ -4,7 +4,7 @@ export default {
     API_URL: 'http://localhost:8000/api/',
     endPoints: {
         loginByAccessCode: 'http://localhost:8000/api/login-code/',
-        areas: '/areas',
+        areas: '/areas/',
         itemsSpanish: '/activeItemsSpanish',
         categories: '/categories',
         urlSaveSubItems: '/participantsResponse/',

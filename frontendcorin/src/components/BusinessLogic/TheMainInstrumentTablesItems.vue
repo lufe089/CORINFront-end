@@ -170,7 +170,6 @@ export default {
     async loadEmptySurvey () {
       /* Consume los servicios que se exponen en el servidor de django  usado el store "survey" de vuex */
       this.$store.dispatch(FETCH_CATEGORIES)
-      // this.fetchQuestions()
       this.$store.commit(SET_LOADING, true)
       // Le pongo el await para que espere que las categorias se hubieran cargado antes de seguir
       await api.getAll(BDData.endPoints.itemsSpanish)
