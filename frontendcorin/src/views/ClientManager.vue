@@ -139,23 +139,6 @@
             </b-form-group>
           </b-col>
         </b-row>
-        <!-- Footer del modal que al final no lo use pq personalice el fondo
-        <b-row>
-          <b-col md="12">
-          <template  slot="modal-ok">
-             <b-button type="submit" size="m" variant="primary" slot="modal-ok">
-              <i class="fa fa-dot-circle-o"></i> {{ $t("message.continue") }}</b-button>
-          </template>
-
-          <div slot="modal-footer" class="w-100 float-right">
-            <b-button type="submit" class="x-2 p-1" size="sm" variant="primary">
-              <i class="fa fa-dot-circle-o"></i> {{ $t("message.continue") }}</b-button>
-            <b-button size="sm" class="p-1" @click="show=false">
-              <i class="fa fa-dot-circle-o"></i> {{ $t("message.cancel") }}</b-button>
-            <span class="p-2"></span>
-          </div>
-          </b-col>
-        </b-row>-->
        </form>
     </b-modal>
     <!-- Modal to configure a survey for a client -->
@@ -234,8 +217,8 @@ export default {
   },
   async created () {
     // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado
-    // this.refreshData()
-    // this.obj = this.clearObj()
+    this.refreshData()
+    this.obj = this.clearObj()
   },
   computed: {
     sortOptions () {
@@ -323,7 +306,7 @@ export default {
         // Si no hay errores
         if (result) {
           if (evt.target.id === 'modalInfo') {
-            this.save(this.obj, BDData.endPoints.servicePath)
+            this.save(this.obj, BDData.endPoints.clients)
             // this.$root.$emit('bv::hide::modal', 'modalInfo')
           } else {
             this.save(this.surveyConfig, BDData.endPoints.surveyConfigPath)
@@ -354,7 +337,7 @@ export default {
     async remove (id) {
       if (confirm(i18n.tc('message.confirm_delete_message'))) {
         try {
-          var response = await api.remove(id, this.servicePath)
+          var response = await api.remove(id, BDData.endPoints.clients)
           // Fue exitoso
           if (response.status >= 200 && response.status <= 300) {
             alert(i18n.tc('message.eliminar_exito'))
@@ -368,7 +351,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .scaleWidth {
   width: 30%;
   /* text-align: center  */

@@ -10,6 +10,8 @@ export const SET_LOADING = "setLoading";
 // Propias de la logica del proyecto
 
 export const SET_CATEGORIES = "setCategories";
+export const SET_CLIENTS = "setClients";
+export const SET_COMPANIES = "setCompanies";
 export const CLEAR_ERRORS = "clearErrors";
 
 export const SET_ARTICLE = "setArticle";

@@ -18,16 +18,21 @@ export default {
 
         }
     },
-    async execute(method, resource, data) {
+    async execute(method, resource, data, header) {
         // inject the accessToken for each request
         let accessToken = JwtService.getToken()
+        var headersData = {}
+            // Para poner el token, solo en los request en los que se necesita enviar el token de autenticacion
+        if (header) {
+            headersData: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        }
         return client({
             method,
             url: resource,
             data,
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
+            headers: headersData
         }).then(req => {
             // console.log(req)
             // alert(JSON.stringify(req))
@@ -38,7 +43,13 @@ export default {
                 if (errorResponse.response != undefined && errorResponse.response.status != undefined) {
                     switch (errorResponse.response.status) {
                         case 400: // bad request
-                            errorMsg = errorResponse.response.data.non_field_errors[0] // Cuando django contesta se toma el primer elemento
+                            errorMsg = JSON.stringify(errorResponse.response.data)
+                            break;
+                        case 500: // SERVER ERROR
+                            //alert(i18n.tc('message.error_consuming_service_permissions'));
+                            var serverError = JSON.stringify(errorResponse.response.data)
+                            console.error(serverError)
+                            errorMsg = i18n.tc('message.error_consuming_service')
                             break;
                         case 403: // FORBBIDEN
                             //alert(i18n.tc('message.error_consuming_service_permissions'));
@@ -57,26 +68,26 @@ export default {
                         errorMsg = i18n.tc('message.error_connecting_dataBase')
                     }
                 }
-                console.log(JSON.stringify(errorResponse.response))
-                console.log(`ApiService ${errorMsg}`)
+                console.error("USER MSG: " + JSON.stringify(errorResponse.response))
+                console.error("SERVER ERROR:" + errorMsg)
                 throw new Error(errorMsg)
             })
     },
-    create(data, path) {
-        var result = this.execute('post', path, data)
+    create(data, path, header = true) {
+        var result = this.execute('post', path, data, header)
         return result
     },
-    update(id, data, path) {
-        return this.execute('put', path + `${id}` + '/', data)
+    update(id, data, path, header = true) {
+        return this.execute('put', path + `${id}` + '/', data, header)
     },
-    remove(id, path) {
-        return this.execute('delete', path + `${id}` + '/')
+    remove(id, path, header = true) {
+        return this.execute('delete', path + `${id}` + '/', header)
     },
-    getAll(path) {
-        return this.execute('get', path)
+    getAll(path, header = true) {
+        return this.execute('get', path, header)
     },
-    post(data, path) {
-        var result = this.execute('post', path, data)
+    post(data, path, header = true) {
+        var result = this.execute('post', path, data, header)
         return result
     }
 

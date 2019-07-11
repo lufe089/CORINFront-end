@@ -14,8 +14,11 @@ export default {
         urlAverageData: 'averageFilters/',
         urlClients: '/clients-and-survey-conf/',
         ulrInstructions: 'consult-custom-inst/',
-        servicePath: 'clients/',
+        clients: 'clients/',
         surveyConfigPath: 'configSurveys/',
+        users: 'users/',
+        usersByCompany: 'users/users_by_company/',
+        companies: 'companies/'
     },
     // apiURL: 'http://zalonore.pythonanywhere.com/api/',
     //  apiURL: 'http://18.232.93.104:8000/api/',
@@ -37,6 +40,20 @@ export default {
             {
                 value: false,
                 text: 'No'
+            }
+
+        ],
+        profiles: [{
+                value: 1,
+                text: 'Administrador'
+            },
+            {
+                value: 2,
+                text: 'Compañía gestora'
+            },
+            {
+                value: 3,
+                text: 'Cliente'
             }
 
         ],

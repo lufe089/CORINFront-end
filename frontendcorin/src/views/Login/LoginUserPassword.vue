@@ -2,6 +2,8 @@
   <div class="app flex-row align-items-center">
     <div class="container">
       <b-row class="justify-content-center">
+        <errors-list></errors-list>
+        <base-loading :isLoading="isLoading"></base-loading>
         <b-col md="8">
           <b-card-group>
             <b-card no-body class="p-4">
@@ -16,7 +18,7 @@
                   </b-input-group>
                   <b-input-group class="mb-4">
                     <b-input-group-prepend><b-input-group-text><i class="icon-lock"></i></b-input-group-text></b-input-group-prepend>
-                    <input type="password" class="form-control" :placeholder="$t('message.pwd')" v-model="obj.pwd" name="pwd" v-validate="'required'">
+                    <input type="password" class="form-control" :placeholder="$t('message.pwd')" v-model="obj.password" name="pwd" v-validate="'required'">
                     <p class="text-danger" v-if="errors.has('pwd')">{{ errors.first('pwd') }}</p>
                   </b-input-group>
                   <b-row>
@@ -61,7 +63,7 @@ export default {
   },
   data () {
     return {
-      obj: {email: '', pwd: ''}
+      obj: {email: '', password: ''}
     }
   },
   methods: {
@@ -81,13 +83,14 @@ export default {
     },
     async login () {
       /* En el store se hace el manejo de los errores */
-      this.$store.dispatch(LOGIN_PWD, this.obj)
-        .then( // FIXME para despachar según el perfil
-          () => this.$router.push({ name: MAIN_ENCUESTA }))
+      await this.$store.dispatch(LOGIN_PWD, this.obj)
+      if (!this.isParticipant && !this.hasErrors) {
+        this.$router.push({ name: MAIN_ENCUESTA })
+      }
     }
   },
   computed: {
-    ...mapGetters(['hasErrors', 'isLoading']) // Trae los getters
+    ...mapGetters(['hasErrors', 'isLoading', 'isParticipant']) // Trae los getters
   }
 }
 </script>

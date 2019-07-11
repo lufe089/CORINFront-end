@@ -11,3 +11,4 @@ export const UPDATE_USER = "updateUser";
 
 // OTHERS
 export const MAIN_ENCUESTA = "Encuesta";
+export const RESULTS_BY_CATEGORIES = "result-by-categories";

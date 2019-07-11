@@ -7,7 +7,7 @@
     <button class="navbar-toggler sidebar-toggler d-md-down-none mr-auto" type="button" @click="sidebarToggle">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <small>{{$t('message.profile')}}</small>: {{showProfile}}
+    <small>{{$t('message.profile')}}</small>: {{showProfileText}}
     <b-navbar-nav class="ml-auto">
       <b-nav-item class="d-md-down-none">
        <i class="fa fa-lock"></i> {{$t('message.logout')}}
@@ -43,22 +43,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin']), // Trae los getters
-    // customized_instrument: this.$store.getters.customizedInstrument
-    showProfile () {
-      var value = ''
-      switch (this.profile) {
-        case 1: value = 'Administrador'
-          break
-        case 2: value = 'Compañía'
-          break
-        case 3: value = 'Cliente'
-          break
-        case 4: value = 'Participante'
-          break
-      }
-      return value
-    }
+    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'showProfileText']) // Trae los getters
   }
 }
 </script>

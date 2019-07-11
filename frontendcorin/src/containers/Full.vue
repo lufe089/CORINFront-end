@@ -111,9 +111,14 @@ export default {
           icon: 'fa icon-settings'
         },
         {
-          name: 'Configuración de encuestas',
+          name: 'Encuestas',
           url: '/configSurveys',
           icon: 'fa icon-docs'
+        },
+        {
+          name: 'Usuarios',
+          url: '/users',
+          icon: 'fa icon-user'
         }
         ])
       }

@@ -123,6 +123,13 @@ export default new Router({
                     name: 'Personalizar encuesta',
                     component: CustomizeSurvey
 
+                },
+                {
+                    path: '/users',
+                    name: 'Usuarios',
+                    component: () =>
+                        import ('@/views/UsersManager.vue')
+
                 }
             ]
         },

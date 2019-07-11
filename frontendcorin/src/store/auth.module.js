@@ -23,7 +23,7 @@ const state = {
     COMPANY = 2
     CLIENT = 3
     PARTICIPANT = 4 */
-    profile: null, // Por defecto sin perfil a menos que se autentique
+    profileType: null, // Por defecto sin perfil a menos que se autentique
     //FIXME decodificar el perfil del token
     isAuthenticated: !!JwtService.getToken()
 };
@@ -36,13 +36,37 @@ const getters = {
         return state.isAuthenticated
     },
     profile(state) {
-        return state.profile
+        return state.profileType
     },
     isAdmin(state) {
-        return state.profile === 1 // admin
+        return state.profileType === 1 // admin
+    },
+    isCompany(state) {
+        return state.profileType === 2 // company
+    },
+    isParticipant(state) {
+        return state.profileType === 4 // participant
     },
     customizedInstrument(state) {
         return state.customized_instrument
+    },
+    showProfileText() {
+        var value = ' '
+        switch (state.profileType) {
+            case 1:
+                value = 'Administrador'
+                break
+            case 2:
+                value = 'Compañía'
+                break
+            case 3:
+                value = 'Cliente'
+                break
+            case 4:
+                value = 'Participante'
+                break
+        }
+        return value
     }
 
 };
@@ -54,7 +78,8 @@ const actions = {
     [LOGIN_ACCESS_CODE](context, data) {
         context.commit(SET_LOADING, true);
         return new Promise(resolve => {
-            api.post(data, BDData.endPoints.loginByAccessCode)
+            // El ultimo parametro sirve para indicar que no hay que poner el token de autorizacion a la peticion
+            api.post(data, BDData.endPoints.loginByAccessCode, false)
                 .then(response => {
                     console.log(response.data)
                     context.commit(SET_AUTH_ACCESS_CODE, response.data);
@@ -69,34 +94,24 @@ const actions = {
                 )
         });
     },
-    [LOGIN_PWD](context, data) {
-        // La accion se vuelve una promesa para manejar la parte asincrona
-        return new Promise(resolve => {
-            api.post(data, BDData.endPoints.loginByAccessCode)
-                .then(({ data }) => {
-                    context.commit(SET_AUTH, data.user);
-                    resolve(data);
-                })
-                .catch(({ response }) => {
-                    context.commit(SET_ERROR, response.data.errors);
-                });
-        });
+    async [LOGIN_PWD](context, data) {
+        context.commit(SET_LOADING, true)
+        try {
+            // El ultimo parametro sirve para indicar que no hay que poner el token de autorizacion a la peticion
+            // La accion se vuelve una promesa para manejar la parte asincrona
+            let response = await api.post(data, BDData.endPoints.loginByPwd, false)
+            if (response.status === 200) {
+                console.log(response.data)
+                context.commit(SET_AUTH, response.data) // Data tiene los datos del user
+            }
+        } catch (exception) {
+            console.error(JSON.stringify(exception.message))
+            context.commit(SET_ERROR, exception.message)
+        }
+        context.commit(SET_LOADING, false)
     },
     [LOGOUT](context) {
         context.commit(PURGE_AUTH);
-    },
-    [REGISTER](context, credentials) {
-        return new Promise((resolve, reject) => {
-            ApiService.post("users", { user: credentials })
-                .then(({ data }) => {
-                    context.commit(SET_AUTH, data.user);
-                    resolve(data);
-                })
-                .catch(({ response }) => {
-                    context.commit(SET_ERROR, response.data.errors);
-                    reject(response);
-                });
-        });
     },
     [CHECK_AUTH](context) {
         if (JwtService.getToken()) {
@@ -136,7 +151,7 @@ const mutations = {
         // Estos son los datos que llegan cuando la autenticacion es de este tipo 
         state.isAuthenticated = true
             // state.profile = data.profile
-        state.profile = 2
+        state.profileType = 1
         state.customized_instrument = data.customized_instrument
         state.config_survey = data.config_survey
         state.errors = {};
@@ -145,6 +160,7 @@ const mutations = {
     [SET_AUTH](state, user) {
         state.isAuthenticated = true;
         state.user = user;
+        state.profileType = user.profileType
         state.errors = {};
         JwtService.saveToken(state.user.token);
     },
