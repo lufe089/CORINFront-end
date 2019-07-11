@@ -47,6 +47,9 @@ const getters = {
     isParticipant(state) {
         return state.profileType === 4 // participant
     },
+    isClient(state) {
+        return state.profileType === 3 // client
+    },
     customizedInstrument(state) {
         return state.customized_instrument
     },

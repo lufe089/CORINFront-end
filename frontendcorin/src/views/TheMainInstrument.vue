@@ -180,7 +180,7 @@ export default {
       // FIXME probar si todavia funciona
       this.$store.commit(SET_LOADING, true)
       this.idClient = idClient
-      let data = {idClient: idClient} // Solo scope de bloque
+      let data = {idClient: idClient} // let hace que exista solo scope de bloque
       try {
         var response = await api.post(data, BDData.endPoints.ulrInstructions)
         // Estuvo exitosa la busqueda

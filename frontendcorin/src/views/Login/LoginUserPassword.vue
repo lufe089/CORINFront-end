@@ -51,7 +51,7 @@
 <script>
 import { LOGIN_PWD } from '@/store/actions.type'
 import ErrorsList from '@/components/BusinessLogic/ErrorsList'
-import { MAIN_ENCUESTA } from '@/router/routesNames'
+import { RESULTS_BY_CATEGORIES } from '@/router/routesNames'
 import { SET_LOADING } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
 
@@ -85,7 +85,7 @@ export default {
       /* En el store se hace el manejo de los errores */
       await this.$store.dispatch(LOGIN_PWD, this.obj)
       if (!this.isParticipant && !this.hasErrors) {
-        this.$router.push({ name: MAIN_ENCUESTA })
+        this.$router.push({ name: RESULTS_BY_CATEGORIES })
       }
     }
   },

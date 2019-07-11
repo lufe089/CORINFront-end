@@ -1,13 +1,13 @@
 <template>
   <div>
   <b-card :no-body="true">
-    <b-card-body class="p-3 clearfix">
+    <b-card-body class="p-3 clearfix" v-show="showSelector">
       <b-row>
         <b-col md="1" class="text-center">
           <i class="fa icon-user bg-dark text-white p-3 font-2xl mr-1 "></i>
         </b-col>
         <b-col md="11">
-            <div class="h5 text-dark mb-0 mt-2" v-show="showSelector">
+            <div class="h5 text-dark mb-0 mt-2">
             <b-form-group :description="$t('message.seleccion_cliente')" :label="$t('message.cliente')" label-for="clientInput" :label-cols="1"
               :horizontal="true" >
               <b-form-select id="clientInput" v-model="idClient" :options="clients_by_company"  @change="changeClient" required/>
@@ -23,7 +23,6 @@
 import api from '@/services/api.js'
 import BDData from '@/common/_BDData.js'
 import { mapGetters } from 'vuex'
-import { ADMIN, COMPANY } from '@/store/profiles.type'
 import { SET_LOADING, SET_ERROR } from '@/store/mutations.type'
 
 export default {
@@ -34,11 +33,19 @@ export default {
     return {
       idClient: null, // Controla para que cliente ser hará la consulta de los datos
       clients_by_company: [],
-      id_company: 1 // FIXME Esto tiene que venir luego del logino algo asi
+      company_id: null // FIXME Esto tiene que venir luego del logino algo asi
     }
   },
-  created: function () {
-    this.consultClients({idCompany: this.id_company}, BDData.endPoints.urlClients)
+  mounted: function () {
+    // Se asigna el id de la compañía segun el perfil del usuario autenticado que se consulta en el store
+    if (this.isAdmin) {
+      this.company_id = -1 // Para el usuario administrador x defecto es null para que las traiga todas
+    } else if (this.isCompany) {
+      this.company_id = this.currentUser.company_id
+    }
+    if (this.isAdmin || this.isCompany) {
+      this.consultClients({'idCompany': this.company_id}, BDData.endPoints.urlClients)
+    }
   },
   methods: {
     async consultClients (data, path) {
@@ -63,13 +70,13 @@ export default {
     showSelector: function () {
       // El selector se muestra si es adminstrador o si es compañia
       // profile sale del store
-      if (this.profile === COMPANY || this.profile === ADMIN) {
+      if (this.isAdmin || this.isCompany) {
         return true
       } else {
         return false
       }
     },
-    ...mapGetters(['profile']) // Trae los getters
+    ...mapGetters(['profile', 'isAdmin', 'isClient', 'currentUser', 'isCompany']) // Trae los getters
   }
 }
 </script>

@@ -3,7 +3,7 @@
     <!-- Card to select which client to consult -->
     <b-row>
     <b-col md="12">
-      <client-selector @client-selector:change='changeClient'></client-selector>
+      <client-selector @client-selector:change='changeClient' v-show="!isClient || !isParticipant"></client-selector>
     </b-col>
     </b-row>
        <!-- End Card to select which client to consult -->
@@ -259,13 +259,20 @@ export default {
       requestPath: '', // Controla cual es la ruta para la que se quieren ver los resultados,
       idClient: null, // Controla para que cliente ser hará la consulta de los datos
       clients_by_company: [], // Clientes asociados a la compania para la que se hara la consulta,
-      id_company: 1 // FIXME Esto tiene que venir luego del logino algo asi
+      id_company: 1 // FIXME Esto tiene que venir luego del login o algo asi
     }
   },
   created: function () {
     this.requestPath = this.$route.path
   },
   mounted: function () {
+    if (this.isClient) {
+      // Se inicializa el cliente a partir del cliente del usuario autenticado
+      this.idClient = this.currentUser.client_id
+      this.id_company = this.currentUser.company_id
+      // Se llama la consulta de los datos para mostrar los resultadospp
+      this.consultAverageData(this.idClient)
+    }
   },
   watch: {
     '$route' (to, from) {
@@ -274,7 +281,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isLoading']) // Trae los getters
+    ...mapGetters(['isLoading', 'isAdmin', 'isCompany', 'currentUser', 'isClient']) // Trae los getters
   },
   methods: {
     changeClient: function (idClient) {

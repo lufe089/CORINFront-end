@@ -75,6 +75,7 @@ export default new Router({
             name: 'Home',
             component: Full,
             /* así se especifica que el resto de componentes son hijos de full */
+            /* El campo "name" es el alias que se le da a la rutan no el nombre que aparece en el menu" */
             children: [{
                     path: '/main_instrument',
                     name: 'Encuesta',
@@ -82,7 +83,7 @@ export default new Router({
                 },
                 {
                     path: '/result-by-categories',
-                    name: 'Resultados por categorías',
+                    name: 'ResultadosCategorias',
                     component: Results
                 },
                 {

@@ -199,7 +199,7 @@ export default {
         .filter(f => f.sortable)
         .map(f => { return { text: f.label, value: f.key } })
     },
-    ...mapGetters(['companies', 'clients', 'isAdmin', 'isCompany', 'profile', 'currentUser']) // Trae los getters
+    ...mapGetters(['companies', 'clients', 'isAdmin', 'isCompany', 'profile', 'currentUser', 'isCompany']) // Trae los getters
   },
   async created () {
     // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado

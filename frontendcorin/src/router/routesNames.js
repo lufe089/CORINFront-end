@@ -9,6 +9,6 @@ export const LOGOUT = "logout";
 export const REGISTER = "register";
 export const UPDATE_USER = "updateUser";
 
-// OTHERS
+// OTHERS los nombres son los que estan en el index.js de router
 export const MAIN_ENCUESTA = "Encuesta";
-export const RESULTS_BY_CATEGORIES = "result-by-categories";
+export const RESULTS_BY_CATEGORIES = "ResultadosCategorias";
