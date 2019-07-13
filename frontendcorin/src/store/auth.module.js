@@ -161,17 +161,18 @@ const mutations = {
         JwtService.saveToken(data.token);
     },
     [SET_AUTH](state, user) {
-        state.isAuthenticated = true;
-        state.user = user;
+        state.isAuthenticated = true
+        state.user = user
         state.profileType = user.profileType
-        state.errors = {};
-        JwtService.saveToken(state.user.token);
+        state.errors = {}
+        JwtService.saveToken(state.user.token)
     },
     [PURGE_AUTH](state) {
-        state.isAuthenticated = false;
-        state.user = {};
-        state.errors = {};
-        JwtService.destroyToken();
+        state.isAuthenticated = false
+        state.user = {}
+        state.errors = {}
+        state.profileType = null
+        JwtService.destroyToken()
     }
 };
 

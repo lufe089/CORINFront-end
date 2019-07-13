@@ -59,6 +59,8 @@
                 :sort-desc.sync="sortDesc"
                 :sort-direction="sortDirection"
                 responsive
+                :emptyText = "$t('message.no_resultados')"
+                :emptyFilteredText = "$t('message.no_data_filter')"
                 @filtered="onFiltered"
         >
           <template slot="name" slot-scope="row">{{row.value.first}} {{row.value.last}}</template>
@@ -96,6 +98,16 @@
     <!-- Info modal ok-only solo mostraria el boton de ok-->
     <b-modal id="modalInfo"  ref="modalCreateUpdate" @hide="resetModalInfo" @ok="onSubmit" :title="modalInfo.title" lazy v-show="modalInfo.visible">
        <form @submit.prevent="onSubmit">
+        <!-- Companias -->
+        <b-form-group>
+          <b-form-select name="companies" id="companies" v-model="obj.company_id" :options="companies"  @change="changeCompany" value-field="id" text-field="name" v-validate="'required'">
+            <template slot="first">
+            <option :value="null">{{$t('message.seleccion_compania')}}</option>
+            </template>
+          </b-form-select>
+          <p class="text-danger" v-if="errors.has('identification')">{{ errors.first('identification') }}</p>
+        </b-form-group>
+        <!-- Nombre del cliente -->
         <b-form-group :class="{'has-error': errors.has('company')}">
           <label for="company">{{$t("message.name") }}</label>
           <!-- <b-form-input type="text" id="company" class="form-control-warning" ref="firstFocus" v-model="obj.client_company_name" :placeholder="$t('message.please_enter_company_name')" v-validate="obj.client_company_name" data-rules="required"></b-form-input>-->
@@ -182,6 +194,8 @@ import api from '@/services/api.js'
 import i18n from '@/lang/config'
 import BDData from '@/common/_BDData'
 import { SET_LOADING, SET_ERROR } from '@/store/mutations.type'
+import { mapGetters } from 'vuex'
+import { FETCH_COMPANIES } from '@/store/actions.type'
 const items = []
 
 export default {
@@ -196,6 +210,7 @@ export default {
         { key: 'is_family_company', label: 'Companía familiar?', sortable: true },
         { key: 'max_surveys', label: i18n.tc('message.max_surveys'), sortable: true },
         { key: 'used_surveys', label: i18n.tc('message.used_surveys'), sortable: true },
+        { key: 'company__name', label: i18n.tc('message.compania'), sortable: true },
         /* { key: 'survey_conf_desc', label: i18n.tc('message.survey_conf_desc'), sortable: true }, */
         { key: 'actions', label: 'Acciones', class: 'scaleWidth, text-center' }
       ],
@@ -210,6 +225,7 @@ export default {
       filter: null,
       modalInfo: {title: '', visible: false},
       modalConfigSurvey: {title: '', visible: false},
+      modalErrors: [], // para mostrar los errores de creacion/edicion en el modal
       items: [],
       obj: {},
       surveyConfig: {}
@@ -226,10 +242,12 @@ export default {
       return this.columns
         .filter(f => f.sortable)
         .map(f => { return { text: f.label, value: f.key } })
-    }
+    },
+    ...mapGetters(['isAdmin', 'isCompany', 'isParticipant', 'isClient', 'hasErrors', 'currentUser', 'companies']) // Trae los getters
   },
   methods: {
-    process (item, index, button) {
+    async process (item, index, button) {
+      this.$store.commit(SET_LOADING, true)
       // Metodo que se llama en caso de crear o editar desde los botones de la tabla
       if (button.id === 'edit') {
         // Se le pone la información a los campos del modal con un metodo para copiar
@@ -240,15 +258,27 @@ export default {
         this.obj = this.clearObj()
         this.modalInfo.title = i18n.tc('message.create')
       }
+      // Is admin viene de los getters del store
+      if (this.isAdmin) {
+        try {
+          // Se trae la lista de compañías del store
+          await this.$store.dispatch(FETCH_COMPANIES)
+        } catch (exception) {
+          this.modalErrors.push(exception.message)
+        }
+      }
       // Abre el modal modalInfo es el id del modal
       // this.$refs.firstFocus.focus()
       this.modalInfo.visible = true
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
+      this.$store.commit(SET_LOADING, false)
     },
     clearObj () {
-      // FIXME: company_id no puede ser siempre uno.
       // Se llama este metodo cuando se selecciona el boton para crear o cuando se guarda para dajar el objeto que tendrá la información preparado
-      var obj = {id: null, identification: null, company_id: 1, client_company_name: null, constitution_year: null, number_employees: null, is_corporate_group: null, is_family_company: null}
+      var obj = {id: null, identification: null, company_id: null, client_company_name: null, constitution_year: null, number_employees: null, is_corporate_group: null, is_family_company: null}
+      if (this.isCompany) {
+        obj.company_id = this.currentUser.company_id
+      }
       return obj
     },
     clearSurveyConf () {
@@ -269,8 +299,16 @@ export default {
         this.$store.commit(SET_LOADING, true)
         // Se limpia el objeto de referencia
         this.clearObj()
-        // FIXME organizar el id de la compania cuando sepa como resolver el problema de la sesion
-        var response = await api.post({idCompany: 1}, BDData.endPoints.urlClients)
+        let dataConsult = {}
+        if (this.isAdmin) {
+          // Para que traiga los clientes de todas las compañías
+          dataConsult.idCompany = null
+        } else if (this.isCompany) {
+          dataConsult.idCompany = this.currentUser.company_id
+        }
+        dataConsult.isCompany = this.isCompany // tomado del store
+        dataConsult.isAdmin = this.isAdmin // tomado del store
+        var response = await api.post(dataConsult, BDData.endPoints.urlClients)
         // Estuvo exitosa la busqueda
         if (response.status === 200) {
           this.items = response.data
@@ -310,7 +348,6 @@ export default {
             // this.$root.$emit('bv::hide::modal', 'modalInfo')
           } else {
             this.save(this.surveyConfig, BDData.endPoints.surveyConfigPath)
-            // this.$root.$emit('bv::hide::modal', 'modalConfigSurvey')
           }
         }
       })
@@ -331,7 +368,7 @@ export default {
           this.modalConfigSurvey.visible = false
         }
       } catch (exception) {
-        this.$store.commit(SET_ERROR, exception.message)
+        this.modalErrors.push(exception.message)
       }
     },
     async remove (id) {
@@ -344,7 +381,7 @@ export default {
             await this.refreshData()
           }
         } catch (exception) {
-          this.$store.commit(SET_ERROR, exception.message)
+          this.modalErrors.push(exception.message)
         }
       }
     }

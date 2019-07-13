@@ -58,12 +58,16 @@
                 :sort-by.sync="sortBy"
                 :sort-desc.sync="sortDesc"
                 :sort-direction="sortDirection"
+                :emptyText = "$t('message.no_resultados')"
+                :emptyFilteredText = "$t('message.no_data_filter')"
                 responsive
                 @filtered="onFiltered"
         >
           <template slot="name" slot-scope="row">{{row.value.first}} {{row.value.last}}</template>
           <template slot="client_company_name" slot-scope="row">{{row.value? row.value:'--'}}</template>
-          <template slot="is_family_company" slot-scope="row">{{row.value?$t("message.yes"):$t("message.no")}}</template>
+          <template slot="profileType" slot-scope="row">
+            {{profileName(row.value)}}
+          </template>
           <template slot="actions" slot-scope="row">
             <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
             <!-- Ojo el id del button es importante para el metodo que procesa la logica no cambiarlo -->
@@ -91,6 +95,7 @@
       </b-row>
     </b-card>
     <!-- Info modal ok-only solo mostraria el boton de ok-->
+    <!-- Modal para crear usuarios nuevos -->
     <b-modal id="modalInfo"  ref="modalCreateUpdate" @hide="resetModalInfo" @ok="onSubmit" :title="modalInfo.title" lazy v-show="modalInfo.visible">
         <b-alert :show="modalErrors.length > 0" variant="danger" >
           <ul class="error-messages">
@@ -101,54 +106,65 @@
           </ul>
         </b-alert>
        <form @submit.prevent="onSubmit">
+        <!-- Perfil -->
         <b-input-group class="mb-3" v-show="isAdmin">
             <b-input-group-prepend>
               <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
             </b-input-group-prepend>
-            <b-form-select name="companies" id="companies" v-model="user.company_id" :options="companies"  @change="changeCompany" value-field="id" text-field="name">
+            <b-form-select name="profile" id="profile" v-model="user.profileType" :options="parameters.profiles">
+              <template slot="first">
+                <option :value="null">{{$t('message.seleccion_perfil')}}</option>
+              </template>
+            </b-form-select>
+            <p class="text-danger" v-if="errors.has('profile')">{{ errors.first('profile') }}</p>
+        </b-input-group>
+        <!-- Compania -->
+        <b-input-group class="mb-3" v-show="isAdmin">
+            <b-input-group-prepend>
+              <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
+            </b-input-group-prepend>
+            <b-form-select name="company" id="company" v-model="user.company_id" :options="companies"  @change="changeCompany" value-field="id" text-field="name" v-validate="'required'">
               <template slot="first">
                 <option :value="null">{{$t('message.seleccion_compania')}}</option>
               </template>
             </b-form-select>
+            <p class="text-danger" v-if="errors.has('company')">{{ errors.first('company') }}</p>
         </b-input-group>
+        <!-- Lista de clientes -->
         <b-input-group class="mb-3">
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
           </b-input-group-prepend>
-          <b-form-select name="clientes" id="clientes" v-model="user.client_id" :options="clients_by_company" text-field="client_company_name">
+          <b-form-select name="cliente" id="cliente" v-model="user.client_id" :options="clients_by_company" text-field="client_company_name" v-validate="'required'" >
              <template slot="first">
                 <option :value="null">{{$t('message.seleccion_cliente')}}</option>
             </template>
           </b-form-select>
+          <p class="text-danger" v-if="errors.has('cliente')">{{ errors.first('cliente') }}</p>
         </b-input-group>
+        <!-- Email -->
         <b-input-group class="mb-3">
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-user"></i></b-input-group-text>
           </b-input-group-prepend>
           <input type="text" class="form-control" :placeholder="$t('message.email')" name="email" id="email" v-model="user.email" autocomplete='email'  v-validate="'required|email'">
+          <p class="text-danger" v-if="errors.has('email')">{{ errors.first('email') }}</p>
         </b-input-group>
-        <p class="text-danger" v-if="errors.has('email')">{{ errors.first('email') }}</p>
+        <!-- Password -->
         <b-input-group class="mb-3">
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-lock"></i></b-input-group-text>
           </b-input-group-prepend>
-          <input type="password" class="form-control" :placeholder="$t('message.pwd')" name="pwd" id="pwd" v-model="user.password" v-validate="'required'">
+          <input type="password" class="form-control" :placeholder="$t('message.pwd')" name="password" id="password" v-model="user.password" v-validate="'required'">
+          <p class="text-danger" v-if="errors.has('password')">{{ errors.first('password') }}</p>
         </b-input-group>
+        <!-- Repetir el password -->
         <b-input-group class="mb-4">
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-lock"></i></b-input-group-text>
           </b-input-group-prepend>
-          <input type="password" class="form-control" :placeholder="$t('message.repeatPwd')">
-        </b-input-group>
-        <b-input-group class="mb-3" v-show="isAdmin">
-            <b-input-group-prepend>
-              <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
-            </b-input-group-prepend>
-            <b-form-select name="profiles" id="profiles" v-model="user.profileType" :options="parameters.profiles">
-              <template slot="first">
-                <option :value="null">{{$t('message.seleccion_perfil')}}</option>
-              </template>
-            </b-form-select>
+          <input type="password" class="form-control" name="verificarPassword" :placeholder="$t('message.repeatPwd')" v-validate="'required'">
+          <p class="text-danger" v-if="errors.has('verificarPassword')">{{ errors.first('verificarPassword') }}</p>
         </b-input-group>
        </form>
     </b-modal>
@@ -172,6 +188,7 @@ export default {
         { key: 'email', label: 'Email', sortable: true, class: 'text-center' },
         { key: 'company.name', label: 'Compañía', sortable: true, sortDirection: 'desc' },
         { key: 'client.client_company_name', label: 'Cliente', sortable: true, class: 'text-center' },
+        { key: 'profileType', label: 'Perfil', sortable: true, class: 'text-center' },
         /* { key: 'survey_conf_desc', label: i18n.tc('message.survey_conf_desc'), sortable: true }, */
         { key: 'actions', label: 'Acciones', class: 'scaleWidth, text-center' }
       ],
@@ -207,43 +224,57 @@ export default {
     this.user = this.clearObj()
   },
   methods: {
+    profileName (profileType) {
+      switch (profileType) {
+        case 1: return i18n.tc('message.administrador')
+        case 2: return i18n.tc('message.compania')
+        case 3: return i18n.tc('message.cliente')
+      }
+    },
     async process (item, index, button) {
+      var idCompanyToConsult = null
       // Metodo que se llama en caso de crear o editar desde los botones de la tabla
       if (button.id === 'edit') {
         // Se le pone la información a los campos del modal con un metodo para copiar
         // los objetos de manera que no se vayan a cambian si el usuario cancela
         this.user = JSON.parse(JSON.stringify(item))
-        // Se actualizan los campos para las listas desplegables del cliente con la info de la compañía
-        this.consultClients(this.user.company_id)
-        this.user.client_id = this.user.client.id
         this.modalInfo.title = i18n.tc('message.edit')
+        // La compañía es la del usuario a editar
+        idCompanyToConsult = this.user.company_id
       } else if (button.id === 'create') {
         this.user = this.clearObj()
         this.modalInfo.title = i18n.tc('message.create')
+        // La compañia es la del usuario autenticado cuando se esta haciendo crear
+        idCompanyToConsult = this.currentUser.company_id
       }
-      // Abre el modal modalInfo es el id del modal
-      // this.$refs.firstFocus.focus()
-      this.modalInfo.visible = true
       // Is admin viene de los getters del store
       if (this.isAdmin) {
         try {
+          // Se trae la lista de compañías del store
           await this.$store.dispatch(FETCH_COMPANIES)
         } catch (exception) {
           this.modalErrors.push(exception.message)
         }
       } else if (this.isCompany) { // El perfil autenticado es el de una compania
-        // FIXME poner la compania
-        this.consultClients(1)
+        this.consultClients(idCompanyToConsult)
       }
+      // Abre el modal modalInfo es el id del modal
+      this.modalInfo.visible = true
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
     async consultClients (idCompany) {
       try {
         this.$store.commit(SET_LOADING, true)
-        var response = await api.post({idCompany: idCompany}, BDData.endPoints.urlClients)
+        let dataConsult = {}
+        dataConsult.idCompany = idCompany
+        dataConsult.isClient = this.isClient // tomado del store
+        dataConsult.isAdmin = this.isAdmin // tomado del store
+        dataConsult.isCompany = this.isCompany // tomado del store
+        var response = await api.post(dataConsult, BDData.endPoints.urlClients)
         // Estuvo exitosa la busqueda
-        this.$store.commit(SET_LOADING, false)
         this.clients_by_company = response.data
+        this.modalErrors = [] // Se limpian los errores del modal en caso de que existan
+        this.$store.commit(SET_LOADING, false)
       } catch (exception) {
         console.error(JSON.stringify(exception.message))
         this.modalErrors.push(exception.message)
@@ -257,11 +288,13 @@ export default {
     clearObj () {
       // Se llama este metodo cuando se selecciona el boton para crear o cuando se guarda para dajar el objeto que tendrá la información preparado
       // Se toma del store el profile para decidir como se ajusta la inicialiacion de valores
-      var user = {id: null, email: null, company: null, company_id: null, client_id: null, password: null, profileType: CLIENT}
+      var user = {id: null, email: null, company: null, company_id: null, client_id: null, password: null, profileType: null}
       // Los usuarios que crea un nueva compañia son iguales a la compañia que los esta creando
       if (this.isCompany) {
         user.company = this.currentUser.company
         user.company_id = this.currentUser.company_id
+        // La compañia solo puede crear clients
+        user.profileType = CLIENT
       }
       // No se agregan mas casos pues si es administrador puede seleccionar y si es cliente o participante no deberia poder ver esta opcion
       return user
@@ -279,8 +312,17 @@ export default {
         this.$store.commit(SET_LOADING, true)
         // Se limpia el objeto de referencia
         this.clearObj()
-        // FIXME organizar el id de la compania cuando sepa como resolver el problema de la sesion
-        var response = await api.post({idCompany: 1}, BDData.endPoints.usersByCompany)
+        let dataConsult = {}
+        if (this.isAdmin) {
+          // Para que traiga los usuarios de todas las compañías
+          dataConsult.idCompany = null
+        } else if (this.isCompany) {
+          // Se parametrizan la info para que se consulten los datos solo de la compania del usuario autenticado
+          dataConsult.idCompany = this.currentUser.company_id
+        }
+        dataConsult.isAdmin = this.isAdmin // tomado del store
+        dataConsult.isCompany = this.isCompany // tomado del store
+        var response = await api.post(dataConsult, BDData.endPoints.usersByCompany)
         // Estuvo exitosa la busqueda
         if (response.status === 200) {
           this.items = response.data
@@ -312,7 +354,7 @@ export default {
       try {
         var response = null
         if (obj.id && obj.id !== 0) {
-          // FIXME arreglar para que el pwd pueda quedar incompelto
+          // FIXME arreglar para que el pwd pueda quedar incompleto
           response = await api.update(obj.id, obj, servicePath)
         } else {
           response = await api.create(obj, servicePath)

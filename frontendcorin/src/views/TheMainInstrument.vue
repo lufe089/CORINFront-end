@@ -9,7 +9,8 @@
       </b-col>
     </b-row>
     <!--<b-alert variant="danger" :show="errorMsg !=='' && errors"><h4>{{errorMsg}}</h4></b-alert>-->
-    <b-row fluid v-show="!isSurveyVisible && !showThanksMessage">
+    <!-- Mensaje de bienvenida -->
+    <b-row fluid v-show="!isSurveyVisible && !showThanksMessage && idClient != null">
       <b-col md=12>
          <b-jumbotron bg-variant="light">
         <template slot="header">
@@ -32,7 +33,7 @@
       </b-jumbotron>
       </b-col>
     </b-row>
-
+    <!-- Encabezado de la encuesta -->
     <div v-show="isSurveyVisible && !showThanksMessage && !hasErrors">
       <b-row fluid>
         <b-col md="12">
@@ -149,7 +150,8 @@ export default {
       showDirective: undefined,
       showQuestions: false,
       showThanksMessage: false,
-      isLoading: null
+      isLoading: null,
+      instruccionData: {}
     }
   },
   async created () {
@@ -282,11 +284,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'customizedInstrument', 'areas', 'hasErrors']), // Trae los getters
+    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'customizedInstrument', 'areas', 'hasErrors']) // Trae los getters
     // customized_instrument: this.$store.getters.customizedInstrument
-    instruccionData () {
-      return this.$store.getters.customizedInstrument
-    }
   }
 }
 </script>

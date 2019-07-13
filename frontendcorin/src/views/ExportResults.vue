@@ -1,6 +1,5 @@
 <template>
   <b-card>
-    <base-loading :isLoading="isLoading"></base-loading>
     <div slot="header">
       <b-row >
         <b-col md="12">
@@ -8,9 +7,26 @@
         </b-col>
       </b-row>
     </div>
+    <!-- Mensaje de informacion -->
+      <b-row md="12">
+        <b-col lg="12">
+            <b-card v-show="showInfoMessage"
+                  header-tag="header"
+                  footer-tag="footer">
+                  <b-alert show variant="info">
+                    <h4 class="alert-heading">{{ $t("message.download_no_data_title") }}</h4>
+                    <hr>
+                    <p>
+                      {{$t('message.download_no_data')}}
+                    </p>
+                  </b-alert>
+            </b-card>
+        </b-col>
+      </b-row>
     <b-row fluid>
-      <b-col md="6">
-        <b-list-group>
+      <!-- questions -->
+      <b-col md="12" v-show="isAdmin">
+        <b-list-group >
           <b-list-group-item variant="secondary"  class="d-flex justify-content-center">  <div class="font-weight-bold font-lg"> {{ $t("message.download_parametric_data") }} </div></b-list-group-item>
             <b-list-group-item button class="d-flex justify-content-between align-items-center">
               {{ $t("message.items") }}
@@ -19,25 +35,78 @@
                 <a href="#"> <i class="fa fa-download fa-lg mt-4"></i></a>
               </download-excel>
             </b-list-group-item>
+        </b-list-group>
+      </b-col>
+      <!-- lista de clientes -->
+      <b-col md="12" v-show="isAdmin || isCompany">
+        <b-list-group >
+          <b-list-group-item variant="secondary"  class="d-flex justify-content-center"><div class="font-weight-bold font-lg"> {{ $t("message.download_clients") }} </div></b-list-group-item>
             <b-list-group-item button class="d-flex justify-content-between align-items-center">
-              {{ $t("message.clients") }}
-              <download-excel
-                 :fields = "json_fields_clients" :fetch= "exportClients" :name= "exportFileNames.clients">
-                <a href="#"> <i class="fa fa-download fa-lg mt-4"></i></a>
-              </download-excel>
+              <b-input-group class="mb-12" v-show="isAdmin">
+                  <b-input-group-prepend>
+                    <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
+                  </b-input-group-prepend>
+                  <b-form-select v-model="idCompany" :options="companies"  value-field="id" text-field="name">
+                    <template slot="first">
+                      <option :value="null">{{$t('message.seleccion_compania')}}</option>
+                    </template>
+                  </b-form-select>
+              </b-input-group>
+              <span v-show="isCompany" class="mb-12">
+                {{$t('message.clients')}}
+               <download-excel
+                  :fields = "json_fields_clients" :fetch= "exportClients" :name= "exportFileNames.clients">
+                  <a href="#"> <i class="fa fa-download fa-lg mt-4"></i></a>
+               </download-excel>
+              </span>
             </b-list-group-item>
         </b-list-group>
       </b-col>
-      <b-col md="6">
+    </b-row>
+    <!-- Results -->
+    <b-row fluid>
+      <b-col md="12">
         <b-list-group>
-          <b-list-group-item variant="secondary"  class="d-flex justify-content-center"><div class="font-weight-bold font-lg"> {{ $t("message.download_answers_data") }} </div></b-list-group-item>
-            <b-list-group-item button class="d-flex justify-content-between align-items-center">
+          <b-list-group-item variant="secondary"  class="d-flex justify-content-center"><div class="font-weight-bold font-lg"> {{ $t("message.download_answers_data") }} </div>
+          </b-list-group-item>
+        </b-list-group>
+        <b-list-group>
+          <!-- Respuestas de un cliente particular seleccionado en la lista desplegable o del cliente autenticado -->
+          <b-list-group-item button class="d-flex justify-content-between align-items-center">
+              <b-row>
+                <b-col  md="9">
+                  <b-input-group v-show="isAdmin || isCompany" class="mb-12">
+                    <b-input-group-prepend>
+                      <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
+                    </b-input-group-prepend>
+                    <b-form-select v-model="idClient" :options="clients" value-field="id" text-field="client_company_name" @change="refresh">
+                      <template slot="first">
+                        <option :value="null">{{$t('message.seleccion_cliente')}}</option>
+                      </template>
+                    </b-form-select>
+                  </b-input-group>
+                </b-col>
+                <b-col md="3">
+                <div v-show="idClient != null" >
+                  {{$t('message.download_answers_by_client_id')}}
+                  <download-excel :fetch="exportResponses"
+                    :fields = "json_fields_responses" :name= "exportFileNames.responses">
+                    <a href="#"> <i class="fa fa-download fa-lg mt-4"></i></a>
+                  </download-excel>
+                </div>
+                </b-col>
+              </b-row>
+          </b-list-group-item>
+           <!-- Todas las respuestas para todos los clientes -->
+          <b-list-group-item button class="d-flex justify-content-between align-items-center">
+              <span v-show="isAdmin">
               {{ $t("message.all") }}
               <download-excel :fetch="exportResponses"
                 :fields = "json_fields_responses" :name= "exportFileNames.responses">
                 <a href="#"> <i class="fa fa-download fa-lg mt-4"></i></a>
               </download-excel>
-            </b-list-group-item>
+              </span>
+          </b-list-group-item>
         </b-list-group>
       </b-col>
     </b-row>
@@ -45,24 +114,27 @@
 </template>
 <script>
 
-import BDData from '@/common/_BDData'
-import api from '../services/api.js'
-import i18n from '../lang/config'
+import BDData from '@/common/_BDData.js'
+import { FETCH_COMPANIES } from '@/store/actions.type'
+import api from '@/services/api.js'
+import i18n from '@/lang/config'
+import { mapGetters } from 'vuex'
+import { SET_LOADING, SET_ERROR } from '@/store/mutations.type'
 
 export default {
   name: 'results-module',
   components: {
     DownloadExcel: () => import('vue-json-excel'),
-    baseLoading: () => import('@/components/BaseComponents/BaseLoading')
+    clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
   },
   data () {
     return {
       exportFileNames: BDData.exportFileNames,
-      isLoading: false,
+      idClient: null,
+      idCompany: null,
+      showInfoMessage: false, // controla si se muestra mensajes informativos
+      clients: [], // Para la lista desplegable del adminstrador y de la compañia
       // urlClients: '/clients-and-survey-conf/',
-      urlClients: '/clients-and-survey-conf/',
-      urlActiveItems: '/activeItemsSpanish/',
-      urlResponses: '/consult-responses/',
       /* json_fields: {
         'Complete name': 'name',
         'City': 'city',
@@ -82,7 +154,7 @@ export default {
         'Componente': {
           field: 'item.component',
           callback: (value) => {
-            if (value === null) {
+            if (value === '') {
               return '----'
             } else {
               return value.name
@@ -144,51 +216,112 @@ export default {
       ]
     }
   },
-  created: function () {
+  async mounted () {
+    if (this.isClient) {
+      // Se inicializa el cliente a partir del cliente del usuario autenticado
+      this.idClient = this.currentUser.client_id
+      this.idCompany = this.currentUser.company_id //
+    } else if (this.isCompany) {
+      this.idCompany = this.currentUser.company_id
+      this.idClient = null // Se debe seleccionar de la lista desplegable
+      let dataConsult = {}
+      dataConsult.idCompany = this.currentUser.company_id
+      dataConsult.isClient = this.isClient // tomado del store
+      dataConsult.isAdmin = this.isAdmin // tomado del store
+      dataConsult.isCompany = this.isCompany // tomado del store
+      this.clients = await this.consult(dataConsult, BDData.endPoints.urlClients, 'post')
+    } else if (this.isAdmin) {
+      this.idCompany = null // Se deben seleccionar de la lista desplegable
+      this.idClient = null // Se deben seleccionar de la lista desplegable
+      // El id de la compania es null para que la consulta retorne todos los clientes
+      let dataConsult = {}
+      dataConsult.idCompany = this.idCompany
+      dataConsult.isClient = this.isClient // tomado del store
+      dataConsult.isAdmin = this.isAdmin // tomado del store
+      dataConsult.isCompany = this.isCompany // tomado del store
+      try {
+        await this.$store.dispatch(FETCH_COMPANIES)
+      } catch (exception) {
+        this.$store.commit(SET_ERROR, exception.message)
+        this.$store.commit(SET_LOADING, false)
+      }
+      this.clients = await this.consult(dataConsult, BDData.endPoints.urlClients, 'post')
+    }
   },
   watch: {
   },
+  computed: {
+    ...mapGetters(['isAdmin', 'isCompany', 'isParticipant', 'isClient', 'hasErrors', 'currentUser', 'companies']) // Trae los getters
+  },
   methods: {
-    exportItems: function () {
-      var dataToExpert = this.consultData(this.urlActiveItems)
-      return dataToExpert
+    changeClientAnswers: function (idClient) {
+      // Se actualiza el id del cliente que sirve para identificar para que cliente se descargarán los datos
+      this.idClient = this.currentUser.client_id
+      this.showInfoMessage = false
     },
-    exportClients: function () {
-      // FIXME: arreglar manejo de la compania
-      var dataToExpert = this.consultDataPost(this.urlClients, {idCompany: 1})
-      return dataToExpert
-    },
-    exportResponses: function () {
-      var dataToExpert = this.consultDataPost(this.urlResponses, {idCompany: 1})
-      return dataToExpert
-    },
-    async consultData (url) {
-      this.isLoading = true
-      var response = await api.getAll(url)
-      // Estuvo exitosa la busqueda
-      if (response.status === 200) {
-        this.isLoading = false
+    async consult (data, path, method = 'post') {
+      try {
+        this.showInfoMessage = false
+        var response = null
+        this.$store.commit(SET_LOADING, true)
+        if (method === 'post') {
+          response = await api.post(data, path)
+        } else if (method === 'get') {
+          response = await api.getAll(path)
+        }
+        // Estuvo exitosa la busqueda
+        this.$store.commit(SET_LOADING, false)
+        if (response.data.length === 0) {
+          // Se habilita la bandera para que muestre que no hay mensajes que descargar
+          this.showInfoMessage = true
+        }
         return response.data
-      } else {
-        // Se pone vacio para evitar errores
-        this.isLoading = false
-        return {}
+      } catch (exception) {
+        console.error(JSON.stringify(exception.message))
+        this.$store.commit(SET_ERROR, exception.message)
+        this.$store.commit(SET_LOADING, false)
       }
     },
-    async consultDataPost (url, data) {
-      // FIXME
-      var response = await api.getWithPost(data, url)
-      // Estuvo exitosa la busqueda
-      this.isLoading = true
-      if (response.status === 200) {
-        this.isLoading = false
-        return response.data
-      } else {
-        // Se pone vacio para evitar errores
-        this.isLoading = false
-        // FIXME
-        return {}
+    async exportItems () {
+      let items = await this.consult({}, BDData.endPoints.urlActiveItems, 'get')
+      return items
+    },
+    async exportClients () {
+      // Segun el perfil
+      let dataConsult = {}
+      if (this.isAdmin) {
+        // Para que se busquen todos los clientes de todas las companias
+        dataConsult.idCompany = null
+      } else if (this.isCompany) {
+        // La compania del usuario autenticado
+        dataConsult.idCompany = this.currentUser.company_id
       }
+      dataConsult.isClient = this.isClient // tomado del store
+      dataConsult.isAdmin = this.isAdmin // tomado del store
+      dataConsult.isCompany = this.isCompany // tomado del store
+      var dataToExport = await this.consult(dataConsult, BDData.endPoints.urlClients)
+      return dataToExport
+    },
+    async exportResponses () {
+      // Controla las respuestas que se exportan segun los permisos y la peticion recibida
+      var dataConsult = {}
+      // el cliente seleccionado en la lista desplegable o el de la sesion configurado cuando se monta el componente
+      // puede ser null entonces se traerian todas las respuestas de todos los clientes
+      dataConsult.idClient = this.idClient
+      // dataConsult.idCompany = this.idCompany
+      dataConsult.isClient = this.isClient // tomado del store
+      dataConsult.isAdmin = this.isAdmin // tomado del store
+      dataConsult.isCompany = this.isCompany // tomado del store
+      var dataToExport = await this.consult(dataConsult, BDData.endPoints.urlResponses)
+      if (dataToExport.length === 0) {
+        console.error('ningun resultado')
+        return [] // Lista vacia para que no hayan errores en el caso en el qe no hayan datos que exportar
+      } else {
+        return dataToExport
+      }
+    },
+    refresh: function () {
+      this.showInfoMessage = false
     }
   }
 }

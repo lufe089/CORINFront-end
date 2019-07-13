@@ -111,7 +111,7 @@ export default {
           icon: 'fa icon-settings'
         },
         {
-          name: 'Encuestas',
+          name: 'Encuestas x cliente',
           url: '/configSurveys',
           icon: 'fa icon-docs'
         },

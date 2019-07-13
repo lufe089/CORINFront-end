@@ -259,7 +259,7 @@ export default {
       requestPath: '', // Controla cual es la ruta para la que se quieren ver los resultados,
       idClient: null, // Controla para que cliente ser hará la consulta de los datos
       clients_by_company: [], // Clientes asociados a la compania para la que se hara la consulta,
-      id_company: 1 // FIXME Esto tiene que venir luego del login o algo asi
+      idCompany: 1 // FIXME Esto tiene que venir luego del login o algo asi
     }
   },
   created: function () {
@@ -269,9 +269,11 @@ export default {
     if (this.isClient) {
       // Se inicializa el cliente a partir del cliente del usuario autenticado
       this.idClient = this.currentUser.client_id
-      this.id_company = this.currentUser.company_id
+      this.idCompany = this.currentUser.company_id
       // Se llama la consulta de los datos para mostrar los resultadospp
       this.consultAverageData(this.idClient)
+    } else if (this.isCompany) {
+      this.idCompany = this.currentUser.company_id
     }
   },
   watch: {
@@ -281,7 +283,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isLoading', 'isAdmin', 'isCompany', 'currentUser', 'isClient']) // Trae los getters
+    ...mapGetters(['isLoading', 'isAdmin', 'isCompany', 'currentUser', 'isClient', 'isParticipant']) // Trae los getters
   },
   methods: {
     changeClient: function (idClient) {

@@ -10,15 +10,17 @@ export default {
         itemsSpanish: '/activeItemsSpanish',
         isAllowedSave: '/is-allowed-save/',
         urlSaveSubItems: '/participantsResponse/',
-        urlResponses: 'participantsResponse/',
         urlAverageData: 'averageFilters/',
         urlClients: '/clients-and-survey-conf/',
         ulrInstructions: 'consult-custom-inst/',
         clients: 'clients/',
         surveyConfigPath: 'configSurveys/',
+        surveyConfigPathByCompany: 'configSurveys/by_company/',
         users: 'users/',
         usersByCompany: 'users/users_by_company/',
-        companies: 'companies/'
+        companies: 'companies/',
+        urlActiveItems: '/activeItemsSpanish/',
+        urlResponses: '/consult-responses/',
     },
     // apiURL: 'http://zalonore.pythonanywhere.com/api/',
     //  apiURL: 'http://18.232.93.104:8000/api/',
@@ -99,7 +101,8 @@ export default {
                 access_code: 'Código de acceso',
                 maxSurveys: 'Máximo de encuestas',
                 email: 'Email',
-                pwd: 'Contraseña'
+                password: 'Contraseña',
+                profile: 'Perfil'
             }
         }
     },

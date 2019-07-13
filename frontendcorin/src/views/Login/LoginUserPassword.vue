@@ -18,8 +18,8 @@
                   </b-input-group>
                   <b-input-group class="mb-4">
                     <b-input-group-prepend><b-input-group-text><i class="icon-lock"></i></b-input-group-text></b-input-group-prepend>
-                    <input type="password" class="form-control" :placeholder="$t('message.pwd')" v-model="obj.password" name="pwd" v-validate="'required'">
-                    <p class="text-danger" v-if="errors.has('pwd')">{{ errors.first('pwd') }}</p>
+                    <input type="password" class="form-control" :placeholder="$t('message.pwd')" v-model="obj.password" name="password" v-validate="'required'">
+                    <p class="text-danger" v-if="errors.has('password')">{{ errors.first('password') }}</p>
                   </b-input-group>
                   <b-row>
                     <b-col cols="12">

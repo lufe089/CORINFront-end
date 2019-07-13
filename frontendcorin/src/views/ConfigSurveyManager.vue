@@ -50,6 +50,8 @@
                 :sort-by.sync="sortBy"
                 :sort-desc.sync="sortDesc"
                 :sort-direction="sortDirection"
+                :emptyText = "$t('message.no_resultados')"
+                :emptyFilteredText = "$t('message.no_data_filter')"
                 @filtered="onFiltered"
         >
           <template slot="name" slot-scope="row">{{row.value.first}} {{row.value.last}}</template>
@@ -108,18 +110,22 @@
 </template>
 
 <script>
-import api from '../services/api.js'
-import i18n from '../lang/config'
+import api from '@/services/api.js'
+import i18n from '@/lang/config'
 import BDData from '@/common/_BDData'
+import { mapGetters } from 'vuex'
+import { SET_LOADING, SET_ERROR } from '@/store/mutations.type'
+
 const items = []
 
 export default {
   data () {
     return {
       columns: [
-        { key: 'client.client_company_name', label: 'Nombre', sortable: true, sortDirection: 'desc' },
+        { key: 'client.client_company_name', label: 'Nombre cliente', sortable: true, sortDirection: 'desc' },
         { key: 'max_surveys', label: i18n.tc('message.max_surveys'), sortable: true },
         { key: 'used_surveys', label: i18n.tc('message.used_surveys'), sortable: true },
+        { key: 'client.company.name', label: i18n.tc('message.compania'), sortable: true },
         { key: 'actions', label: 'Acciones', class: 'scaleWidth, text-center' }
       ],
       currentPage: 1,
@@ -133,8 +139,6 @@ export default {
       filter: null,
       modalConfigSurvey: {title: '', visible: true},
       // Real data
-      servicePath: 'configSurveys/',
-      loading: false,
       items: [],
       obj: {},
       surveyConfig: {}
@@ -151,7 +155,8 @@ export default {
       return this.columns
         .filter(f => f.sortable)
         .map(f => { return { text: f.label, value: f.key } })
-    }
+    },
+    ...mapGetters(['isAdmin', 'isCompany', 'profile', 'currentUser', 'isCompany']) // Trae los getters
   },
   methods: {
     process (item, index, button) {
@@ -163,14 +168,14 @@ export default {
         this.modalConfigSurvey.title = i18n.tc('message.edit')
       } else if (button.id === 'create') {
         this.obj = this.clearObj()
-        this.modalInfo.title = i18n.tc('message.create')
+        this.modalConfigSurvey.title = i18n.tc('message.create')
       }
       // Abre el modal modalInfo es el id del modal
       // this.$refs.firstFocus.focus()
       this.$root.$emit('bv::show::modal', 'modalConfigSurvey', button)
     },
     clearObj () {
-      // FIXME: company_id no puede ser siempre uno.
+      // FIXME: instrument_header_id no debería ser siempre 1
       // Se llama este metodo cuando se selecciona el boton para crear o cuando se guarda para dajar el objeto que tendrá la información preparado
       var obj = {id: null, client_id: null, instrument_header_id: 1, max_surveys: 0, used_surveys: 0}
       return obj
@@ -184,18 +189,30 @@ export default {
       this.currentPage = 1
     },
     async refreshData () {
-      this.loading = true
-      // Se limpia el objeto de referencia
-      this.clearObj()
-      var response = await api.getAll(this.servicePath)
-      // Estuvo exitosa la busqueda
-      if (response.status === 200) {
-        this.items = response.data
-      } else {
-        // Se pone vacio para evitar errores
-        this.items = []
+      try {
+        this.$store.commit(SET_LOADING, true)
+        // Se limpia el objeto de referencia
+        this.clearObj()
+        let dataConsult = {}
+        if (this.isAdmin) {
+          // Para que traiga los usuarios de todas las compañías
+          dataConsult.idCompany = null
+        } else if (this.isCompany) {
+          dataConsult.idCompany = this.currentUser.company_id
+        }
+        dataConsult.isAdmin = this.isAdmin // tomado del store
+        var response = await api.post(dataConsult, BDData.endPoints.surveyConfigPathByCompany)
+        // Estuvo exitosa la busqueda
+        if (response.status === 200) {
+          this.items = response.data
+        } else {
+          // Se pone vacio para evitar errores
+          this.items = []
+        }
+      } catch (exception) {
+        this.$store.commit(SET_ERROR, exception.message)
       }
-      this.loading = false
+      this.$store.commit(SET_LOADING, false)
     },
     loadConfigSurveys (item, index) {
       // Ir a buscar a la bd si hay configuracion para ese cliente
@@ -216,38 +233,28 @@ export default {
       this.$validator.validate().then(result => {
         // Si no hay errores
         if (result) {
-          this.save()
+          this.save(BDData.endPoints.user)
         }
       })
     },
-    async save () {
-      var response = null
-      if (this.obj.id) {
-        response = await api.update(this.obj.id, this.obj, this.servicePath)
-      } else {
-        response = await api.create(this.obj, this.servicePath)
-      }
-      // Fue exitoso
-      if (response.status >= 200 && response.status <= 300) {
-        alert(i18n.tc('message.guardar_modificar_exito'))
-        await this.refreshData()
-        this.$refs.modalCreateUpdate.hide()
-      }
-    },
     async remove (id) {
       if (confirm(i18n.tc('message.confirm_delete_message'))) {
-        var response = await api.remove(id, this.servicePath)
-        // Fue exitoso
-        if (response.status >= 200 && response.status <= 300) {
-          alert(i18n.tc('message.eliminar_exito'))
-          await this.refreshData()
+        try {
+          var response = await api.remove(id, BDData.endPoints.surveyConfigPath)
+          // Fue exitoso
+          if (response.status >= 200 && response.status <= 300) {
+            alert(i18n.tc('message.eliminar_exito'))
+            await this.refreshData()
+          }
+        } catch (exception) {
+          this.$store.commit(SET_ERROR, exception.message)
         }
       }
     }
   }
 }
 </script>
-<style>
+<style scoped>
 .scaleWidth {
   width: 40%;
   /* text-align: center  */

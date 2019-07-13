@@ -8,7 +8,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <small>{{$t('message.profile')}}</small>: {{showProfileText}}
-    <b-navbar-nav class="ml-auto">
+    <b-navbar-nav class="ml-auto" @click="logout">
       <b-nav-item class="d-md-down-none">
        <i class="fa fa-lock"></i> {{$t('message.logout')}}
       </b-nav-item>
@@ -21,6 +21,8 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import { LOGOUT } from '@/store/actions.type'
+import { LOGIN_BY_PASSWORD } from '@/router/routesNames'
 
 export default {
   name: 'c-header',
@@ -40,10 +42,15 @@ export default {
     asideToggle (e) {
       e.preventDefault()
       document.body.classList.toggle('aside-menu-hidden')
+    },
+    logout () {
+      this.$store.dispatch(LOGOUT).then(() => {
+        this.$router.push({ name: LOGIN_BY_PASSWORD })
+      })
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'showProfileText']) // Trae los getters
+    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'showProfileText', 'currentUser']) // Trae los getters
   }
 }
 </script>

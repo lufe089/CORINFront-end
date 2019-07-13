@@ -5,6 +5,7 @@ Contiene como constantes las rutas disponibles de la aplicacion */
 export const CHECK_AUTH = "checkAuth";
 export const LOGIN = "Login";
 export const LOGIN_ACCESS_CODE = "LoginAccessCode";
+export const LOGIN_BY_PASSWORD = "LoginByPassword";
 export const LOGOUT = "logout";
 export const REGISTER = "register";
 export const UPDATE_USER = "updateUser";
