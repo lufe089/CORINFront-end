@@ -405,7 +405,6 @@ export default {
       try {
         var response = null
         if (obj.id && obj.id !== 0) {
-          // FIXME arreglar para que el pwd pueda quedar incompleto
           response = await api.update(obj.id, obj, servicePath)
         } else {
           response = await api.create(obj, servicePath)
@@ -417,7 +416,6 @@ export default {
           this.modalInfo.visible = false
         }
       } catch (exception) {
-        this.modalInfo.visible = true // FIXME por ahora obligo a que este visible el modal info pero puede q no
         this.modalErrors.push(exception.message)
       }
     },

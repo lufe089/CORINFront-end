@@ -57,10 +57,9 @@
           <div class="customForm">
             <div class="h5 text-info mb-2 pt-2">
               {{$t("message.survey_instructions") }}
-               <ck-editor :editor="editor" v-model="obj.custom_contact_info" ... ></ck-editor>
             </div>
             <div >
-              <trix-editor id='surveyInstructions' name='surveyInstructions' inputId="userInstructionsText" v-model="obj.custom_user_instructions"/>
+              <ckeditor :editor="editor" v-model="obj.custom_user_instructions"></ckeditor>
             </div>
           </div>
         </b-card>
@@ -75,8 +74,7 @@
               {{$t("message.contact_information") }}
             </div>
             <div >
-              <input id="contactText" v-model="obj.custom_contact_info" type="hidden" name="contactText">
-              <trix-editor id='surveyContact' input="contactText"/>
+              <ckeditor :editor="editor" v-model="obj.custom_contact_info"></ckeditor>
             </div>
           </div>
         </b-card>
@@ -91,7 +89,7 @@
                 {{$t("message.thanks_information") }}
               </div>
               <div >
-                <trix-editor name='surveyThanks' id='surveyThanks' inputId="thanksText" v-model="obj.custom_thanks"/>
+                <ckeditor :editor="editor" v-model="obj.custom_thanks"></ckeditor>
               </div>
             </div>
           </b-card>
@@ -108,17 +106,17 @@
 import api from '@/services/api.js'
 import i18n from '@/lang/config'
 import BDData from '@/common/_BDData.js'
-import VueTrix from 'vue-trix'
 
 import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import CKEditor from '@ckeditor/ckeditor5-vue'
 
 export default {
   components: {
-    'trix-editor': VueTrix,
     clientSelector: () => import('@/components/BusinessLogic/ClientSelector'),
-    'ck-editor': () => import('@ckeditor/ckeditor5-vue')
+    ckeditor: CKEditor.component
+    /* Documentacion del componente https://ckeditor.com/docs/ckeditor5/latest/builds/guides/integration/frameworks/vuejs.html */
   },
   data () {
     return {
