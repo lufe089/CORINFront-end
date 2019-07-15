@@ -106,13 +106,12 @@
 </template>
 
 <script>
-import api from '../services/api.js'
-import i18n from '../lang/config'
+import api from '@/services/api.js'
+import i18n from '@/lang/config'
 import VueTrix from 'vue-trix'
 
 export default {
   components: {
-    baseLoading: () => import('@/components/BaseComponents/BaseLoading'),
     'trix-editor': VueTrix,
     clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
   },
@@ -130,7 +129,6 @@ export default {
         { key: 'actions', label: 'Acciones', class: 'scaleWidth, text-center' }
       ],
       servicePath1: 'consult-custom-inst/',
-      servicePath2: 'customizedInstrument/',
       isLoading: false,
       obj: {},
       idClient: null,
@@ -180,7 +178,7 @@ export default {
         // Si no hay errores
         if (result) {
           this.isLoading = true
-          this.save(this.obj, this.servicePath2)
+          this.save(this.obj, this.customizedInstrument)
           this.isLoading = false
         }
       })

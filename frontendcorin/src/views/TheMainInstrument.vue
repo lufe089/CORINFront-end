@@ -159,6 +159,8 @@ export default {
     para tomar como objeto de referencia el json que esta en el archivo parametrico pero no modificarlo */
     this.participantResponse = this.clone(BDData.participantResponse)
     if (!this.isAdmin) {
+      // Si el usuario no es admin, entonces se consulta para que cliente se hara la busqueda
+      // y también las areas
       this.refreshDataNoAdmin()
     } // Logica en caso de que si sea admin y tenga que funcionar el selector
   },
@@ -176,6 +178,11 @@ export default {
     },
     refreshDataNoAdmin: function () {
       this.loadAreas()
+      if (this.isParticipant || this.isClient) {
+        this.idClient = this.currentUser.client_id
+        // Se llama el metodo que consulta los datos para el cliente
+        this.refreshData(this.idClient)
+      }
     },
     async refreshData (idClient) {
       // Este metodo funciona en el caso de que el usuario sea un administrador
@@ -284,7 +291,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'customizedInstrument', 'areas', 'hasErrors']) // Trae los getters
+    ...mapGetters(['isAuthenticated', 'currentUser', 'profile', 'isAdmin', 'isParticipant', 'isClient', 'customizedInstrument', 'areas', 'hasErrors']) // Trae los getters
     // customized_instrument: this.$store.getters.customizedInstrument
   }
 }

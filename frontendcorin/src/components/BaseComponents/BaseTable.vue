@@ -23,11 +23,60 @@
         </b-col>
       </b-row>
     </b-card>
+    <div class="h5 text-warning mb-0 mt-2">{{$t('message.categorias')}}</div>
     <b-table :hover='hover' :bordered='bordered' :small='small'  responsive stacked='sm' :items='items' :fields='getColumns()' :current-page='currentPage' :per-page="perPage"
         :filter="filter" @filtered="onFiltered">
     <template slot='average' slot-scope='data'>
       <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
       <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults(data.item.average)"  :value= "data.item.average" :max="max"/>
+    </template>
+    <!-- Detalles para la tabla que muestra los resultados anidados -->
+    <template slot="show_details" slot-scope="row">
+      <b-button size="sm" @click="row.toggleDetails" class="mr-2">
+        {{ row.detailsShowing ? $t('message.hide') : $t('message.show') }}
+      </b-button>
+    </template>
+    <template slot="row-details" slot-scope="row">
+      <!-- Slot de nivel 2 para dimensiones -->
+      <b-card>
+        <div class="h5 text-primary mb-0 mt-2">{{$t('message.dimensions')}}</div>
+        <b-table :hover='hover' :small='small'  responsive stacked='sm' :items='row.item.items' :fields='getColumns()'>
+          <template slot="show_details" slot-scope="row">
+            {{row.item.items.length}}
+            <b-button size="md" @click="row.toggleDetails" class="mr-2" variant="primary">
+              <i :class="row.detailsShowing ? 'icon-arrow-up font-xl float-left':'icon-plus font-xl float-left'"></i>
+            </b-button>
+          </template>
+           <template slot='average' slot-scope='data'>
+              <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
+              <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults(data.item.average)"  :value= "data.item.average" :max="max"/>
+            </template>
+          <!-- Slot nivel 3 para componentes -->
+          <template slot="row-details" slot-scope="row">
+            <b-card>
+              <b-row>
+                <b-col md="6">
+                  <div class="h5 text-success mb-0 mt-2">{{$t('message.components')}} de la {{$t('message.dimension')}} {{row.item.name}}</div>
+                </b-col>
+                <!--
+                <b-col>
+                  <div class="h5 text-success mb-0 mt-2">{{$t('message.dimension')}} : {{row.item.name}}</div>
+                </b-col>
+                <b-col md="4">
+                  <div class="h5 text-success mb-0 mt-2">{{$t('message.average')}}: {{row.item.average}}</div>
+                </b-col> -->
+              </b-row>
+              <!-- Se envia 1 en getColumns para que solo dibuje el nombre del campo y el promedio -->
+              <b-table :hover='hover' borderless=true small=true responsive stacked='sm' :items='row.item.items' :fields='getColumns(1)'>
+                <template slot='average' slot-scope='data'>
+                  <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
+                  <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults(data.item.average)"  :value= "data.item.average" :max="max"/>
+                </template>
+              </b-table>
+            </b-card>
+          </template>
+        </b-table>
+      </b-card>
     </template>
     </b-table>
     <nav>
@@ -118,15 +167,22 @@ export default {
       }
       return variant
     },
-    getColumns: function () {
+    getColumns: function (value = null) {
+      // NO se envia valor
+      if (value === null) {
+        value = this.columnsDetail
+      }
       var fields = []
-      if (this.columnsDetail === 1) {
+      if (value === 1 || value === 3) {
         fields = [ {key: 'name', label: 'Nombre', sortable: true, class: 'widthColumn'},
           {key: 'average', label: 'Promedio', sortable: true}]
-      } else if (this.columnsDetail === 2) {
+      } else if (value === 2) {
         fields = [ {key: 'name', label: 'Nombre', sortable: true, class: 'widthColumn'},
           {key: 'category', label: 'Categoría', sortable: true},
           {key: 'average', label: 'Promedio', sortable: true}]
+      }
+      if (value === 3) { // Tabla anidada en la que se pueden ver los detalles que constituyen los promedios
+        fields.push({key: 'show_details', label: 'Detalles', sortable: false})
       }
       return fields
     }

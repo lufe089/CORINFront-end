@@ -52,7 +52,6 @@
 import { LOGIN_PWD } from '@/store/actions.type'
 import ErrorsList from '@/components/BusinessLogic/ErrorsList'
 import { RESULTS_BY_CATEGORIES } from '@/router/routesNames'
-import { SET_LOADING } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -69,7 +68,6 @@ export default {
   methods: {
     onSubmit: function (evt) {
       // the page doesn’t reload when the form is submitted,
-      this.$store.commit(SET_LOADING, true)
       evt.preventDefault()
       // Se validan los resultados
       this.$validator.validate().then(result => {

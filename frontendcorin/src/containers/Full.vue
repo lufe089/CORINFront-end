@@ -50,7 +50,7 @@ export default {
           icon: 'fa icon-notebook'
         }])
       }
-      if (profile !== PARTICIPANT) {
+      if (profile != null && profile < PARTICIPANT) {
         paths = paths.concat([
           {
             title: true,
@@ -86,6 +86,12 @@ export default {
           {
             name: 'Por dimensiones y componentes',
             url: '/results_by_dim_comp',
+            icon: 'fa icon-chart'
+
+          },
+          {
+            name: 'Tabla resumen dimensiones y componentes',
+            url: '/results_by_dim_comp_table',
             icon: 'fa icon-chart'
 
           },

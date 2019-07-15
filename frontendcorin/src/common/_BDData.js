@@ -5,6 +5,7 @@ export default {
     endPoints: {
         areas: '/areas/',
         categories: '/categories',
+        customizedInstrument: 'customizedInstrument/',
         loginByAccessCode: '/login-code/',
         loginByPwd: '/login-pwd/',
         itemsSpanish: '/activeItemsSpanish',
@@ -102,7 +103,9 @@ export default {
                 maxSurveys: 'Máximo de encuestas',
                 email: 'Email',
                 password: 'Contraseña',
-                profile: 'Perfil'
+                profile: 'Perfil',
+                prefix: 'Prefijo',
+                verificarPassword: 'Contra'
             }
         }
     },

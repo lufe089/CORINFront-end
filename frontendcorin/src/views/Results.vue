@@ -205,6 +205,26 @@
           </b-col>
         </b-row><!--/.row-->
         </div><!-- End results_by_dim_comp-div-->
+        <!-- tabla que agrupa todos los valores -->
+        <div id="results_by_dim_comp_table" v-show="showView('/results_by_dim_comp_table')">
+          <b-row>
+            <b-col md="12">
+            <b-card>
+              <b-row>
+                <b-col>
+                <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{$t("message.resultado_dimensiones")+ ' ('+$t("message.n") +' = '+ this.n +' )'}}</div>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col md="12"  sm="12">
+                  <!-- Se muestra la tabla anidada -->
+                  <base-table :filterValues=false :columnsDetail=3 hover :items="nested_average"></base-table>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+        </b-row>
+        </div><!-- End tabla que agrupa todos los valores-div-->
       </div>
     </div>
   </div>
@@ -244,6 +264,7 @@ export default {
       average_by_categories: [],
       average_by_components: [],
       average_by_areas: [],
+      nested_average: [],
       categories_average_by_directives: [],
       categories_average_by_no_directives: [],
       categories_average_by_area: [], // Sirve para mostrar el promedio relacionado de cada categoria por area
@@ -259,7 +280,7 @@ export default {
       requestPath: '', // Controla cual es la ruta para la que se quieren ver los resultados,
       idClient: null, // Controla para que cliente ser hará la consulta de los datos
       clients_by_company: [], // Clientes asociados a la compania para la que se hara la consulta,
-      idCompany: 1 // FIXME Esto tiene que venir luego del login o algo asi
+      idCompany: null
     }
   },
   created: function () {
@@ -319,6 +340,7 @@ export default {
             this.categories_average_by_no_directives = averageChartsData['categories_average_by_no_directives']
             this.categories_average_by_area = averageChartsData['categories_average_by_area']
             this.categories_names = averageChartsData['category_names']
+            this.nested_average = averageChartsData['nested_average']
             /* No voy a hacer esto sino que voy a dejar el espacio por facilidad
             this.categories_average_by_area.map((obj) => {
               obj.sortable = 'true'
@@ -363,6 +385,20 @@ export default {
         this.drawComponentsChart(this.average_by_dimensions, i18n.tc('message.dimensions'), this.$refs.chartByDimensions, i18n.tc('message.rendimiento_dimension'))
         this.drawComponentsChart(this.average_by_components, i18n.tc('message.components'), this.$refs.chartByComponents, i18n.tc('message.rendimiento_componente'))
       }
+      if (this.requestPath === '/results_by_dim_comp_table') {
+        this.makeNestedResultsTable()
+      }
+    },
+    makeNestedResultsTable: function () {
+      // FIXME Voy a hacer unos de prueba para ver como pinta
+      /* var nivelTres1 = [{name: 'Nivel3a', average: 5.0, level: 3, items: []},
+        {name: 'Nivel3b', average: 7.0, level: 3, _showDetails: true, items: []}]
+      var nivelDos = [{name: 'Nivel2', average: 3.0, level: 2, _showDetails: true, items: nivelTres1},
+        {name: 'Nivel2', average: 1.0, level: 2, _showDetails: true, items: nivelTres1}]
+      var nivelUno = [{name: 'Nivel1', average: 3.8, level: 1, items: nivelDos},
+        {name: 'aNivel1', average: 3.0, level: 1, items: nivelDos}] */
+      // this.nested_average = nivelUno
+      console.log('Algo')
     },
     drawRadarChart: function (div, titleText, data) {
       let chart = am4core.create(div, am4charts.RadarChart)

@@ -74,6 +74,9 @@
             <b-button size="sm" id="edit" @click.stop="process(row.item, row.index, $event.target)">
               {{$t('message.edit')}}
             </b-button>
+            <b-button size="sm" id="changePassword" @click.prevent="process(row.item, row.index, $event.target)" variant="secondary">
+              {{$t('message.change_password')}}
+            </b-button>
             <b-button size="sm" id="remove" @click.prevent="remove(row.item.id)" variant="danger">
               {{$t('message.delete')}}
             </b-button>
@@ -106,6 +109,7 @@
           </ul>
         </b-alert>
        <form @submit.prevent="onSubmit">
+        <div v-show="modalInfo.mode === 'create' || modalInfo.mode === 'edit'">
         <!-- Perfil -->
         <b-input-group class="mb-3" v-show="isAdmin">
             <b-input-group-prepend>
@@ -119,11 +123,14 @@
             <p class="text-danger" v-if="errors.has('profile')">{{ errors.first('profile') }}</p>
         </b-input-group>
         <!-- Compania -->
-        <b-input-group class="mb-3" v-show="isAdmin">
+        <!-- No Se debe seleccionar la compañía si el admin esta creando otro usuario de tipo admin -->
+        <!-- Tampoco cuando es un usuario de una compañía -->
+        <b-input-group class="mb-3" v-show="!(isAdmin &&  user.profileType === 1 || isCompany)">
             <b-input-group-prepend>
               <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
             </b-input-group-prepend>
-            <b-form-select name="company" id="company" v-model="user.company_id" :options="companies"  @change="changeCompany" value-field="id" text-field="name" v-validate="'required'">
+            <b-form-select name="company" id="company" v-model="user.company_id" :options="companies"
+            @change="changeCompany" value-field="id" text-field="name" v-validate="!(isAdmin &&  user.profileType === 1)?'required':''">
               <template slot="first">
                 <option :value="null">{{$t('message.seleccion_compania')}}</option>
               </template>
@@ -131,11 +138,12 @@
             <p class="text-danger" v-if="errors.has('company')">{{ errors.first('company') }}</p>
         </b-input-group>
         <!-- Lista de clientes -->
-        <b-input-group class="mb-3">
+        <!-- Se debe seleccionar un cliente si un admin o una compañia estan creando un usuario de tipo cliente -->
+        <b-input-group class="mb-3" v-show='user.profileType === 3'>
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
           </b-input-group-prepend>
-          <b-form-select name="cliente" id="cliente" v-model="user.client_id" :options="clients_by_company" text-field="client_company_name" v-validate="'required'" >
+          <b-form-select name="cliente" id="cliente" v-model="user.client_id" :options="clients_by_company" text-field="client_company_name" v-validate="adminValidation" >
              <template slot="first">
                 <option :value="null">{{$t('message.seleccion_cliente')}}</option>
             </template>
@@ -143,6 +151,7 @@
           <p class="text-danger" v-if="errors.has('cliente')">{{ errors.first('cliente') }}</p>
         </b-input-group>
         <!-- Email -->
+        <!-- Para verificar email repetidos https://codesandbox.io/s/y3504yr0l1?initialpath=%2F%23%2Fbackend&module=%2Fsrc%2Fcomponents%2FBackend.vue  -->
         <b-input-group class="mb-3">
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-user"></i></b-input-group-text>
@@ -150,12 +159,16 @@
           <input type="text" class="form-control" :placeholder="$t('message.email')" name="email" id="email" v-model="user.email" autocomplete='email'  v-validate="'required|email'">
           <p class="text-danger" v-if="errors.has('email')">{{ errors.first('email') }}</p>
         </b-input-group>
+        </div> <!-- fin de campos que piden los datos basicos del usuario -->
+        <!-- password-->
+        <div v-show="modalInfo.mode === 'create' || modalInfo.mode === 'changePassword'">
         <!-- Password -->
         <b-input-group class="mb-3">
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-lock"></i></b-input-group-text>
           </b-input-group-prepend>
-          <input type="password" class="form-control" :placeholder="$t('message.pwd')" name="password" id="password" v-model="user.password" v-validate="'required'">
+          <!-- Se pone logica para que la validacion solo se haga cuando el campo este visible -->
+          <input v-validate="modalInfo.mode === 'create'?'required|min:8': ''"  class="form-control" v-model="user.password" name="password" type="password" :placeholder="$t('message.pwd')" ref="password">
           <p class="text-danger" v-if="errors.has('password')">{{ errors.first('password') }}</p>
         </b-input-group>
         <!-- Repetir el password -->
@@ -163,9 +176,10 @@
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-lock"></i></b-input-group-text>
           </b-input-group-prepend>
-          <input type="password" class="form-control" name="verificarPassword" :placeholder="$t('message.repeatPwd')" v-validate="'required'">
+          <input type="password" class="form-control" name="verificarPassword" :placeholder="$t('message.repeatPwd')" v-validate="modalInfo.mode === 'create'?'required|confirmed:password':''" data-vv-as="password">
           <p class="text-danger" v-if="errors.has('verificarPassword')">{{ errors.first('verificarPassword') }}</p>
         </b-input-group>
+        </div>
        </form>
     </b-modal>
   </b-container>
@@ -201,11 +215,11 @@ export default {
       sortDesc: false,
       sortDirection: 'asc',
       filter: null,
-      modalInfo: {title: '', visible: false},
+      modalInfo: {title: '', visible: false, mode: 'create'},
+      modalChangePassword: {title: '', visible: false},
       items: [],
       user: {},
       modalErrors: [], // para mostrar los errores de creacion/edicion en el modal
-      surveyConfig: {},
       clients_by_company: {}
     }
   },
@@ -215,6 +229,14 @@ export default {
       return this.columns
         .filter(f => f.sortable)
         .map(f => { return { text: f.label, value: f.key } })
+    },
+    adminValidation () {
+      // Si es administrador hay algunos campos que no se necesitan validar como oblligatorios
+      if (this.isAdmin) {
+        return ''
+      } else {
+        return 'required'
+      }
     },
     ...mapGetters(['companies', 'clients', 'isAdmin', 'isCompany', 'profile', 'currentUser', 'isCompany']) // Trae los getters
   },
@@ -232,20 +254,30 @@ export default {
       }
     },
     async process (item, index, button) {
-      var idCompanyToConsult = null
       // Metodo que se llama en caso de crear o editar desde los botones de la tabla
+      var idCompanyToConsult = null
       if (button.id === 'edit') {
         // Se le pone la información a los campos del modal con un metodo para copiar
         // los objetos de manera que no se vayan a cambian si el usuario cancela
         this.user = JSON.parse(JSON.stringify(item))
         this.modalInfo.title = i18n.tc('message.edit')
+        this.modalInfo.mode = 'edit'
         // La compañía es la del usuario a editar
         idCompanyToConsult = this.user.company_id
       } else if (button.id === 'create') {
         this.user = this.clearObj()
+        this.modalInfo.mode = 'create'
         this.modalInfo.title = i18n.tc('message.create')
         // La compañia es la del usuario autenticado cuando se esta haciendo crear
         idCompanyToConsult = this.currentUser.company_id
+      } else if (button.id === 'changePassword') {
+        // Se carga el usuario
+        this.user = JSON.parse(JSON.stringify(item))
+        // Se pone en el titulo el nombre del cliente para el que se quiere configuraar
+        this.modalInfo.mode = 'changePassword'
+        this.modalInfo.title = i18n.tc('message.change_password')
+        // Se pasan los datos a la configuracion
+        this.$root.$emit('bv::show::modal', 'modalChangePassword')
       }
       // Is admin viene de los getters del store
       if (this.isAdmin) {
@@ -267,7 +299,6 @@ export default {
         this.$store.commit(SET_LOADING, true)
         let dataConsult = {}
         dataConsult.idCompany = idCompany
-        dataConsult.isClient = this.isClient // tomado del store
         dataConsult.isAdmin = this.isAdmin // tomado del store
         dataConsult.isCompany = this.isCompany // tomado del store
         var response = await api.post(dataConsult, BDData.endPoints.urlClients)
@@ -366,6 +397,7 @@ export default {
           this.modalInfo.visible = false
         }
       } catch (exception) {
+        this.modalInfo.visible = true // FIXME por ahora obligo a que este visible el modal info pero puede q no
         this.modalErrors.push(exception.message)
       }
     },

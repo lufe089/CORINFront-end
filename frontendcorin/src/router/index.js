@@ -97,6 +97,11 @@ export default new Router({
                     component: Results
                 },
                 {
+                    path: '/results_by_dim_comp_table',
+                    name: 'Tabla resumen',
+                    component: Results
+                },
+                {
                     path: '/result-by-directives',
                     name: 'Resultados para directivos y no directivos',
                     component: Results

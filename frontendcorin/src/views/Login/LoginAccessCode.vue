@@ -62,7 +62,6 @@
 import { LOGIN_ACCESS_CODE } from '@/store/actions.type'
 import ErrorsList from '@/components/BusinessLogic/ErrorsList'
 import { MAIN_ENCUESTA } from '@/router/routesNames'
-import { SET_LOADING } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -79,7 +78,6 @@ export default {
   methods: {
     onSubmit: function (evt) {
       // the page doesn’t reload when the form is submitted,
-      this.$store.commit(SET_LOADING, true)
       evt.preventDefault()
       // Se validan los resultados
       this.$validator.validate().then(result => {

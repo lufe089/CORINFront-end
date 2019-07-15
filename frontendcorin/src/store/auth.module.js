@@ -53,6 +53,14 @@ const getters = {
     customizedInstrument(state) {
         return state.customized_instrument
     },
+    clientName(state) {
+        // Util especialmente cuando el usuario es un cliente o un participante
+        if (state.profileType >= 3 && state.user.client != null) {
+            return state.user.client.client_company_name
+        } else {
+            return ''
+        }
+    },
     showProfileText() {
         var value = ' '
         switch (state.profileType) {
@@ -153,19 +161,28 @@ const mutations = {
     [SET_AUTH_ACCESS_CODE](state, data) {
         // Estos son los datos que llegan cuando la autenticacion es de este tipo 
         state.isAuthenticated = true
-            // state.profile = data.profile
-        state.profileType = 1
+        state.profileType = data.profileType
         state.customized_instrument = data.customized_instrument
         state.config_survey = data.config_survey
-        state.errors = {};
-        JwtService.saveToken(data.token);
+        state.errors = {}
+        JwtService.saveToken(data.token)
+        var user = {}
+        user.company = state.config_survey.client.company
+        user.client = state.config_survey.client
+        user.company_id = user.company.id
+        user.client_id = user.client.id
+        user.profileType = data['profileType']
+        user.token = data['token']
+        user.email = ''
+            // A partir de los datos recibidos creo un "fake user" que tenga la info de la compañía y del cliente
+            // al que pertenece el participante
+        state.user = user
     },
     [SET_AUTH](state, user) {
         state.isAuthenticated = true
         state.user = user
         state.profileType = user.profileType
         state.errors = {}
-        JwtService.saveToken(state.user.token)
     },
     [PURGE_AUTH](state) {
         state.isAuthenticated = false

@@ -80,6 +80,9 @@ export default {
     update(id, data, path, header = true) {
         return this.execute('put', path + `${id}` + '/', data, header)
     },
+    patch(id, data, path, header = true) {
+        return this.execute('patch', path + `${id}` + '/', data, header)
+    },
     remove(id, path, header = true) {
         return this.execute('delete', path + `${id}` + '/', header)
     },

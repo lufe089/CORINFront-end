@@ -52,7 +52,8 @@
                     </template>
                   </b-form-select>
               </b-input-group>
-              <span v-show="isCompany" class="mb-12">
+              <!-- Cuando se seleccione para que empresa se van a descargar los clientes se habilita la opcion -->
+              <span v-show="idCompany != null" class="mb-12">
                 {{$t('message.clients')}}
                <download-excel
                   :fields = "json_fields_clients" :fetch= "exportClients" :name= "exportFileNames.clients">

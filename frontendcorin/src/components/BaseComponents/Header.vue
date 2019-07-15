@@ -7,8 +7,12 @@
     <button class="navbar-toggler sidebar-toggler d-md-down-none mr-auto" type="button" @click="sidebarToggle">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <small>{{$t('message.profile')}}</small>: {{showProfileText}}
-    <b-navbar-nav class="ml-auto" @click="logout">
+    <div><small>
+      {{ currentUser.email }}
+      <div><strong>{{$t('message.profile')}}</strong>: {{showProfileText}} <strong><br> {{clientName}} </strong></div>
+    </small></div>
+    <!-- Cuando es participante no muestra la opcion de logout -->
+    <b-navbar-nav class="ml-auto" @click="logout"  v-show="!isParticipant">
       <b-nav-item class="d-md-down-none">
        <i class="fa fa-lock"></i> {{$t('message.logout')}}
       </b-nav-item>
@@ -50,7 +54,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'showProfileText', 'currentUser']) // Trae los getters
+    ...mapGetters(['isAuthenticated', 'profile', 'isAdmin', 'showProfileText', 'currentUser', 'isParticipant', 'clientName']) // Trae los getters
   }
 }
 </script>
