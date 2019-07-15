@@ -71,6 +71,8 @@ export default {
   },
   methods: {
     onSubmit: function (evt) {
+      // Se limpian errores anteriores
+      this.$store.commit(CLEAR_ERRORS)
       // the page doesn’t reload when the form is submitted,
       evt.preventDefault()
       // Se validan los resultados

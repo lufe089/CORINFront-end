@@ -57,6 +57,7 @@
           <div class="customForm">
             <div class="h5 text-info mb-2 pt-2">
               {{$t("message.survey_instructions") }}
+               <ck-editor :editor="editor" v-model="obj.custom_contact_info" ... ></ck-editor>
             </div>
             <div >
               <trix-editor id='surveyInstructions' name='surveyInstructions' inputId="userInstructionsText" v-model="obj.custom_user_instructions"/>
@@ -111,11 +112,13 @@ import VueTrix from 'vue-trix'
 
 import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 
 export default {
   components: {
     'trix-editor': VueTrix,
-    clientSelector: () => import('@/components/BusinessLogic/ClientSelector')
+    clientSelector: () => import('@/components/BusinessLogic/ClientSelector'),
+    'ck-editor': () => import('@ckeditor/ckeditor5-vue')
   },
   data () {
     return {
@@ -132,7 +135,8 @@ export default {
       ],
       obj: {},
       idClient: null,
-      showData: false
+      showData: false,
+      editor: ClassicEditor
     }
   },
   async created () {
