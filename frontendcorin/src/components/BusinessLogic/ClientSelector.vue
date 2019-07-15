@@ -58,7 +58,7 @@ export default {
       idClient: null, // Controla para que cliente ser hará la consulta de los datos
       clients_by_company: [],
       companies: [],
-      idCompany: null // FIXME Esto tiene que venir luego del logino algo asi
+      idCompany: null
     }
   },
   async mounted () {
@@ -76,6 +76,7 @@ export default {
       // Se consultan la lista de compañias
       this.companies = await this.consult({}, BDData.endPoints.companies, 'get')
     }
+    // No se pone para clientes pq los clientes no deberian ver este componente
   },
   methods: {
     async consult (data, path, method = 'post') {

@@ -144,7 +144,6 @@ export default {
       result: '',
       isSurveyVisible: false,
       parameters: BDData.parameters,
-      // FIXME
       idClient: null,
       selected: [], // Must be an array reference!,
       showDirective: undefined,

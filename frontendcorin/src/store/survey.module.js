@@ -97,9 +97,6 @@ const actions = {
             if (response.status === 200) {
                 console.log(response.data)
                 context.commit(SET_CLIENTS, response.data)
-            } else {
-                //FIXME mirar aqui como llega el error
-                context.commit(SET_ERROR, errorMsg);
             }
         } catch (exception) {
             console.error(JSON.stringify(exception.message))

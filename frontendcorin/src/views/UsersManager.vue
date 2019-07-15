@@ -269,6 +269,9 @@ export default {
     async process (item, index, button) {
       // Metodo que se llama en caso de crear o editar desde los botones de la tabla
       var idCompanyToConsult = null
+      this.$store.commit(CLEAR_ERRORS)
+      this.modalErrors = {}
+      this.$store.commit(SET_LOADING, true)
       if (button.id === 'edit') {
         // Se le pone la información a los campos del modal con un metodo para copiar
         // los objetos de manera que no se vayan a cambian si el usuario cancela

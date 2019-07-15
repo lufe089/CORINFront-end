@@ -395,17 +395,6 @@ export default {
         this.makeNestedResultsTable()
       }
     },
-    makeNestedResultsTable: function () {
-      // FIXME Voy a hacer unos de prueba para ver como pinta
-      /* var nivelTres1 = [{name: 'Nivel3a', average: 5.0, level: 3, items: []},
-        {name: 'Nivel3b', average: 7.0, level: 3, _showDetails: true, items: []}]
-      var nivelDos = [{name: 'Nivel2', average: 3.0, level: 2, _showDetails: true, items: nivelTres1},
-        {name: 'Nivel2', average: 1.0, level: 2, _showDetails: true, items: nivelTres1}]
-      var nivelUno = [{name: 'Nivel1', average: 3.8, level: 1, items: nivelDos},
-        {name: 'aNivel1', average: 3.0, level: 1, items: nivelDos}] */
-      // this.nested_average = nivelUno
-      console.log('Algo')
-    },
     drawRadarChart: function (div, titleText, data) {
       let chart = am4core.create(div, am4charts.RadarChart)
       if (div === this.$refs.chartByCategories) {
