@@ -50,7 +50,9 @@
               </b-row>
               <b-row>
                 <b-col md="4"  sm="12">
-                  <base-table hover  :items="average_by_categories"></base-table>
+                  <!--<base-table hover  :items="average_by_categories" columnsDetail=3 ></base-table>-->
+                  <!-- Se muestra la tabla anidada -->
+                  <base-table :filterValues=false :columnsDetail=3 hover :items="nested_average" :caption ="$t('message.categorias')"></base-table>
                 </b-col>
                 <b-col md="8">
                   <b-card >
@@ -77,10 +79,13 @@
         </b-row>
         <b-row>
           <b-col md="6"  sm="12">
-            <base-table :caption="$t('message.resultado_categorias_directivos')"  hover  :items="categories_average_by_directives"></base-table>
+            <!--<base-table :caption="$t('message.resultado_categorias_directivos')"  hover  :items="categories_average_by_directives"></base-table>-->
+             <base-table :filterValues=false :columnsDetail=3 hover :items="categories_average_by_directives" :caption ="$t('message.resultado_categorias_directivos')"></base-table>
           </b-col>
           <b-col md="6"  sm="12">
-            <base-table :caption="$t('message.resultado_categorias_no_directivos')"  hover  :items="categories_average_by_no_directives"></base-table>
+            <!--<base-table :caption="$t('message.resultado_categorias_no_directivos')"  hover  :items="categories_average_by_no_directives"></base-table>-->
+            <!-- Se muestra la tabla anidada -->
+            <base-table :filterValues=false :columnsDetail=3 hover :items="categories_average_by_no_directives" :caption ="$t('message.resultado_categorias_no_directivos')"></base-table>
           </b-col>
         </b-row>
         </div> <!-- End result-by-directives-div-->
@@ -218,7 +223,7 @@
               <b-row>
                 <b-col md="12"  sm="12">
                   <!-- Se muestra la tabla anidada -->
-                  <base-table :filterValues=false :columnsDetail=3 hover :items="nested_average"></base-table>
+                  <base-table :filterValues=false :columnsDetail=3 hover :items="nested_average" :caption ="$t('message.categorias')"></base-table>
                 </b-col>
               </b-row>
             </b-card>
@@ -287,6 +292,7 @@ export default {
     this.requestPath = this.$route.path
   },
   mounted: function () {
+    this.$store.commit(CLEAR_ERRORS)
     if (this.isClient) {
       // Se inicializa el cliente a partir del cliente del usuario autenticado
       this.idClient = this.currentUser.client_id

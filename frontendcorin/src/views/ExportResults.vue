@@ -120,7 +120,7 @@ import { FETCH_COMPANIES } from '@/store/actions.type'
 import api from '@/services/api.js'
 import i18n from '@/lang/config'
 import { mapGetters } from 'vuex'
-import { SET_LOADING, SET_ERROR } from '@/store/mutations.type'
+import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
 
 export default {
   name: 'results-module',
@@ -218,6 +218,7 @@ export default {
     }
   },
   async mounted () {
+    this.$store.commit(CLEAR_ERRORS)
     if (this.isClient) {
       // Se inicializa el cliente a partir del cliente del usuario autenticado
       this.idClient = this.currentUser.client_id

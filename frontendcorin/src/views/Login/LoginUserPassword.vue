@@ -53,6 +53,7 @@ import { LOGIN_PWD } from '@/store/actions.type'
 import ErrorsList from '@/components/BusinessLogic/ErrorsList'
 import { RESULTS_BY_CATEGORIES } from '@/router/routesNames'
 import { mapGetters } from 'vuex'
+import { CLEAR_ERRORS } from '@/store/mutations.type'
 
 export default {
   name: 'LoginUserPwd',
@@ -64,6 +65,9 @@ export default {
     return {
       obj: {email: '', password: ''}
     }
+  },
+  mounted: function () {
+    this.$store.commit(CLEAR_ERRORS)
   },
   methods: {
     onSubmit: function (evt) {

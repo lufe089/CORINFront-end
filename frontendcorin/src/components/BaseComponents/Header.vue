@@ -12,7 +12,7 @@
       <div><strong>{{$t('message.profile')}}</strong>: {{showProfileText}} <strong><br> {{clientName}} </strong></div>
     </small></div>
     <!-- Cuando es participante no muestra la opcion de logout -->
-    <b-navbar-nav class="ml-auto" @click="logout"  v-show="!isParticipant">
+    <b-navbar-nav class="ml-auto" @click="logout"  v-show="isAuthenticated">
       <b-nav-item class="d-md-down-none">
        <i class="fa fa-lock"></i> {{$t('message.logout')}}
       </b-nav-item>
@@ -26,7 +26,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { LOGOUT } from '@/store/actions.type'
-import { LOGIN_BY_PASSWORD } from '@/router/routesNames'
+import { LOGIN_BY_PASSWORD, LOGIN_ACCESS_CODE } from '@/router/routesNames'
 
 export default {
   name: 'c-header',
@@ -48,9 +48,15 @@ export default {
       document.body.classList.toggle('aside-menu-hidden')
     },
     logout () {
-      this.$store.dispatch(LOGOUT).then(() => {
-        this.$router.push({ name: LOGIN_BY_PASSWORD })
-      })
+      if (this.isParticipant) {
+        this.$store.dispatch(LOGOUT).then(() => {
+          this.$router.push({ name: LOGIN_ACCESS_CODE })
+        })
+      } else {
+        this.$store.dispatch(LOGOUT).then(() => {
+          this.$router.push({ name: LOGIN_BY_PASSWORD })
+        })
+      }
     }
   },
   computed: {

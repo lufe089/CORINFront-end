@@ -111,39 +111,40 @@
        <form @submit.prevent="onSubmit">
         <div v-show="modalInfo.mode === 'create' || modalInfo.mode === 'edit'">
         <!-- Perfil -->
-        <b-input-group class="mb-3" v-show="isAdmin">
+        <b-input-group class="mb-3" v-show="isVisible('profileType')" >
             <b-input-group-prepend>
               <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
             </b-input-group-prepend>
-            <b-form-select name="profile" id="profile" v-model="user.profileType" :options="parameters.profiles">
+            <b-form-select name="profileType" id="profileType" v-model="user.profileType" :options="parameters.profiles"
+              v-validate="isVisible('profileType')?'required':''">
               <template slot="first">
                 <option :value="null">{{$t('message.seleccion_perfil')}}</option>
               </template>
             </b-form-select>
-            <p class="text-danger" v-if="errors.has('profile')">{{ errors.first('profile') }}</p>
+            <p class="text-danger" v-if="errors.has('profileType')">{{ errors.first('profileType') }}</p>
         </b-input-group>
         <!-- Compania -->
         <!-- No Se debe seleccionar la compañía si el admin esta creando otro usuario de tipo admin -->
         <!-- Tampoco cuando es un usuario de una compañía -->
-        <b-input-group class="mb-3" v-show="!(isAdmin &&  user.profileType === 1 || isCompany)">
+        <b-input-group class="mb-3" v-show="isVisible('companies')">
             <b-input-group-prepend>
               <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
             </b-input-group-prepend>
-            <b-form-select name="company" id="company" v-model="user.company_id" :options="companies"
-            @change="changeCompany" value-field="id" text-field="name" v-validate="!(isAdmin &&  user.profileType === 1)?'required':''">
+            <b-form-select name="companies" id="companies" v-model="user.company_id" :options="companies"
+            @change="changeCompany" value-field="id" text-field="name" v-validate="isVisible('companies')?'required':''">
               <template slot="first">
                 <option :value="null">{{$t('message.seleccion_compania')}}</option>
               </template>
             </b-form-select>
-            <p class="text-danger" v-if="errors.has('company')">{{ errors.first('company') }}</p>
+            <p class="text-danger" v-if="errors.has('companies')">{{ errors.first('companies') }}</p>
         </b-input-group>
         <!-- Lista de clientes -->
         <!-- Se debe seleccionar un cliente si un admin o una compañia estan creando un usuario de tipo cliente -->
-        <b-input-group class="mb-3" v-show='user.profileType === 3'>
+        <b-input-group class="mb-3" v-show="isVisible('cliente')">
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
           </b-input-group-prepend>
-          <b-form-select name="cliente" id="cliente" v-model="user.client_id" :options="clients_by_company" text-field="client_company_name" v-validate="adminValidation" >
+          <b-form-select name="cliente" id="cliente" v-model="user.client_id" :options="clients_by_company" text-field="client_company_name"  v-validate="isVisible('cliente')?'required':''">
              <template slot="first">
                 <option :value="null">{{$t('message.seleccion_cliente')}}</option>
             </template>
@@ -161,14 +162,14 @@
         </b-input-group>
         </div> <!-- fin de campos que piden los datos basicos del usuario -->
         <!-- password-->
-        <div v-show="modalInfo.mode === 'create' || modalInfo.mode === 'changePassword'">
+        <div v-show="isVisible('password')">
         <!-- Password -->
         <b-input-group class="mb-3">
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-lock"></i></b-input-group-text>
           </b-input-group-prepend>
           <!-- Se pone logica para que la validacion solo se haga cuando el campo este visible -->
-          <input v-validate="modalInfo.mode === 'create'?'required|min:8': ''"  class="form-control" v-model="user.password" name="password" type="password" :placeholder="$t('message.pwd')" ref="password">
+          <input v-validate="isVisible('companies')?'required|min:8': ''"  class="form-control" v-model="user.password" name="password" type="password" :placeholder="$t('message.pwd')" ref="password">
           <p class="text-danger" v-if="errors.has('password')">{{ errors.first('password') }}</p>
         </b-input-group>
         <!-- Repetir el password -->
@@ -176,7 +177,7 @@
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-lock"></i></b-input-group-text>
           </b-input-group-prepend>
-          <input type="password" class="form-control" name="verificarPassword" :placeholder="$t('message.repeatPwd')" v-validate="modalInfo.mode === 'create'?'required|confirmed:password':''" data-vv-as="password">
+          <input type="password" class="form-control" name="verificarPassword" :placeholder="$t('message.repeatPwd')" v-validate="isVisible('companies')?'required|confirmed:password':''" data-vv-as="password">
           <p class="text-danger" v-if="errors.has('verificarPassword')">{{ errors.first('verificarPassword') }}</p>
         </b-input-group>
         </div>
@@ -190,7 +191,7 @@ import api from '@/services/api.js'
 import i18n from '@/lang/config'
 import BDData from '@/common/_BDData'
 import { mapGetters } from 'vuex'
-import { SET_LOADING, SET_ERROR } from '@/store/mutations.type'
+import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
 import { FETCH_COMPANIES } from '@/store/actions.type'
 import { CLIENT } from '@/store/profiles.type'
 const items = []
@@ -230,14 +231,6 @@ export default {
         .filter(f => f.sortable)
         .map(f => { return { text: f.label, value: f.key } })
     },
-    adminValidation () {
-      // Si es administrador hay algunos campos que no se necesitan validar como oblligatorios
-      if (this.isAdmin) {
-        return ''
-      } else {
-        return 'required'
-      }
-    },
     ...mapGetters(['companies', 'clients', 'isAdmin', 'isCompany', 'profile', 'currentUser', 'isCompany']) // Trae los getters
   },
   async created () {
@@ -245,7 +238,27 @@ export default {
     this.refreshData()
     this.user = this.clearObj()
   },
+  mounted: function () {
+    this.$store.commit(CLEAR_ERRORS)
+  },
   methods: {
+    isVisible (fieldId) {
+      // Controla visualizacion y renderizado de las validaciones
+      if (fieldId === 'companies' && this.isAdmin && this.user.profileType > 1) {
+        return true // Además de las condicioens basicas, si el usuario que se esta creando es administrador no se pregunta la compañía ni el cliente
+      }
+      if (fieldId === 'cliente' && (this.isAdmin || this.isClient) && this.user.profileType > 2) {
+        return true // Además de las condicioens basicas, si el usuario que se esta creando es compania o administrador no se pregunta la compañía ni el cliente
+      }
+      if (fieldId === 'profileType' && (this.isAdmin)) { // Solo los admin pueden escoger el perfil
+        return true
+      }
+      if (fieldId === 'password' && (this.modalInfo.mode === 'create' || this.modalInfo.mode === 'changePassword')) {
+        // No se muestra en edicion de usuarios
+        return true
+      }
+      return false
+    },
     profileName (profileType) {
       switch (profileType) {
         case 1: return i18n.tc('message.administrador')

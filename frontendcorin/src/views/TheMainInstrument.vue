@@ -164,6 +164,9 @@ export default {
       this.refreshDataNoAdmin()
     } // Logica en caso de que si sea admin y tenga que funcionar el selector
   },
+  mounted: function () {
+    this.$store.commit(CLEAR_ERRORS)
+  },
   components: {
     /* tag, component name */
     // itemLevel2Table()
@@ -207,11 +210,13 @@ export default {
             this.errorMsg = i18n.tc('message.error_configuracion_encuesta')
             this.$store.commit(SET_ERROR, this.errorMsg)
           }
+          this.$store.commit(SET_LOADING, false)
         }
       } catch (exception) {
         // Se pone vacio para evitar errores
         this.instruccionData = {user_instructions: '', contact_info: '', thanks: ' '}
         this.$store.commit(SET_ERROR, exception.message)
+        this.$store.commit(SET_LOADING, false)
       }
     },
     clone (obj) {

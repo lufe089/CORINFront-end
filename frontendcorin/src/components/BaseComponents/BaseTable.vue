@@ -23,7 +23,7 @@
         </b-col>
       </b-row>
     </b-card>
-    <div class="h5 text-warning mb-0 mt-2">{{$t('message.categorias')}}</div>
+    <div class="h5 text-warning mb-0 mt-2">{{caption}}</div>
     <b-table :hover='hover' :bordered='bordered' :small='small'  responsive stacked='sm' :items='items' :fields='getColumns()' :current-page='currentPage' :per-page="perPage"
         :filter="filter" @filtered="onFiltered">
     <template slot='average' slot-scope='data'>

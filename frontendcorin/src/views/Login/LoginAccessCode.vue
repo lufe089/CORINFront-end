@@ -62,6 +62,7 @@
 import { LOGIN_ACCESS_CODE } from '@/store/actions.type'
 import ErrorsList from '@/components/BusinessLogic/ErrorsList'
 import { MAIN_ENCUESTA } from '@/router/routesNames'
+import { CLEAR_ERRORS } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -74,6 +75,9 @@ export default {
     return {
       obj: {access_code: '', prefix: ''}
     }
+  },
+  mounted: function () {
+    this.$store.commit(CLEAR_ERRORS)
   },
   methods: {
     onSubmit: function (evt) {

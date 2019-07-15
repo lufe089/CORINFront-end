@@ -59,7 +59,9 @@
               {{$t("message.survey_instructions") }}
             </div>
             <div >
-              <trix-editor id='surveyInstructions' name='surveyInstructions' inputId="userInstructionsText" v-model="obj.custom_user_instructions"/>
+              <input id="surveyInstructions" v-model="obj.custom_user_instructions"  name="surveyInstructions">
+              <trix-editor input="surveyInstructions"></trix-editor>
+              <!--<trix-editor id='surveyInstructions' name='surveyInstructions' inputId="userInstructionsText"/>-->
             </div>
           </div>
         </b-card>
@@ -90,7 +92,8 @@
                 {{$t("message.thanks_information") }}
               </div>
               <div >
-                <trix-editor name='surveyThanks' id='surveyThanks' inputId="thanksText" v-model="obj.custom_thanks"/>
+                <b-form-textarea  name='surveyThanks' id='surveyThanks' inputId="thanksText" v-model="obj.custom_thanks"></b-form-textarea>
+                <!-- <trix-editor name='surveyThanks' id='surveyThanks' inputId="thanksText" v-model="obj.custom_thanks"/> -->
               </div>
             </div>
           </b-card>
@@ -141,6 +144,13 @@ export default {
     if (this.isClient) {
       this.refreshData(this.currentUser.idClient)
     }
+    // Insert a bold “Hello” at the beginning of the document
+    var element = document.querySelector('trix-editor')
+    element.editor.setSelectedRange([0, 0])
+    element.editor.insertHTML('<strong>Hello</strong>')
+  },
+  mounted: function () {
+    this.$store.commit(CLEAR_ERRORS)
   },
   computed: {
     ...mapGetters(['currentUser', 'isAdmin', 'isCompany', 'isParticipant', 'isClient', 'customizedInstrument', 'hasErrors', 'isLoading']) // Trae los getters

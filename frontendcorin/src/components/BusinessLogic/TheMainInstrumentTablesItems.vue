@@ -78,7 +78,7 @@ import BDData from '@/common/_BDData.js'
 import api from '@/services/api'
 import { mapGetters } from 'vuex'
 import { FETCH_CATEGORIES } from '@/store/actions.type'
-import { SET_LOADING, SET_ERROR } from '@/store/mutations.type'
+import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
 export default {
   name: 'the-main-instrument-tables-items',
   props: {
@@ -138,6 +138,7 @@ export default {
     }
   },
   mounted: function () {
+    this.$store.commit(CLEAR_ERRORS)
     this.loadEmptySurvey()
   },
   methods: {

@@ -99,11 +99,12 @@ export default {
                 corporativeGroup: '¿Grupo empresarial?',
                 familyCompany: '¿Empresa familiar?',
                 company: 'Compañía',
+                companies: 'Compañía',
                 access_code: 'Código de acceso',
                 maxSurveys: 'Máximo de encuestas',
                 email: 'Email',
                 password: 'Contraseña',
-                profile: 'Perfil',
+                profileType: 'Perfil',
                 prefix: 'Prefijo',
                 verificarPassword: 'Contra'
             }

@@ -114,7 +114,7 @@ import api from '@/services/api.js'
 import i18n from '@/lang/config'
 import BDData from '@/common/_BDData'
 import { mapGetters } from 'vuex'
-import { SET_LOADING, SET_ERROR } from '@/store/mutations.type'
+import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
 
 const items = []
 
@@ -148,6 +148,9 @@ export default {
     // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado
     this.refreshData()
     this.obj = this.clearObj()
+  },
+  mounted: function () {
+    this.$store.commit(CLEAR_ERRORS)
   },
   computed: {
     sortOptions () {

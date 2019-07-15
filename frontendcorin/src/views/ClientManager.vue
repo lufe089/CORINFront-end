@@ -97,10 +97,18 @@
     </b-card>
     <!-- Info modal ok-only solo mostraria el boton de ok-->
     <b-modal id="modalInfo"  ref="modalCreateUpdate" @hide="resetModalInfo" @ok="onSubmit" :title="modalInfo.title" lazy v-show="modalInfo.visible">
-       <form @submit.prevent="onSubmit">
+      <b-alert :show="modalErrors.length > 0" variant="danger" >
+          <ul class="error-messages">
+            <li v-for="(value, key) in modalErrors" :key="key">
+              <span v-text="value" />
+              {{value}}
+            </li>
+          </ul>
+      </b-alert>
+      <form @submit.prevent="onSubmit">
         <!-- Companias -->
         <b-form-group>
-          <b-form-select name="companies" id="companies" v-model="obj.company_id" :options="companies"  value-field="id" text-field="name" v-validate="'required'">
+          <b-form-select name="companies" id="companies" v-model="obj.company_id" :options="companies"  value-field="id" text-field="name" v-show="isVisible('companies')" v-validate="isVisible('companies')?'required':''">
             <template slot="first">
             <option :value="null">{{$t('message.seleccion_compania')}}</option>
             </template>
@@ -155,6 +163,14 @@
     </b-modal>
     <!-- Modal to configure a survey for a client -->
     <b-modal id="modalConfigSurvey"  ref="modalConfigSurvey" @ok="onSubmit" :title="modalConfigSurvey.title" v-show="modalConfigSurvey.visible" lazy>
+      <b-alert :show="modalErrors.length > 0" variant="danger" >
+          <ul class="error-messages">
+            <li v-for="(value, key) in modalErrors" :key="key">
+              <span v-text="value" />
+              {{value}}
+            </li>
+          </ul>
+      </b-alert>
        <form @submit.prevent="onSubmit">
         <b-row>
           <b-col md="12">
@@ -193,7 +209,7 @@
 import api from '@/services/api.js'
 import i18n from '@/lang/config'
 import BDData from '@/common/_BDData'
-import { SET_LOADING, SET_ERROR } from '@/store/mutations.type'
+import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
 import { FETCH_COMPANIES } from '@/store/actions.type'
 const items = []
@@ -235,6 +251,9 @@ export default {
     // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado
     this.refreshData()
     this.obj = this.clearObj()
+  },
+  mounted: function () {
+    this.$store.commit(CLEAR_ERRORS)
   },
   computed: {
     sortOptions () {
@@ -288,6 +307,16 @@ export default {
     },
     resetModalInfo () {
       this.modalInfo.title = ''
+    },
+    isVisible (fieldId) {
+      // Controla visualizacion y renderizado de las validaciones
+      if (fieldId === 'companies' && this.isAdmin) {
+        return true
+      }
+      if (fieldId === 'clients' && (this.isAdmin || this.isClient)) {
+        return true
+      }
+      return false
     },
     onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering

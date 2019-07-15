@@ -57,7 +57,7 @@ export default new Router({
                 },
                 {
                     path: 'login-code',
-                    name: 'Login',
+                    name: 'LoginAccessCode',
                     component: () =>
                         import ('@/views/Login/LoginAccessCode.vue')
                 },
