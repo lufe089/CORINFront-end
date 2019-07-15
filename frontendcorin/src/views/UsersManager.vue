@@ -280,6 +280,10 @@ export default {
         this.modalInfo.mode = 'edit'
         // La compañía es la del usuario a editar
         idCompanyToConsult = this.user.company_id
+        // Si es visble el campo de clientes entonces se carga la lista desplegable de clientes para la compania definida
+        if (this.isVisible('cliente')){
+          this.consultClients(idCompanyToConsult)
+        }
       } else if (button.id === 'create') {
         this.user = this.clearObj()
         this.modalInfo.mode = 'create'
