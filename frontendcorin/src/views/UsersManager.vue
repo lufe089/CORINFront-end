@@ -169,7 +169,7 @@
             <b-input-group-text><i class="icon-lock"></i></b-input-group-text>
           </b-input-group-prepend>
           <!-- Se pone logica para que la validacion solo se haga cuando el campo este visible -->
-          <input v-validate="isVisible('companies')?'required|min:8': ''"  class="form-control" v-model="user.password" name="password" type="password" :placeholder="$t('message.pwd')" ref="password">
+          <input v-validate="isVisible('password')?'required|min:8': ''"  class="form-control" v-model="user.password" name="password" type="password" :placeholder="$t('message.pwd')" ref="password">
           <p class="text-danger" v-if="errors.has('password')">{{ errors.first('password') }}</p>
         </b-input-group>
         <!-- Repetir el password -->
@@ -177,7 +177,7 @@
           <b-input-group-prepend>
             <b-input-group-text><i class="icon-lock"></i></b-input-group-text>
           </b-input-group-prepend>
-          <input type="password" class="form-control" name="verificarPassword" :placeholder="$t('message.repeatPwd')" v-validate="isVisible('companies')?'required|confirmed:password':''" data-vv-as="password">
+          <input type="password" class="form-control" name="verificarPassword" :placeholder="$t('message.repeatPwd')" v-validate="isVisible('password')?'required|confirmed:password':''" data-vv-as="password">
           <p class="text-danger" v-if="errors.has('verificarPassword')">{{ errors.first('verificarPassword') }}</p>
         </b-input-group>
         </div>
@@ -270,7 +270,7 @@ export default {
       // Metodo que se llama en caso de crear o editar desde los botones de la tabla
       var idCompanyToConsult = null
       this.$store.commit(CLEAR_ERRORS)
-      this.modalErrors = {}
+      this.modalErrors = []
       this.$store.commit(SET_LOADING, true)
       if (button.id === 'edit') {
         // Se le pone la información a los campos del modal con un metodo para copiar
