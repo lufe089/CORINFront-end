@@ -39,11 +39,10 @@
     <template slot="row-details" slot-scope="row">
       <!-- Slot de nivel 2 para dimensiones -->
       <b-card>
-        <div class="h5 text-primary mb-0 mt-2">{{$t('message.dimensions')}}</div>
+        <div class="h5 text-primary mb-0 mt-2">{{$t('message.dimensions')}} de la {{$t('message.category')}} : {{row.item.name}}</div>
         <b-table :hover='hover' :small='small'  responsive stacked='sm' :items='row.item.items' :fields='getColumns()'>
           <template slot="show_details" slot-scope="row">
-            {{row.item.items.length}}
-            <b-button size="md" @click="row.toggleDetails" class="mr-2" variant="primary">
+            <b-button size="md" @click="row.toggleDetails" class="mr-2" variant="primary" v-show="row.item.items.length > 0">
               <i :class="row.detailsShowing ? 'icon-arrow-up font-xl float-left':'icon-plus font-xl float-left'"></i>
             </b-button>
           </template>
@@ -55,8 +54,8 @@
           <template slot="row-details" slot-scope="row">
             <b-card>
               <b-row>
-                <b-col md="6">
-                  <div class="h5 text-success mb-0 mt-2">{{$t('message.components')}} de la {{$t('message.dimension')}} {{row.item.name}}</div>
+                <b-col md="8">
+                  <div class="h5 text-success mb-0 mt-2">{{$t('message.components')}} de la {{$t('message.dimension')}}: {{row.item.name}}</div>
                 </b-col>
                 <!--
                 <b-col>
@@ -67,7 +66,7 @@
                 </b-col> -->
               </b-row>
               <!-- Se envia 1 en getColumns para que solo dibuje el nombre del campo y el promedio -->
-              <b-table :hover='hover' borderless=true small=true responsive stacked='sm' :items='row.item.items' :fields='getColumns(1)'>
+              <b-table :hover='hover' borderless=true :small="true" responsive stacked='sm' :items='row.item.items' :fields='getColumns(1)'>
                 <template slot='average' slot-scope='data'>
                   <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item.average"></vue-numeric></strong>
                   <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults(data.item.average)"  :value= "data.item.average" :max="max"/>

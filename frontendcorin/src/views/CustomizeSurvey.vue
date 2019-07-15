@@ -1,12 +1,10 @@
 <template>
   <b-container fluid>
-    <base-loading :isLoading="isLoading"></base-loading>
     <b-row>
       <b-col md="12">
         <client-selector @client-selector:change='refreshData'></client-selector>
       </b-col>
     </b-row>
-    <b-alert variant="danger" :show="error !== ''"><h4>{{error}}</h4></b-alert>
     <div v-show="showData">
     <b-alert variant="warning" :show="obj.id === null"><h4>{{$t("message.no_survey_config")}}</h4></b-alert>
     <form>
@@ -108,7 +106,11 @@
 <script>
 import api from '@/services/api.js'
 import i18n from '@/lang/config'
+import BDData from '@/common/_BDData.js'
 import VueTrix from 'vue-trix'
+
+import { SET_LOADING, SET_ERROR, CLEAR_ERRORS } from '@/store/mutations.type'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -128,78 +130,86 @@ export default {
         /* { key: 'survey_conf_desc', label: i18n.tc('message.survey_conf_desc'), sortable: true }, */
         { key: 'actions', label: 'Acciones', class: 'scaleWidth, text-center' }
       ],
-      servicePath1: 'consult-custom-inst/',
-      isLoading: false,
       obj: {},
       idClient: null,
-      showData: false,
-      error: ''
+      showData: false
     }
   },
   async created () {
-    // Refresh data llama al listar  y crearObj crea un objeto listo para ser configurado
-    // this.refreshData()
+    // Si es un cliente entonces llama a refrescar los datos con el id del cliente autenticado
+    // si es una compañía o el administrador, estos datos provienen de la selección de la lista desplegable
+    if (this.isClient) {
+      this.refreshData(this.currentUser.idClient)
+    }
   },
   computed: {
+    ...mapGetters(['currentUser', 'isAdmin', 'isCompany', 'isParticipant', 'isClient', 'customizedInstrument', 'hasErrors', 'isLoading']) // Trae los getters
   },
   methods: {
     async refreshData (idClient) {
+      this.$store.commit(SET_LOADING, true)
+      this.showData = false // Se ocultan los datos del cliente anterior
       this.idClient = idClient
-      this.isLoading = true
-      // FIXME: preguntar por el id del cliente correcto
-      var data = {idClient: idClient}
-      var response = await api.getWithPost(data, this.servicePath1)
-      // Estuvo exitosa la busqueda
-      if (response.status === 200) {
-        this.obj = response.data
-        // Se verifica que no hayan errores en la respuesta
-        if (this.obj.error === undefined) {
-          this.showData = true
-          this.error = ''
-        } else if (this.obj.error === 'config_survey') {
-          this.showData = false
-          this.error = i18n.tc('message.error_configuracion_cliente')
-        } else if (this.obj.error === 'no_customized_instrument') {
-          // Se deja todo disponible para personalizar la encuesta
-          // usando los datos que se reciben de la base de datos
-          this.showData = true
+      let dataConsult = {idClient: idClient} // let hace que exista solo scope de bloque
+      try {
+        let response = await api.post(dataConsult, BDData.endPoints.ulrInstructions)
+        // Estuvo exitosa la busqueda
+        if (response.status === 200) {
+          this.obj = response.data
+          // Se verifica que no hayan errores en la respuesta
+          if (this.obj.error === undefined) {
+            this.showData = true
+            this.$store.commit(CLEAR_ERRORS)
+          } else if (this.obj.error === 'config_survey') {
+            this.showData = false
+            this.$store.commit(SET_ERROR, i18n.tc('message.error_configuracion_cliente'))
+          } else if (this.obj.error === 'no_customized_instrument') {
+            // Se deja todo disponible para personalizar la encuesta
+            // usando los datos que se reciben de la base de datos
+            this.showData = true
+          }
         }
-      } else {
+      } catch (exception) {
         // Se pone vacio para evitar errores
         this.obj = {}
+        this.$store.commit(SET_ERROR, exception.message)
       }
-      this.isLoading = false
+      this.$store.commit(SET_LOADING, false)
     },
     onSubmit (evt) {
       // Evita que se cierre
       evt.preventDefault()
       // Se validan los resultados
       this.$validator.validate().then(result => {
-        // Si no hay errores
+        // Si no hay errores en el front-end
         if (result) {
-          this.isLoading = true
-          this.save(this.obj, this.customizedInstrument)
-          this.isLoading = false
+          this.save(this.obj, BDData.endPoints.customizedInstrument)
         }
       })
     },
     async save (obj, servicePath) {
-      var response = null
-      if (obj.id && obj.id !== 0) {
-        response = await api.update(obj.id, obj, servicePath)
-      } else {
-        response = await api.create(obj, servicePath)
+      try {
+        this.$store.commit(SET_LOADING, true)
+        var response = null
+        if (obj.id && obj.id !== 0) {
+          response = await api.update(obj.id, obj, servicePath)
+        } else {
+          response = await api.create(obj, servicePath)
+        }
+        // Fue exitoso
+        if (response.status >= 200 && response.status <= 300) {
+          alert(i18n.tc('message.guardar_modificar_exito'))
+          await this.refreshData(this.idClient)
+        }
+      } catch (exception) {
+        this.$store.commit(SET_ERROR, i18n.tc('message.error_configuracion_cliente'))
       }
-      // Fue exitoso
-      if (response.status >= 200 && response.status <= 300) {
-        alert(i18n.tc('message.guardar_modificar_exito'))
-        await this.refreshData(this.idClient)
-      }
+      this.$store.commit(SET_LOADING, false)
     }
   }
 }
 </script>
-<style>
+<style scoped>
 .scaleWidth {
   width: 40%;
   /* text-align: center  */

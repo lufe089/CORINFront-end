@@ -125,9 +125,9 @@
                 <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Competencias organizacionales']"></vue-numeric></strong>
                 <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults('bar', data.item['Competencias organizacionales'])"  :value= "data.item['Competencias organizacionales']" :max="max"/>
               </template>
-              <template slot='Estructura' slot-scope='data'>
-                <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Estructura']"></vue-numeric></strong>
-                <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults('bar', data.item['Estructura'])"  :value= "data.item['Estructura']" :max="max"/>
+              <template slot='Formadores de cultura' slot-scope='data'>
+                <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Formadores de cultura']"></vue-numeric></strong>
+                <b-progress height={} class="progress-xs my-0" :variant="calculateVariantResults('bar', data.item['Formadores de cultura'])"  :value= "data.item['Formadores de cultura']" :max="max"/>
               </template>
               <template slot='Liderazgo y métricas' slot-scope='data'>
                 <strong><vue-numeric v-bind:precision="2" read-only v-model="data.item['Liderazgo y métricas']"></vue-numeric></strong>
@@ -212,7 +212,7 @@
             <b-card>
               <b-row>
                 <b-col>
-                <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{$t("message.resultado_dimensiones")+ ' ('+$t("message.n") +' = '+ this.n +' )'}}</div>
+                <div class="h5 text-info mb-3 pt-3 text-center text-uppercase font-weight-bold font-md">{{$t("message.resultado_detallados")+ ' ('+$t("message.n") +' = '+ this.n +' )'}}</div>
                 </b-col>
               </b-row>
               <b-row>
@@ -540,7 +540,12 @@ export default {
         seriesDirectors.strokeWidth = 3
         seriesDirectors.tensionX = 0.8
         seriesDirectors.name = 'Directivos (n = ' + this.categories_average_by_directives[0].n + ')'
-        seriesDirectors.bullets.push(new am4charts.CircleBullet())
+        var bulletDirectivos = seriesDirectors.bullets.push(new am4charts.Bullet())
+        circle = bulletDirectivos.createChild(am4core.Circle)
+        circle.width = 8
+        circle.height = 8
+        // Tooltip with the info
+        circle.tooltipText = '{categoryX}: [bold]{valueY}[/]'
       }
       // Label
       /* var columnLabel = columnTemplate.createChild(am4core.Label)

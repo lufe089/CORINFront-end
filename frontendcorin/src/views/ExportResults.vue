@@ -75,7 +75,7 @@
           <!-- Respuestas de un cliente particular seleccionado en la lista desplegable o del cliente autenticado -->
           <b-list-group-item button class="d-flex justify-content-between align-items-center">
               <b-row>
-                <b-col  md="9">
+                <b-col  md="12">
                   <b-input-group v-show="isAdmin || isCompany" class="mb-12">
                     <b-input-group-prepend>
                       <b-input-group-text><i class="icon-grid"></i></b-input-group-text>
@@ -87,7 +87,7 @@
                     </b-form-select>
                   </b-input-group>
                 </b-col>
-                <b-col md="3">
+                <b-col md="12">
                 <div v-show="idClient != null" >
                   {{$t('message.download_answers_by_client_id')}}
                   <download-excel :fetch="exportResponses"
@@ -309,7 +309,7 @@ export default {
       // el cliente seleccionado en la lista desplegable o el de la sesion configurado cuando se monta el componente
       // puede ser null entonces se traerian todas las respuestas de todos los clientes
       dataConsult.idClient = this.idClient
-      // dataConsult.idCompany = this.idCompany
+      dataConsult.idCompany = this.idCompany
       dataConsult.isClient = this.isClient // tomado del store
       dataConsult.isAdmin = this.isAdmin // tomado del store
       dataConsult.isCompany = this.isCompany // tomado del store

@@ -100,7 +100,7 @@
        <form @submit.prevent="onSubmit">
         <!-- Companias -->
         <b-form-group>
-          <b-form-select name="companies" id="companies" v-model="obj.company_id" :options="companies"  @change="changeCompany" value-field="id" text-field="name" v-validate="'required'">
+          <b-form-select name="companies" id="companies" v-model="obj.company_id" :options="companies"  value-field="id" text-field="name" v-validate="'required'">
             <template slot="first">
             <option :value="null">{{$t('message.seleccion_compania')}}</option>
             </template>

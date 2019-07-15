@@ -186,7 +186,6 @@ export default {
     },
     async refreshData (idClient) {
       // Este metodo funciona en el caso de que el usuario sea un administrador
-      // FIXME probar si todavia funciona
       this.$store.commit(SET_LOADING, true)
       this.idClient = idClient
       let data = {idClient: idClient} // let hace que exista solo scope de bloque
@@ -197,6 +196,7 @@ export default {
           this.obj = response.data
           if (this.obj.error === undefined) {
             this.instruccionData = response.data
+            this.loadAreas()
             this.$store.commit(CLEAR_ERRORS)
           } else if (this.obj.error === 'config_survey') {
             this.showData = false
@@ -213,7 +213,6 @@ export default {
         this.instruccionData = {user_instructions: '', contact_info: '', thanks: ' '}
         this.$store.commit(SET_ERROR, exception.message)
       }
-      this.loadAreas()
     },
     clone (obj) {
       // var outpurArr = []
@@ -292,7 +291,6 @@ export default {
   },
   computed: {
     ...mapGetters(['isAuthenticated', 'currentUser', 'profile', 'isAdmin', 'isParticipant', 'isClient', 'customizedInstrument', 'areas', 'hasErrors']) // Trae los getters
-    // customized_instrument: this.$store.getters.customizedInstrument
   }
 }
 </script>
