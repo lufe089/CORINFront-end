@@ -1,7 +1,8 @@
 /* eslint-disable */
 export default {
 
-    API_URL: 'http://localhost:8000/api/',
+    // API_URL: 'http://localhost:8000/api/',
+    API_URL: 'http://18.232.93.104:8000',
     endPoints: {
         areas: '/areas/',
         activeInstrumentHeader: '/activeInstrumentHeader/active/',
