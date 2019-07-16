@@ -100,7 +100,6 @@
       <b-alert :show="modalErrors.length > 0" variant="danger" >
           <ul class="error-messages">
             <li v-for="(value, key) in modalErrors" :key="key">
-              <span v-text="value" />
               {{value}}
             </li>
           </ul>

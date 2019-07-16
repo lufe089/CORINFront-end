@@ -2,7 +2,7 @@
  <b-alert :show="hasErrors" variant="danger" >
   <ul class="error-messages">
     <li v-for="(value, key) in getErrors" :key="key">
-      <span v-text="value" />
+      <!--<span v-text="value" /> -->
       {{value}}
     </li>
   </ul>
