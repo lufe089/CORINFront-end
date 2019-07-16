@@ -53,7 +53,7 @@ import { LOGIN_PWD } from '@/store/actions.type'
 import ErrorsList from '@/components/BusinessLogic/ErrorsList'
 import { RESULTS_BY_CATEGORIES } from '@/router/routesNames'
 import { mapGetters } from 'vuex'
-import { CLEAR_ERRORS } from '@/store/mutations.type'
+import { CLEAR_ERRORS, SET_LOADING } from '@/store/mutations.type'
 
 export default {
   name: 'LoginUserPwd',
@@ -87,10 +87,12 @@ export default {
     },
     async login () {
       /* En el store se hace el manejo de los errores */
+      this.$store.commit(SET_LOADING, true)
       await this.$store.dispatch(LOGIN_PWD, this.obj)
       if (!this.isParticipant && !this.hasErrors) {
         this.$router.push({ name: RESULTS_BY_CATEGORIES })
       }
+      this.$store.commit(SET_LOADING, false)
     }
   },
   computed: {

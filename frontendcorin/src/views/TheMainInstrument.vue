@@ -276,7 +276,7 @@ export default {
             }
           } else if (this.obj.save === false) {
             this.showThanksMessage = false
-            this.errorMsg = i18n.tc('message.error_no_espacio_guardar_encuesta')
+            this.$store.commit(SET_ERROR, i18n.tc('message.error_no_espacio_guardar_encuesta'))
             this.hasErrors = true
           }
         }

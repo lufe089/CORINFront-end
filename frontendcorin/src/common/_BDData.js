@@ -4,6 +4,7 @@ export default {
     API_URL: 'http://localhost:8000/api/',
     endPoints: {
         areas: '/areas/',
+        activeInstrumentHeader: '/activeInstrumentHeader/active/',
         categories: '/categories',
         customizedInstrument: 'customizedInstrument/',
         loginByAccessCode: '/login-code/',

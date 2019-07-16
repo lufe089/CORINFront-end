@@ -12,7 +12,7 @@ import {
     CHECK_AUTH,
     UPDATE_USER
 } from "./actions.type";
-import { SET_AUTH, SET_AUTH_ACCESS_CODE, PURGE_AUTH, SET_ERROR, CLEAR_ERRORS, SET_LOADING } from "./mutations.type";
+import { SET_AUTH, SET_AUTH_ACCESS_CODE, PURGE_AUTH, SET_ERROR, CLEAR_ERRORS, SET_LOADING, SET_ACTIVE_INSTRUMENT_ID } from "./mutations.type";
 import { ADMIN } from '@/store/profiles.type'
 
 const state = {
@@ -25,7 +25,8 @@ const state = {
     PARTICIPANT = 4 */
     profileType: null, // Por defecto sin perfil a menos que se autentique
     //FIXME decodificar el perfil del token
-    isAuthenticated: !!JwtService.getToken()
+    isAuthenticated: !!JwtService.getToken(),
+    instrument_header_id: null
 };
 
 const getters = {
@@ -49,6 +50,9 @@ const getters = {
     },
     isClient(state) {
         return state.profileType === 3 // client
+    },
+    idActiveInstrumentHeader(state) {
+        return state.instrument_header_id
     },
     customizedInstrument(state) {
         return state.customized_instrument
@@ -106,7 +110,6 @@ const actions = {
         });
     },
     async [LOGIN_PWD](context, data) {
-        context.commit(SET_LOADING, true)
         try {
             // El ultimo parametro sirve para indicar que no hay que poner el token de autorizacion a la peticion
             // La accion se vuelve una promesa para manejar la parte asincrona
@@ -114,12 +117,13 @@ const actions = {
             if (response.status === 200) {
                 console.log(response.data)
                 context.commit(SET_AUTH, response.data) // Data tiene los datos del user
+                let response2 = await api.getAll(BDData.endPoints.activeInstrumentHeader)
+                context.commit(SET_ACTIVE_INSTRUMENT_ID, response2.data) // Data es el header del instrumento activo
             }
         } catch (exception) {
             console.error(JSON.stringify(exception.message))
             context.commit(SET_ERROR, exception.message)
         }
-        context.commit(SET_LOADING, false)
     },
     [LOGOUT](context) {
         context.commit(PURGE_AUTH);
@@ -165,6 +169,7 @@ const mutations = {
         state.customized_instrument = data.customized_instrument
         state.config_survey = data.config_survey
         state.errors = {}
+        state.instrument_header_id = data.config_survey.instrument_header_id
         JwtService.saveToken(data.token)
         var user = {}
         user.company = state.config_survey.client.company
@@ -177,6 +182,9 @@ const mutations = {
             // A partir de los datos recibidos creo un "fake user" que tenga la info de la compañía y del cliente
             // al que pertenece el participante
         state.user = user
+    },
+    [SET_ACTIVE_INSTRUMENT_ID](state, data) {
+        state.instrument_header_id = data.id
     },
     [SET_AUTH](state, user) {
         state.isAuthenticated = true

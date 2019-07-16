@@ -159,7 +159,7 @@ export default {
         .filter(f => f.sortable)
         .map(f => { return { text: f.label, value: f.key } })
     },
-    ...mapGetters(['isAdmin', 'isCompany', 'profile', 'currentUser', 'isCompany']) // Trae los getters
+    ...mapGetters(['isAdmin', 'isCompany', 'profile', 'currentUser', 'isCompany', 'idActiveInstrumentHeader']) // Trae los getters
   },
   methods: {
     process (item, index, button) {
@@ -180,7 +180,7 @@ export default {
     clearObj () {
       // FIXME: instrument_header_id no debería ser siempre 1
       // Se llama este metodo cuando se selecciona el boton para crear o cuando se guarda para dajar el objeto que tendrá la información preparado
-      var obj = {id: null, client_id: null, instrument_header_id: 1, max_surveys: 0, used_surveys: 0}
+      var obj = {id: null, client_id: null, instrument_header_id: this.idActiveInstrumentHeader, max_surveys: 0, used_surveys: 0}
       return obj
     },
     resetModal () {

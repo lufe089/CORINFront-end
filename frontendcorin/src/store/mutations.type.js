@@ -12,6 +12,7 @@ export const SET_LOADING = "setLoading";
 export const SET_CATEGORIES = "setCategories";
 export const SET_CLIENTS = "setClients";
 export const SET_COMPANIES = "setCompanies";
+export const SET_ACTIVE_INSTRUMENT_ID = "setActiveInstrumentId";
 export const CLEAR_ERRORS = "clearErrors";
 
 export const SET_ARTICLE = "setArticle";
