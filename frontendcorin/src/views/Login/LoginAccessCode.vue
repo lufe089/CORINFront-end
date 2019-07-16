@@ -62,7 +62,7 @@
 import { LOGIN_ACCESS_CODE } from '@/store/actions.type'
 import ErrorsList from '@/components/BusinessLogic/ErrorsList'
 import { MAIN_ENCUESTA } from '@/router/routesNames'
-import { CLEAR_ERRORS } from '@/store/mutations.type'
+import { CLEAR_ERRORS, SET_ERROR, SET_LOADING } from '@/store/mutations.type'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -97,9 +97,16 @@ export default {
     },
     async login () {
       /* En el store se hace el manejo de los errores */
-      this.$store.dispatch(LOGIN_ACCESS_CODE, this.obj)
-        .then(
-          () => this.$router.push({ name: MAIN_ENCUESTA }))
+      try {
+        this.$store.commit(SET_LOADING, true)
+        await this.$store.dispatch(LOGIN_ACCESS_CODE, this.obj)
+        if (!this.hasErrors) {
+          this.$router.push({ name: MAIN_ENCUESTA })
+        }
+      } catch (exception) {
+        this.$store.commit(SET_ERROR, exception.message)
+      }
+      this.$store.commit(SET_LOADING, false)
     }
   },
   computed: {

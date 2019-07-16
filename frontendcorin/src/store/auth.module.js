@@ -90,24 +90,30 @@ const actions = {
     // we can use the ES2015 computed property name feature
     // to use a constant as the function name
     // source https://vuex.vuejs.org/guide/mutations.html
-    [LOGIN_ACCESS_CODE](context, data) {
+    async [LOGIN_ACCESS_CODE](context, data) {
         context.commit(SET_LOADING, true);
-        return new Promise(resolve => {
+        try {
             // El ultimo parametro sirve para indicar que no hay que poner el token de autorizacion a la peticion
-            api.post(data, BDData.endPoints.loginByAccessCode, false)
-                .then(response => {
-                    console.log(response.data)
-                    context.commit(SET_AUTH_ACCESS_CODE, response.data);
-                    context.commit(CLEAR_ERRORS)
-                    resolve(response.data);
-                }).catch(error => {
-                    // Here we could override the busy state, setting isBusy to false
-                    console.error(JSON.stringify(error.message))
-                    context.commit(SET_ERROR, error.message)
-                }).finally(
-                    context.commit(SET_LOADING, false)
-                )
-        });
+            var loginResponse = await api.post(data, BDData.endPoints.loginByAccessCode, false)             
+            // Se verifica que todavia haya espacio para crear encuestas personalizadas
+            var dataToSend = {idCustomizedInstrument: loginResponse.data.customized_instrument.id}
+            var responseCanSave= await api.post(dataToSend, BDData.endPoints.isAllowedSave)
+            if (responseCanSave.status === 200) {
+                this.obj = responseCanSave.data
+                if (this.obj.save === true) {
+                    console.log(loginResponse.data)
+                    context.commit(SET_AUTH_ACCESS_CODE, loginResponse.data);
+                    context.commit(CLEAR_ERRORS)  
+                } else if (this.obj.save === false) {
+                    context.commit(SET_ERROR, i18n.tc('message.error_no_espacio_guardar_encuesta'))
+                }
+            }
+        } catch (exception) {
+            // Here we could override the busy state, setting isBusy to false
+            console.error(JSON.stringify(exception.message))
+            context.commit(SET_ERROR, exception.message)
+        }
+        context.commit(SET_LOADING, false)
     },
     async [LOGIN_PWD](context, data) {
         try {

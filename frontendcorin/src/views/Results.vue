@@ -49,17 +49,17 @@
                 </b-col>
               </b-row>
               <b-row>
-                <b-col md="4"  sm="12">
-                  <!--<base-table hover  :items="average_by_categories" columnsDetail=3 ></base-table>-->
-                  <!-- Se muestra la tabla anidada -->
-                  <base-table :filterValues=false :columnsDetail=3 hover :items="nested_average" :caption ="$t('message.categorias')"></base-table>
-                </b-col>
-                <b-col md="8">
+                <b-col md="12">
                   <b-card >
                   <div class="chart-wrapper">
                      <div class="radarStyle" ref="chartByCategories"> </div>
                   </div>
                   </b-card>
+                </b-col>
+                <b-col md="12"  sm="12">
+                  <!--<base-table hover  :items="average_by_categories" columnsDetail=3 ></base-table>-->
+                  <!-- Se muestra la tabla anidada -->
+                  <base-table :filterValues=false :columnsDetail=3 hover :items="nested_average" :caption ="$t('message.categorias')"></base-table>
                 </b-col>
               </b-row>
             </b-card>
@@ -428,7 +428,13 @@ export default {
       series.strokeWidth = 3
       // chart.legend = new am4charts.Legend()
       // Le pone bolitas en cada cambio de valor
-      series.bullets.push(new am4charts.CircleBullet())
+      // series.bullets.push(new am4charts.CircleBullet())
+      var bulletCategorias = series.bullets.push(new am4charts.Bullet())
+      var circle = bulletCategorias.createChild(am4core.Circle)
+      circle.width = 8
+      circle.height = 8
+      // Tooltip with the info
+      circle.tooltipText = '{categoryX}: [bold]{valueY}[/]'
       // chart.scrollbarX = new am4core.Scrollbar()
       chart.scrollbarY = new am4core.Scrollbar()
       // Title
