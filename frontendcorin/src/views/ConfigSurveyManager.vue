@@ -178,7 +178,6 @@ export default {
       this.$root.$emit('bv::show::modal', 'modalConfigSurvey', button)
     },
     clearObj () {
-      // FIXME: instrument_header_id no debería ser siempre 1
       // Se llama este metodo cuando se selecciona el boton para crear o cuando se guarda para dajar el objeto que tendrá la información preparado
       var obj = {id: null, client_id: null, instrument_header_id: this.idActiveInstrumentHeader, max_surveys: 0, used_surveys: 0}
       return obj

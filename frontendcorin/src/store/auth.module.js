@@ -94,16 +94,16 @@ const actions = {
         context.commit(SET_LOADING, true);
         try {
             // El ultimo parametro sirve para indicar que no hay que poner el token de autorizacion a la peticion
-            var loginResponse = await api.post(data, BDData.endPoints.loginByAccessCode, false)             
-            // Se verifica que todavia haya espacio para crear encuestas personalizadas
-            var dataToSend = {idCustomizedInstrument: loginResponse.data.customized_instrument.id}
-            var responseCanSave= await api.post(dataToSend, BDData.endPoints.isAllowedSave)
+            var loginResponse = await api.post(data, BDData.endPoints.loginByAccessCode, false)
+                // Se verifica que todavia haya espacio para crear encuestas personalizadas
+            var dataToSend = { idCustomizedInstrument: loginResponse.data.customized_instrument.id }
+            var responseCanSave = await api.post(dataToSend, BDData.endPoints.isAllowedSave)
             if (responseCanSave.status === 200) {
                 this.obj = responseCanSave.data
                 if (this.obj.save === true) {
                     console.log(loginResponse.data)
                     context.commit(SET_AUTH_ACCESS_CODE, loginResponse.data);
-                    context.commit(CLEAR_ERRORS)  
+                    context.commit(CLEAR_ERRORS)
                 } else if (this.obj.save === false) {
                     context.commit(SET_ERROR, i18n.tc('message.error_no_espacio_guardar_encuesta'))
                 }

@@ -302,7 +302,6 @@ export default {
       return obj
     },
     clearSurveyConf () {
-      // FIXME instrument_header_id no debería ser siempre 1
       // Por ahora se deja este porue no se ha incluido la opción de personalizar las preguntas incluidas en el instrumento sino que es el mismo
       var obj = {id: null, client_id: null, instrument_header_id: this.idActiveInstrumentHeader, max_surveys: null, used_surveys: 0}
       return obj

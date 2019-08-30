@@ -88,10 +88,7 @@ Correr el servidor -->
 
 
 
-Comandos
-Migrar la base de datos python manage.py migrate
-Correr servidor : python manage.py runserver
-Elaborar nuevas migraciones: manage.py makemigrations
+
 
 
 #############VUE.js ################
@@ -104,7 +101,7 @@ npm install vee-validate --save
 https://m.dotdev.co/form-validation-using-vue-js-2-35abd6b18c5d
 https://www.npmjs.com/package/vee-validate
 
-Para el despliegue de vue tube que agrgar un archvio en la raiz llamado vue.config.js en este archivo puse un codigo en el que si la llamada era en rpoduction entonces se usara /corin/ sino se usara /
+Para el despliegue de vue tuve que agrgar un archvio en la raiz llamado vue.config.js en este archivo puse un codigo en el que si la llamada era en rpoduction entonces se usara /corin/ sino se usara /
 
 Instale paquete para la edición de los textos de manera más interactiva ese paquete se llama tiptap
 (Al fin no funciono)
@@ -115,7 +112,41 @@ npm install --save tiptap-extensions
 https://vuejsexamples.com/simple-and-lightweight-trix-rich-text-editor-component-for-vue-js/
 
 
+#Instalé paquete para la descarga de datos en excel 
+https://vuejsexamples.com/json-to-excel-for-vue-2/
+vue-json-excel
+npm install vue-json-excel --save
 
+# Instale vuex para el manejo de estados
+npm install vuex --save
+
+vueaxios para manejar axios integrado con vue
+https://www.npmjs.com/package/vue-axios
+npm install --save axios vue-axios
+
+#Instalé Yarn para instalr un paque para documentar los componentes que se llama vuese [ no funciono]
+
+
+# Manejar permisos dentro de la APP
+CASL 
+CASL allows you to define a set of rules which restrict what resources a given user is allowed to access.
+ASL (pronounced /ˈkæsəl/, like castle) is an isomorphic authorization JavaScript library which restricts what resources a given user is allowed to access. All permissions are defined in a single location (the Ability class) and not duplicated across UI components, API services, and database queries.
+npm install @casl/vue @casl/ability --save
+
+-- Con la lista desplegable se puede poner el siguiente atributo cuando el campo de texto de la lista desplegable no se llame text entonces se pone 
+<b-form-select name="companies" id="companies" v-model="user.company" :options="companies" text-field="name"/>
+
+
+-- VUEX
+Maneja el estado de la aplicación tiene un arreglo state en el que se meten las varibles que se quieren controlar  y en mutation se ponen los métodos que controlan las variables definidas en el state. 
+Se tiene que haber instalado vuex para poderlo usar. Estos metodo se llaman con la palabra clave commit
+ejemplo store.commit ('nombre de la propiedad')
+
+Vuex provides a mechanism to "inject" the store into all child components from the root component with the store option (enabled by Vue.use(Vuex)):
+
+Vue authentication and route handling
+VUE https://scotch.io/tutorials/vue-authentication-and-route-handling-using-vue-router
+Vuex y autenticacion : https://scotch.io/tutorials/handling-authentication-in-vue-using-vuex
 
 **  Flex-box properties
 justify-content: center, flex-start, flex-end, center, space-around( equal amount of space) space-between space-evenly
@@ -147,6 +178,22 @@ flex-wrap: wrap
 
 order: permite cambiar laubicacónde los items en el domdel mismo content. Numeros menoreds a 0 se ubican primero y numeros mayors a cero se ubican de ultimos
 
+
+####################### django commands  ##############
+Comandos
+Migrar la base de datos python manage.py migrate
+Correr servidor : python manage.py runserver
+Elaborar nuevas migraciones: manage.py makemigrations
+
+Crear super user
+manage.py createsuperuser
+
+
+#Superusuario
+admin
+pwd: poiU1234
+
+pycharm: alt + enter:  arrega los imports 
 
 ############## REST FRAMEWORK #############################
 http://www.django-rest-framework.org/tutorial/2-requests-and-responses/
@@ -270,6 +317,9 @@ heroku run python manage.py migrate
  Susperndiendo procesos en heroku
  heroku ps:stop run.3372
 
+#Paquete para hacer request http desde la consola usando django
+pip install httpie
+Ejemplo de uso: http POST http://localhost:8000/api-token-auth/ username="admin" password="poiU1234"
 
 #Consultas en el manager de python
 EN el serializador objetos que solo retornen un elemento deben tener una coma
@@ -277,3 +327,81 @@ Note the comma. A tuple with only one object requires a trailing comma to distin
  class Meta:
         model = Company
         fields = ('company_contact_name',)
+
+
+# Verificar problemas de seguridad para el despligue
+python manage.py check --deploy
+
+# Arreglar problema de longitud de campos en mysql
+mysql> ALTER TABLE table_columns MODIFY type varchar(255);
+
+# Con mariadb
+https://websiteforstudents.com/fix-mariadb-plugin-unix_socket-is-not-loaded-error-on-ubuntu-17-04-17-10/
+
+#Configuracion proyecto en el server
+Icono nuevo superior izquierdo.
+Nombre: ttulo 
+Host: ip del server que lo va a desplegar
+A mano de derecha:
+conexión-> autenticación- >a mano izquierda y escojo llave publica
+Click en configurar y busco el archivo y lo selecciono. 
+
+Nombre de usuario: se escribe.
+Method. Se pone la llave publica y ya con eso queda conectado. 
+ME queda acceso al servidor. 
+
+# Autenticación api rest
+Poner la configuración x defecto en el settings.py
+Incluir 'rest_framework.authtoken' en las installed apps
+Crear un usuario admin ( para probar)
+Correr la migración
+
+# Despliegue de la aplicació
+Pasar quien es el usuario de autenticación, y la parte de rest a la parte de autentiation del local_settings.py
+
+
+
+# Despliegue con una rama diferente del master en heroku
+git push -f heroku herokuVersion:master
+
+
+900737228-0
+DIRECCIÓN CALLE 128A NRO 53 40
+
+
+# Detalle des desarrollo
+Front-end
+# Uso de vee-validate
+Los campos que en la renderización tiene v-show = false si tienen validacion igual trataran de ser validados aunque esten ocultos y eso hará que el formulario no se envie. En ese caso el v-validate debe ser controlado por una expresión para que solo se validen como 'required' cuando sean visibles. Ejemplos de esto se encuentran en UserManager con el campo password en modo edición y con las listas de usuario y contraseña que no se piden siempre. 
+
+Revisar que estoy enviando en el update pq es posible que trate de actualizar el password con null y esa no es la idea.
+
+#Update method Serializer
+Si se sobreescribe el update se tiene ue enviar desde la vista actual la instancia actual, y los datos del formulario para que no se cree un nuevo objeto
+
+
+# arreglar el config_survey pq esta tomando siempre como customized instrument 1 y eso no esta bn
+
+#limpiar los mensajes cuando hay errores  ok
+
+# personalizar encuesta , estaba usando un componente mas sofisticado pero como 
+# no estaba funcionando los cambie por text areas
+
+Descargar respuestas todas --> ok
+
+#Campo requerido profile
+
+#repetido el mensaje de error 
+
+# errores en el modal
+# que cuando hay errores en el login no se quitan y por eso no deja seguir
+
+
+#Sobre django
+Aprendi que el metodo validate solo se llama después de que los datos que se esperan sean recibidos
+
+Aprendi que para llamar el save si no se quiere que se cree un nuevo objeto al instanciar el serializador se debe enviar por parametro la instancia actual
+
+Aprendi que si algún campo puede ser null cuando se inserta en la base de datos en la definición de los campos en el serializador se tiene que poner el parametro allow_null=True.
+Ahora si en la actualización no se tiene que mandar algún campo en la definición de los atributos en el serializador se tiene que poner el atributo
+required=False. Ejemplos de esto en el UserSerializer

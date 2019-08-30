@@ -5,7 +5,7 @@ git clone https://github.com/lufe089/CORIN-backend
 Para descargar todos los archivos del backend del proyecto
 
 * Se creo un entorno virutal (no es necesario instalarlo) con el comando:
-virutalenv --python=python3.6 envcorin
+virtualenv --python=python3.6 envcorin
 Para usar la versión python 3.6 y llamamos el ambiente envcorin
 
 * Se activa el virutalenv con la carpeta del ambiente creada:
@@ -96,3 +96,6 @@ python manage.py collectsatitic # o collectstatic
 http://zalonore.pythonanywhere.com
 
 
+
+# Para desplegar en el servidor para cualquier ip
+python3 manage.py runserver 0.0.0.0:8000
